@@ -12,6 +12,7 @@ archive/v1/source/out/
 *.FCBak
 *.FCStd1
 *.lock
+!pixi.lock
 
 # OS / editors
 .DS_Store
