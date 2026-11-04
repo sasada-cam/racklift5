@@ -38,7 +38,7 @@ Then once: `git lfs install`. Open a **new** terminal afterwards so the PATH is 
 
 ### 2. Clone and install the environment
 ```
-git clone https://github.com/<user>/racklift5.git
+git clone https://github.com/sasada-cam/racklift5.git
 cd racklift5
 pixi install                 # default env: CAD export + FEM toolchain (~0.5 GB)
 pixi run check-tools         # smoke test: prints build123d / gmsh versions and runs ccx
