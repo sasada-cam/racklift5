@@ -21,21 +21,52 @@ tray level, and picks baskets off 5 shelf levels with a 2-link SCARA hook arm.
 | `archive/v1/` | RackLift 5 v1 (two-rail lift), kept for reference only. |
 | `archive/v2_original_stl/` | The original mesh STLs of v2 – reference for the volume check. |
 
-## Setup
-```
-pip install -r requirements.txt
-```
-FreeCAD 1.0 is needed for the `.FCStd` files and for FEM. Clone with Git LFS installed (`git lfs install`) –
-STL / STEP / FCStd / PNG files are stored in LFS.
+## Setup (Windows, macOS, Linux)
 
-## Regenerate after changing `generator/params.py`
+The project uses **[pixi](https://pixi.sh)**: one lock file (`pixi.lock`) pins Python, the CAD kernel
+(build123d / OCP), the mesher (gmsh) and the FEM solver (CalculiX `ccx`) for `win-64`, `osx-arm64`
+(Apple Silicon), `osx-64` (Intel Mac) and `linux-64`. No system Python is needed.
+
+### 1. Install the tools (once per machine)
+
+| | Windows (PowerShell) | macOS / Linux (Terminal) |
+|---|---|---|
+| Git + Git LFS | `winget install Git.Git GitHub.GitLFS` | `brew install git git-lfs` |
+| pixi | `winget install prefix-dev.pixi` (or `scoop install pixi`) | `curl -fsSL https://pixi.sh/install.sh \| sh` |
+
+Then once: `git lfs install`. Open a **new** terminal afterwards so the PATH is refreshed.
+
+### 2. Clone and install the environment
 ```
-python cad/export_brep.py                    # all parts + 3 assembly poses -> models/   (~1 min)
-python cad/tools/test_parts.py               # volume check of every part vs archive/v2_original_stl
-"C:\Program Files\FreeCAD 1.0\bin\freecadcmd.exe" cad/tools/freecad_verify.py   # FreeCAD validity check + .FCStd
+git clone https://github.com/<user>/racklift5.git
+cd racklift5
+pixi install                 # default env: CAD export + FEM toolchain (~0.5 GB)
+pixi run check-tools         # smoke test: prints build123d / gmsh versions and runs ccx
 ```
-`python cad/export_brep.py parts` or `... reach` regenerates only that part of the output.
-The original mesh pipeline still works: `cd generator && python export_v2.py` (writes `generator/out/`, git-ignored).
+Optional environments (only if you need them – they are large):
+```
+pixi install -e viz          # + pyvista for 3-D result plots (~1 GB, VTK)
+pixi install -e freecad      # + headless FreeCAD 1.0 (~1.5 GB)
+```
+
+### 3. Everyday commands
+```
+pixi task list               # everything available
+pixi run export              # all parts + 3 assembly poses -> models/   (~1 min)
+pixi run export-parts        # only the printable parts
+pixi run test                # validity + volume check vs archive/v2_original_stl
+pixi run -e freecad verify   # open all STEP files in FreeCAD, write assembly .FCStd
+pixi run gen-stl             # original mesh pipeline -> generator/out/ (git-ignored)
+pixi run gen-clearance       # original 67-pose collision check
+```
+Workflow: edit `generator/params.py` → `pixi run export` → `pixi run test` → commit.
+
+Without pixi (CAD export only, no FEM solver): `pip install -r requirements.txt` with Python 3.11–3.14.
+
+### Opening the models
+* **FreeCAD 1.0** – open `models/assembly/*.FCStd` or any `.step` (File → Open).
+* **Fusion 360** – Upload / Open the `.step` files; every body comes in as a separate component.
+* **Slicer** – `models/print/*.stl` (already in print orientation).
 
 ## Notes on the exact CAD
 * Bought parts (motors, servos, rails, V-wheels, angle iron, baskets) are simplified envelopes.

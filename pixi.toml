@@ -1,0 +1,46 @@
+[workspace]
+name = "racklift5"
+version = "2.0.0"
+description = "RackLift 5 v2 - parametric climbing rack robot: exact CAD export (build123d) and FEM (gmsh + CalculiX)"
+channels = ["conda-forge"]
+platforms = ["win-64", "osx-arm64", "osx-64", "linux-64"]
+
+# ---------------------------------------------------------------- default environment
+[dependencies]
+python = "3.11.*"
+numpy = ">=1.24"
+pillow = ">=10"
+# FEM toolchain (native binaries - the reason this project uses pixi rather than plain pip/uv)
+calculix = "*"          # ccx solver
+meshio = "*"
+
+[pypi-dependencies]
+build123d = "==0.13.0"  # conda-forge only ships 0.9.x
+gmsh = ">=4.13"         # mesher; PyPI wheel is self-contained (the conda one drags in VTK, >1 GB)
+
+[tasks]
+# exact CAD (writes models/)
+export = { cmd = "python cad/export_brep.py", description = "Build all parts + 3 assembly poses as STEP/STL into models/" }
+export-parts = { cmd = "python cad/export_brep.py parts", description = "Only the printable parts" }
+test = { cmd = "python cad/tools/test_parts.py", description = "Validity + volume check of every part against archive/v2_original_stl" }
+# original mesh generator (writes generator/out/, git-ignored)
+gen-stl = { cmd = "python export_v2.py", cwd = "generator", description = "Original mesh STL export" }
+gen-clearance = { cmd = "python clearance_v2.py", cwd = "generator", description = "67-pose collision check" }
+gen-renders = { cmd = "python r2.py", cwd = "generator", description = "Preview renders" }
+check-tools = { cmd = "python -c \"import build123d, gmsh, meshio, numpy, PIL; print('build123d', build123d.__version__, '| gmsh', gmsh.__version__)\" && ccx -v", description = "Smoke test of the toolchain" }
+
+# ---------------------------------------------------------------- optional: 3-D result plots (pulls VTK, ~1 GB)
+[feature.viz.dependencies]
+pyvista = "*"
+
+# ---------------------------------------------------------------- optional: headless FreeCAD (~1.5 GB)
+[feature.freecad.dependencies]
+freecad = "1.0.*"
+
+[feature.freecad.tasks]
+verify = { cmd = "freecadcmd cad/tools/freecad_verify.py", description = "Open every STEP in FreeCAD, check solids, write assembly .FCStd files" }
+
+[environments]
+default = { solve-group = "main" }
+viz = { features = ["viz"], solve-group = "main" }
+freecad = { features = ["freecad"], solve-group = "main" }
