@@ -1,0 +1,28 @@
+group,file,qty,size_x,size_y,size_z,approx_grams_each_solid,note
+Robot,R01_chassis.stl,1,74.0,172.0,45.0,226.8,Back face on the bed. Bolts to both gantry plates; holds the M8 hand axle and the turn motor.
+Robot,R02_climber_yoke.stl,1,34.0,33.0,73.0,28.9,Side wall on the bed. Holds the climb motor's L-bracket; slots set the gear mesh.
+Robot,R03_climber_pinion_14T.stl,2,24.0,23.6,11.0,3.0,"5 mm wide, runs inside the rail slot. 100% infill, 0.12 mm layers. 1 spare."
+Robot,R04_turn_pinion_12T.stl,1,21.0,21.0,12.0,3.3,On the turn motor; drives the 48T gear on the hand.
+Robot,R05_hand_tray_arm_48T.stl,1,209.0,118.5,20.0,203.0,"The 'hand': 48T gear, 2x 608 bearings, arms to the tray and the fork crown."
+Robot,R06_fork_crown.stl,1,71.0,67.0,34.0,56.9,Two 4-way forks that slide onto the junction pins; holds 2x LJ12A3.
+Robot,R07_tray_foot.stl,1,148.0,110.0,48.0,94.5,Carries the plywood tray on the hand.
+Robot,R10_hand_axle_spacer.stl,1,14.0,14.0,22.8,2.8,On the M8 axle between chassis and hand.
+Robot,R08_wheel_spacer_6mm.stl,4,10.0,10.0,6.0,0.4,For the concentric wheels (or buy aluminium).
+Robot,R09_gantry_drill_jig.stl,1,65.0,65.0,9.0,26.7,Drill 4 x 5.2 mm in each gantry plate.
+Tray,T01_shoulder_tower.stl,1,80.0,92.0,127.0,233.7,Shoulder servo holder.
+Tray,T02_upper_arm.stl,1,214.0,32.0,8.0,36.2,"SCARA link 1, carries the elbow servo upside-down."
+Tray,T03_forearm_hook.stl,1,207.0,32.0,47.0,34.6,SCARA link 2 with the hook pin.
+Tray,T04_basket_stop.stl,2,40.0,24.0,26.0,13.2,Tray stops; one holds the basket switch.
+Tray,T05_cam_tof_bracket.stl,1,48.0,108.0,11.0,28.8,ESP32-CAM + VL53L0X on the tower.
+Tray,T06_tof_down_mount.stl,1,30.0,20.0,12.0,8.6,VL53L0X looking down.
+Junction,J01_turntable_rotor.stl,2,44.0,210.0,8.0,71.5,Carries the 300 mm rail piece; spins on a 608 bearing in the base plate.
+Junction,J02_detent_spring.stl,4,35.6,15.6,9.0,2.6,Clicks the turntable at 0 deg and 90 deg. PETG.
+Junction,J03_torque_pin_sleeve.stl,4,10.0,10.0,110.9,3.3,Over an M8 x 130 bolt: the fixed pins the hand pushes against.
+Junction,J04_stub_block.stl,2,20.0,9.0,40.0,8.6,Holds the short horizontal rail to the base plates.
+Junction,J05_base_spacer_22.stl,10,16.0,16.0,22.0,5.0,Spaces the base plates 22 mm off the rack posts.
+Junction,J06_rail_bridge.stl,4,122.0,40.0,40.0,53.5,Holds each vertical rail to the rack (top + just above the junction).
+Rack,K_rack_turntable_half.stl,4,10.0,149.8,4.3,3.9,"In-slot gear rack, 149.8 mm. Flange down, 0.12 mm layers."
+Rack,K_rack_end.stl,2,10.0,154.5,4.3,4.1,"In-slot gear rack, 154.5 mm. Flange down, 0.12 mm layers."
+Rack,K_rack_33T.stl,6,10.0,155.5,4.3,4.1,"In-slot gear rack, 155.5 mm. Flange down, 0.12 mm layers."
+Rack,K_rack_18T_top.stl,2,10.0,84.8,4.3,2.2,"In-slot gear rack, 84.8 mm. Flange down, 0.12 mm layers."
+Rack,K_rack_horizontal.stl,1,10.0,134.7,4.3,3.5,"In-slot gear rack, 134.7 mm. Flange down, 0.12 mm layers."

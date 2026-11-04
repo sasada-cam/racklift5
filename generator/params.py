@@ -1,0 +1,127 @@
+"""All dimensions in mm.  GLOBAL FRAME: x = right, y = into the rack (front face of rack at y=0),
+z = up from the floor.  Edit these values to match the parts you actually bought, then re-run build.py.
+Values marked  # MEASURE  are typical catalogue sizes - check them with a caliper.
+"""
+import math
+
+# ---------------- slotted angle iron rack ----------------
+ANG = 38.0            # angle iron leg width            # MEASURE
+ANG_T = 2.0           # angle iron thickness            # MEASURE
+XI = 153.0            # inner face of post side-flange (clear opening = 2*XI = 306)
+RACK_D = 230.0        # rack depth (front y=0 .. back)
+RACK_H = 1000.0       # post height (1 m pieces)
+LEVELS = [178.0, 353.0, 528.0, 703.0, 878.0]   # top surface of each shelf ledge (5 steps); bottom rail runs below shelf 1
+
+# ---------------- basket (Daraz small foldable basket) ----------------
+BASKET_W, BASKET_D, BASKET_H = 260.0, 180.0, 110.0   # MEASURE yours
+BASKET_Y0 = 40.0      # basket front wall y when stored on a shelf
+
+# ---------------- V-slot rail ----------------
+XR = XI + ANG / 2     # rail centre x (= centre of the post front flange) -> 172
+RAIL_Y0, RAIL_Y1 = -60.0, -40.0   # rail front / back face y
+RAIL_LEN = 1000.0
+SLOT_W = 6.2
+
+# gantry plate / wheels
+PLATE_W, PLATE_T = 65.0, 6.0      # MEASURE (OpenBuilds mini V gantry plate 20mm)
+PLATE_Y1 = -61.0                  # back face of plate
+PLATE_Y0 = PLATE_Y1 - PLATE_T     # front face of plate (-67)
+WHEEL_DX = 19.8                   # wheel centre offset from rail centre (x)
+WHEEL_DZ = 20.0                   # wheel centre offset from plate centre (z)
+WHEEL_R, WHEEL_W = 12.2, 10.2
+WHEEL_YC = (RAIL_Y0 + RAIL_Y1) / 2
+PLATE_HOLES = [(sx * 28.5, sz * 8.0) for sx in (-1, 1) for sz in (-1, 1)]  # 4 x Ø5.2 to drill (u, w)
+
+# ---------------- rack & pinion ----------------
+MOD = 1.5
+PIN_T = 14
+PA = 20.0
+PITCH = math.pi * MOD                 # 4.712
+PIN_R = MOD * PIN_T / 2               # 10.5 pitch radius
+ADD, DED = 1.0 * MOD, 1.25 * MOD
+BACKLASH = 0.15                       # printed-gear clearance (each side)
+SEG_TEETH = 34
+SEG_LEN = SEG_TEETH * PITCH           # 160.22
+N_SEG = 5
+RACK_Z0 = 120.0                       # bottom of first rack segment
+RACK_ROOT_Y = -32.0                   # tooth root line (teeth point toward +y)
+RACK_PITCH_Y = RACK_ROOT_Y + DED      # -30.125
+PIN_Y = RACK_PITCH_Y + PIN_R          # pinion axis y (-19.625)
+TEETH_U0, TEETH_U1 = 6.0, 19.0        # tooth band across the rack (u = outward from rail centre)
+PIN_U0, PIN_U1 = 6.5, 18.5            # pinion face (12 mm)
+
+# ---------------- lift / tray ----------------
+T_OFF = 40.0                          # tray top = plate centre - T_OFF
+APPROACH = 35.0                       # raise used to hook the basket (pin passes 5 mm over the rim)
+DECK_T = 9.0                          # plywood deck thickness
+DECK_X = 145.0                        # deck half width
+DECK_Y0, DECK_Y1 = -3.0, -330.0
+PC_HOME = 135.0                       # plate-centre height at homing switch
+
+# ---------------- JGY-370 + steel L bracket (approx) ----------------
+GB_U0 = 22.5                          # gearbox face (u) behind the L-bracket plate
+GB_T, GB_Y, GB_Z = 22.5, 32.0, 46.0   # gearbox: thickness along shaft, width (y), height (z)   # MEASURE
+GB_SHAFT_FROM_BOTTOM = 10.0           # shaft distance from bottom of gearbox           # MEASURE
+MOTOR_D, MOTOR_L = 24.4, 33.0
+LBR_T = 2.0
+SHAFT_D, SHAFT_FLAT = 6.0, 5.5        # D-shaft                                          # MEASURE
+BRACKET_BASE_W = -12.0                # w of underside of the steel L-bracket base (rel. plate centre)
+
+# ---------------- servos (20 kg, 25T) ----------------
+SV_L, SV_W, SV_H = 40.5, 20.2, 38.0   # body                                             # MEASURE
+SV_TAB_L, SV_TAB_T, SV_TAB_Z = 54.5, 2.5, 26.0   # tab span, thickness, tab underside height from body bottom
+SV_HOLE_DX, SV_HOLE_DY = 49.5, 10.0
+SV_SPLINE_OFF = 10.25                 # spline axis from the near end of the body
+SV_HORN_TOP = 47.0                    # top of metal disc horn above body bottom
+HORN_PCD, HORN_D = 14.0, 25.0         # horn bolt circle (4 x M3) and disc diameter      # MEASURE
+
+# ---------------- arm (2-link SCARA) ----------------
+L1 = L2 = 180.0
+SHOULDER = (0.0, -290.0)
+UPPER_Z = 148.0                       # upper-arm underside above tray top
+ARM_T = 8.0
+PIN_LEN = 39.0
+PIN_DIA = 8.0
+
+# hardware
+M5_CLR, M3_CLR = 5.4, 3.3
+M5_HEAD_D = 10.0
+
+
+# =====================================================================  SquaBot-style rail grid (v2)
+P = PITCH
+N_BAYS = 2
+BAY_PITCH = 93 * P                    # 438.2 mm  (multiple of the rack pitch so racks stay in phase)
+BAY_X = [i * BAY_PITCH for i in range(N_BAYS)]
+RAIL_OFF = 230.0                      # vertical rail sits this far left of its bay centre
+RAIL_X = [bx - RAIL_OFF for bx in BAY_X]
+JZ = 140.0                            # centre height of the bottom rail / junctions
+JUNCTIONS = [(rx, JZ) for rx in RAIL_X]
+SEG_HALF = 32 * P - 1.0               # rotating rail piece half length (149.8)
+STUB0 = 32 * P + 1.0                  # fixed rails start this far from a junction centre (2 mm gaps, in tooth spaces)
+RAIL_TOP = 1000.0
+
+# in-slot rack (front slot of the V-slot)
+RK_TIP_Y = -58.5                      # tooth tips, 1.5 mm inside the slot
+RK_PITCH_Y = RK_TIP_Y + 0.8 * MOD     # -57.3
+RK_ROOT_Y = RK_PITCH_Y + 1.25 * MOD   # -55.425
+RK_FLANGE_Y1 = -54.0                  # slot floor
+RK_TEETH_W, RK_FLANGE_W = 5.6, 10.0
+CP_Y = RK_PITCH_Y - PIN_R             # climber pinion axis y (-67.8)
+CP_A = 82.0                           # climber pinion along the rail from robot centre
+CP_W = 5.0                            # climber pinion face (runs inside the 6.2 slot opening)
+
+# robot (body frame: s = across rail, a = along rail, y = global y)
+PLATE_AC = [-32.5, 32.5]              # two gantry plates in tandem
+WHEEL_A = [-52.5, -12.5, 12.5, 52.5]
+HUB_Y0, HUB_Y1 = -135.0, -155.0       # hand hub (gear y -135..-147, plate y -147..-155)
+GEAR_T = 12.0
+HAND_GEAR_T, TURN_PIN_T = 60, 12      # 60T on the hand, 12T on the turn motor -> 5:1
+TURN_A = -54.0                        # turn pinion centre (12T) below the hub gear (60T)
+TRAY_TOP_REL = 38.0                   # tray top ABOVE robot centre (tray+basket ride in the gap below the vertical rails)
+TRAY_X0, TRAY_X1 = 100.0, 380.0       # tray x range relative to rail
+TRAY_T = 12.0                         # 12 mm plywood
+RECV = [(-85.0, -90.0), (-110.0, -65.0)]   # torque-pin positions relative to junction / receivers relative to robot
+PIN_D_FIX = 10.0
+RECV_GAP = 11.0
+PIN_TIP_Y = HUB_Y1 + 6.0              # nut on the torque-pin tip (-149)

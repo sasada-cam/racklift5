@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# generator scratch output (python generator/export_v2.py etc. write here)
+generator/out/
+archive/v1/source/out/
+
+# FreeCAD backups / lock files
+*.FCBak
+*.FCStd1
+*.lock
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

@@ -1,0 +1,5 @@
+# generator (original mesh pipeline)
+numpy>=1.24
+Pillow>=10.0
+# exact CAD export (cad/)
+build123d==0.13.0
