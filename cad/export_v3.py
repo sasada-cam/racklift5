@@ -1,8 +1,8 @@
 """RackLift5 v3 (v2 machine, Squid-style two-hub body) -> exact B-rep CAD (build123d / OpenCascade).  v2 files in models/ are left untouched.
 
-    python cad/export_v3.py            # new printed parts + 4 assembly poses (pick, swivel, travel, transfer)
+    python cad/export_v3.py            # new printed parts + 4 assembly poses (pick, swivel, travel, transfer, dock)
     python cad/export_v3.py parts      # only the new printed parts
-    python cad/export_v3.py pick       # one pose: pick | swivel | travel | transfer
+    python cad/export_v3.py pick       # one pose: pick | swivel | travel | transfer | dock
 
 Output: models/v3/print/*.step|.stl, models/v3/design/*.step, models/v3/assembly/RackLift5_v3_<pose>.step
 Geometry source: generator/params_v3.py + generator/assembly_v3.py (the same source the v3 MuJoCo model uses).
@@ -18,7 +18,8 @@ import export_brep as E            # noqa: E402  (helpers: to_bed, colours, grou
 import build123d as bd             # noqa: E402
 
 OUT = os.path.abspath(os.path.join(HERE, "..", "models", "v3"))
-GROUP_LABEL = {"static": "Rack + rails (fixed)", "rotor": "Crossing turntables + transfer cart", "cart": "Transfer cart (moving)", "robot": "Robot: column, battery, tray",
+GROUP_LABEL = {"static": "Rack + rails (fixed)", "rotor": "Crossing turntables + transfer cart", "cart": "Transfer cart (moving)", "jack0": "Dock 1 jack (moving)", "jack1": "Dock 2 jack (moving)",
+               "jack2": "Dock 3 jack (moving)", "robot": "Robot: column, battery, tray",
                "hub1": "Upper hub", "hub2": "Lower hub", "arm_mid": "Telescopic arms (middle)",
                "arm_in": "Telescopic arms (inner)", "finger": "Flip fingers + inner square tubes",
                "belt": "Stage-2 belt runs"}
@@ -40,10 +41,18 @@ NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V08_stage1_belt_clamp": (lambda: _pick(A3.arm_mid_local(), "printed stage-1 belt clamp (middle bar)"), R.RX(90), 2),
     "V09_inner_bar_bearing": (lambda: _pick(A3.arm_in_local(), "finger shaft bearing (inner bar)"), R.RX(90), 4),
     "V13_transfer_pinion_16T": (lambda: _pick(A3.turn_pinion_local(), "turn drive pinion 16T (robot)"), I, 1),
-    "V15_rail_end_bracket": (lambda: _pick(A3.row_static_local(), "printed rail end bracket"), R.RX(90), A3.N_ROWS),
+    "V15_cart_trolley_plate": (lambda: _pick(A3.cart_local(), "cart trolley plate"), R.RY(90), 2),
     "V16_lift_carriage": (lambda: _pick(A3.turn_carriage_local(), "printed lift carriage"), I, 1),
     "V14_turn_drive_mast": (lambda: _pick(A3.robot_local(), "printed turn-drive mast"), R.RX(90), 1),
     "V10_stage2_pulley": (lambda: _pick(A3.dpulley_local(1, 0), "stage-2 pulley (extend)"), R.RY(90), 4),
+    # dock jack (per dock; x3 docks): printed parts of the scissor lift - plates, arms, shafts and the stepper are bought
+    "V17_jack_bottom_lug": (lambda: _pick(A3.jack_static_local(), "jack: bottom pivot lug"), I, 2 * A3.N_ROWS),
+    "V18_jack_top_lug": (lambda: _pick(A3.jack_platform_local(), "jack: top pivot lug"), I, 2 * A3.N_ROWS),
+    "V19_jack_bearing_block": (lambda: _pick(A3.jack_static_local(), "jack: screw bearing block (printed)"), I, A3.N_ROWS),
+    "V20_jack_motor_bracket": (lambda: _pick(A3.jack_static_local(), "jack: motor bracket (printed)"), I, A3.N_ROWS),
+    "V21_jack_slider_shoe": (lambda: _pick(A3.jack_slider_local(), "jack: slider shoe (printed)"), I, 2 * A3.N_ROWS),
+    "V22_jack_lead_nut_block": (lambda: _pick(A3.jack_slider_local(), "jack: lead nut block (printed)"), I, A3.N_ROWS),
+    "V23_jack_coupling_flag": (lambda: _pick(A3.jack_screw_local(), "jack: shaft coupling + index flag"), R.RY(90), A3.N_ROWS),
 }
 
 def export_parts():

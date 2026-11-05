@@ -16,13 +16,17 @@ body{font:15px system-ui,sans-serif;margin:16px;max-width:420px;background:#f4f5
 h1{font-size:18px;margin:0 0 12px} button{display:block;width:100%;margin:6px 0;padding:12px;font-size:15px;text-align:left;
 border:1px solid #bbb;border-radius:8px;background:#fff;cursor:pointer} button:hover{background:#e8f0ff}
 button:active{background:#cfe0ff} #st{margin-top:14px;padding:10px;border-radius:8px;background:#fff;border:1px solid #ddd;white-space:pre-line}
+#log{margin-top:8px;padding:10px;border-radius:8px;background:#fbfbf3;border:1px solid #ddd;white-space:pre-line;font-size:13px;color:#444}
 form{display:flex;gap:6px;margin-top:10px} input{flex:1;padding:10px;font-size:15px} form button{width:auto;margin:0}
 </style></head><body><h1>RackLift5 v3 - tasks</h1>__BUTTONS__
 <form onsubmit="go(this.n.value);this.n.value='';return false"><input name="n" placeholder="task number" inputmode="numeric"><button>Enter</button></form>
 <div id="st">...</div>
+<div id="log"></div>
 <script>
 function go(n){fetch('/run?n='+encodeURIComponent(n)).then(r=>r.json()).then(s);}
-function s(j){document.getElementById('st').textContent=j.task+'\\n'+j.step+(j.queued?'\\nqueued: '+j.queued:'');}
+function s(j){document.getElementById('st').textContent=j.task+'\\n'+j.step+
+  ((j.queue&&j.queue.length)?'\\n\\nnext: '+j.queue.join('\\n      '):'');
+  document.getElementById('log').textContent=(j.log||[]).join('\\n');}
 setInterval(()=>fetch('/status').then(r=>r.json()).then(s).catch(()=>{document.getElementById('st').textContent='viewer closed';}),500);
 </script></body></html>"""
 

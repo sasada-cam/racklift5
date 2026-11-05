@@ -78,8 +78,12 @@ Without pixi (CAD export only, no CalculiX solver): `pip install .` (or `pip ins
 | **Pick:** arms out beside the basket, all four fingers down (front behind the far wall, rear before the near wall) | **Pull:** servo 1 retracts the arms; the 2:1 belts bring the captured basket onto the tray |
 | ![picker drive](docs/renders/v3_05_picker_drive.png) | ![transfer cart](docs/renders/v3_06_transfer_cart.png) |
 | **Picker drive:** servo 1 under the tray (step-up belt, cross shaft, belt loop per arm), servo 2 + belt for the fingers | **Transfer:** the robot on the cart half way across an aisle, its own pinion in the fixed transfer rack |
-| ![weight balance](docs/renders/v3_08_weight_balance.png) | |
-| **Weight balance:** centre of gravity (yellow) and the rail forces on the two hubs (blue twist, red forward) | |
+| ![weight balance](docs/renders/v3_08_weight_balance.png) | ![dock push](docs/renders/v3_09_dock_push.png) |
+| **Weight balance:** centre of gravity (yellow) and the rail forces on the two hubs (blue twist, red forward) | **Dock:** the robot pushes a basket off its tray onto the raised platform of the docking station at the end of the row |
+| ![jack lowering](docs/renders/v3_10_dock_jack_lowering.png) | ![dock lowered](docs/renders/v3_11_dock_lowered.png) |
+| **Jack lowering:** the scissor lift brings the basket down from tray height while the robot drives on | **Lowered:** the basket sits on the raised floor (rectangle) where the home-delivery robot will pick it up |
+| ![jack mechanism](docs/renders/v3_12_dock_jack.png) | |
+| **Jack mechanism:** scissor arms, slider with lead nut, TR8x2 lead screw and the stepper (platform raised) | |
 
 Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e sim render-v3`.
 
@@ -128,6 +132,14 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
     hold the robot on the cart). At the new row the pinion lifts and the robot drives on. The cart has **no motor**.
   * The robot never turns, so all rows face the same way. The cart is the only way between rows, so it is always at
     the robot's row.
+  * **The cart hangs** from the transfer beam on two trolleys (V-wheels above and below the beam, ~230 mm apart), so it
+    cannot lean, tip or lift; the floor rail below only guides it sideways and carries no load, so an uneven floor does
+    not tilt it. The beam stands on posts with levelling feet, set to the rows' rail height.
+  * **Lock pin:** at each row a spring pin on the cart sits in a socket on the row's rail-end arms and holds the cart's
+    rail pieces in line with the row's rails. It is pulled back by a lever the robot's lower hub presses when the robot
+    is fully on the cart, and springs back when the cart reaches the next row.
+  * The rail ends past the last rack are carried by short arms from the rack's end post (nothing stands on the floor
+    behind the robot).
   * Why not corner turrets (as tried for the 4-rack tower): the robot is not mirror-symmetric (tray on one side of the
     column), so at a T-junction its body sweeps over the side rail behind it, and left-hand corners only work one way.
     Turning corners works only at plain L corners (a ring of racks round a block); the cart works for any number of rows.
@@ -139,8 +151,8 @@ Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 ```
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
-pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer)
-pixi run clearance-v3        # collision check, 108 poses (picks, swivels, climb, every row, the cart transfer)
+pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
+pixi run clearance-v3        # collision check, 152 poses (picks, swivels, climb, every row, the cart, the docks)
 pixi run -e sim legs --v3    # wheel loads, v3 vs v2
 pixi run -e sim sim-v2       # the v2 robot (with physics)
 ```
@@ -162,6 +174,29 @@ servo 2, its gear pair and the finger shafts turn with the fingers. The two pick
 1. Pulls the heaviest basket slowly, so the arrows grow as it slides on.
 2. Switches the battery's effect off and on, so you can see what the battery box does.
 
+**Docking stations (home-delivery hand-over), one per row = 3:**
+* The robot cannot lift a basket (it only drags), so it hands baskets over exactly as it stores them on a shelf: it
+  pushes the tray basket across the same ~68 mm gap onto a **platform** at the end of the row (right of the last rack,
+  before the cart), from the same side (front) as the racks. Nothing on the robot changes.
+* The platform sits on a **motorized scissor lab jack on the floor** (not on the robot): two X-pairs of 170 mm arms, the
+  bottom-right ends on a slider with a lead nut (TR8x2, self-locking, NEMA17), the platform pivots at the top-left and its
+  roller slides in a guide. Stroke 106 mm (platform top 70 -> 176 mm, arm angle 8 -> 49 deg, the nut moves 58 mm).
+* **Up** = tray height (176 mm: 2 mm below the tray, so the basket slides over). **Down** = the top of a **rectangular
+  raised floor** (plywood deck, top 70 mm) round the jack: the basket then sits at floor level where the home-delivery
+  robot (not simulated; the raised floor stands in for it) can slide it off. The jack lowers it as soon as the robot has
+  let go, so nothing at robot height stays in the way.
+* **No collision with the robot on the cart:** the robot's battery box (z 155-245 mm) sweeps along the end of the rows while
+  the cart carries the robot across the aisles. The cart stands 350 mm beyond the platform centre so that strip is clear of
+  the platform, the deck and any basket on them - checked with baskets on all three raised platforms and on the lowered
+  ones (a deliberate test 250 mm closer does hit, so the check is real).
+* The reverse works the same way: the delivery robot slides a parcel onto the lowered platform, the jack raises it and the
+  robot pulls it onto its tray (task 16), then stores it in an empty slot.
+* **Empty slots:** 6 of the 60 shelf slots start empty (so the robot can rearrange baskets, tasks 17 and 18; a basket goes
+  back to its own shelf if that is free, else to the nearest empty slot). The sim tracks every basket and slot.
+
+New tasks: 13 / 14 deliver a basket to dock 1 / dock 3, 15 the delivery robot takes the baskets, 16 it brings a parcel back,
+17 / 18 move a basket to an empty slot in another row.
+
 Rail changes vs v2:
 * 3 rows of 4 bays joined by a transfer cart at their right ends (v2: 2 bays in a row);
 * a second horizontal rail;
@@ -175,9 +210,14 @@ Known v3 limits:
 * At full reach the bars overlap only ~29 mm per stage; real bars need side guide lips (so they can't lift off) and stiff
   sections (aluminium 13 x 8 is the minimum; measure the deflection with a 2 kg basket).
 * Belts stretch: tension the stage-1 loops and stage-2 belts, and home servo 1 once against the stowed stop.
-* Transfer cart: the robot (~3.5 kg + basket) rides 2 short rail pieces; the cart needs a firm floor track, a top
-  guide on the rack beam, a detent at each row, and its rail pieces must line up with each row's rails to ~0.2 mm
-  (with the racks' tooth phase).
+* Dock jack: the scissor needs a stiff platform and the screw's support bearing; a basket of up to 2 kg + platform (~3 kg)
+  needs about 100 N at the lowest arm angle (a TR8x2 screw + NEMA17 has margin). The basket must be dropped on the
+  platform within the same +-2 mm height tolerance as a shelf; limit switches sit at both ends of the nut travel.
+* The rail ends past the last rack are cantilevered ~460 mm from the rack's end post on 24 x 30 mm arms (deflection ~0.6 mm
+  at 50 N): fit a brace or a post if the rack's end post is thin.
+* Transfer cart: the robot (~3.5 kg + basket) rides 2 short rail pieces on a hanging cart. The beam must be stiff (posts
+  at every row) and levelled to the rows; the lock pin sets the final alignment, which must be ~0.2 mm (with the racks'
+  tooth phase). The lock-release lever is a concept (not yet modelled in detail).
 * People share the aisles with the robot: a real system needs a stop sensor or zone lights.
 * Basket masses in the sim are demo values.
 * Masses and motor ratings are estimates.

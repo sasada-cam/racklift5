@@ -24,7 +24,7 @@ shot("v3_02_top_view", (0.9, 0.5, 0.2), 90, -89, 3.3)
 # 3: at a shelf, both fingers down round the basket (row 1, bay 1, shelf 3)
 b, l = 0, 2
 s.cmd.update(x=A3.bay_rail_x(b), z=P3.cz_for_level(l), h1=0, h2=0, r00=0, r01=0, arm=P3.TIP_SHELF, f=90.0)
-s.basket[(b, l)] = "held"; s.hold[(b, l)] = P3.BASKET_Y0
+s.basket[(b, l)] = "held"; s.ctx[(b, l)] = ("shelf", (b, l)); s.hold[(b, l)] = P3.BASKET_Y0
 s.apply(); rp = s.d.xpos[s.m.body("robot").id]
 shot("v3_03_pick_captured", rp + np.array([P3.BXR, 60, P3.T_V3 + 90]) * MM, 100, -50, 0.8)
 # 4: pulling the basket half way onto the tray (picker mechanism visible)
@@ -42,4 +42,19 @@ shot("v3_06_transfer_cart", (P3.X_CART * MM + 0.1, P3.ROW_P / 2 * MM, 0.3), 160,
 s.cmd.update(x=A3.bay_rail_x(0) + 130, ry=0.0, cart=0.0, lift=P3.TURN_LIFT)
 s.basket[(0, 4)] = "tray"; s.apply(); rp = s.d.xpos[s.m.body("robot").id]
 shot("v3_08_weight_balance", rp + np.array([120, 0, 0]) * MM, 90, -3, 1.1, balance=True)
+# 9-12: the docking station (row 1): pushing onto the raised platform, jack half way down, lowered on the raised floor, jack
+k, xc, pxc = (1, 1), P3.DOCK_X_C, P3.PXC
+s.cmd.update(x=xc, z=P3.CZ_HOME, h1=-90, h2=-90, r00=-90, r01=-90, arm=(P3.TIP_TRAY + P3.TIP_PUSHED) / 2, f=90.0,
+             ry=0.0, cart=0.0, lift=P3.TURN_LIFT, j0=P3.JACK_UP)
+s.basket[(0, 4)] = "shelf"
+s.basket[k] = "held"; s.ctx[k] = ("dock", 0); s.hold[k] = 0.0
+look = np.array([pxc, 100, 150]) * MM
+shot("v3_09_dock_push", look + np.array([0, -0.1, 0.05]), 130, -22, 1.8)
+s.cmd.update(x=s.x_home, arm=P3.TIP0, f=0.0, j0=120.0); s.basket[k] = "dock"; s.dock_of[k] = 0
+shot("v3_10_dock_jack_lowering", look, 160, -15, 1.3)
+s.cmd.update(j0=P3.JACK_DOWN)
+shot("v3_11_dock_lowered", look, 150, -25, 1.5)
+s.basket[k] = "away"; s.away_pos[k] = (P3.X_CART + 700.0, 80.0, 0.0); s.dock_of.pop(k)
+s.cmd.update(j0=140.0)
+shot("v3_12_dock_jack", np.array([pxc, 100, 90]) * MM, 205, -18, 0.95)
 print("ok")

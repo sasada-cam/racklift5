@@ -46,8 +46,24 @@ def build(out=None):
             ry = A3.row_M(A3.bay_row(j))[1, 3]
             rotors += (f'<body name="cross{j}{k}" pos="{v3(A3.bay_rail_x(j), ry, zc)}">'
                        f'<joint name="cross{j}{k}" type="hinge" axis="0 1 0"/>{INERT}{cross}</body>')
+    # docking stations (one per row): scissor jack = platform (slides in z) + outer arms (hinge y at the fixed bottom pivot)
+    # + inner arms (hinge y at the platform's top pivot) + slider with the lead nut (slides in x) + the lead screw (turns)
+    zp = P3.PLATE_T + P3.PIN_DROP
+    for r in range(P3.N_ROWS):
+        ry = A3.row_M(r)[1, 3]
+        rotors += (f'<body name="dock{r}_platform" pos="{v3(P3.PXC, ry, 0)}"><joint name="dock{r}_platform" type="slide" axis="0 0 1"/>'
+                   f'{INERT}{vis(A3.jack_platform_local())}'
+                   f'<body name="dock{r}_arm2" pos="{v3(-P3.JACK_X0, 0, -zp)}"><joint name="dock{r}_arm2" type="hinge" axis="0 1 0"/>'
+                   f'{INERT}{vis(A3.jack_arm2_local())}</body></body>'
+                   f'<body name="dock{r}_arm1" pos="{v3(P3.PXC - P3.JACK_X0, ry, P3.JACK_ZB)}"><joint name="dock{r}_arm1" type="hinge" axis="0 1 0"/>'
+                   f'{INERT}{vis(A3.jack_arm1_local())}</body>'
+                   f'<body name="dock{r}_slider" pos="{v3(P3.PXC - P3.JACK_X0, ry, P3.JACK_ZB)}"><joint name="dock{r}_slider" type="slide" axis="1 0 0"/>'
+                   f'{INERT}{vis(A3.jack_slider_local())}</body>'
+                   f'<body name="dock{r}_screw" pos="{v3(P3.PXC + P3.SCREW_X, ry + P3.JACK_YC, P3.JACK_ZB)}"><joint name="dock{r}_screw" type="hinge" axis="1 0 0"/>'
+                   f'{INERT}{vis(A3.jack_screw_local())}</body>')
     # transfer cart (no motor): slides along y, pushed by the robot's pinion in the fixed transfer rack
-    rotors += f'<body name="cart"><joint name="cart" type="slide" axis="0 1 0"/>{INERT}{vis(A3.cart_local())}</body>'
+    rotors += (f'<body name="cart"><joint name="cart" type="slide" axis="0 1 0"/>{INERT}{vis(A3.cart_local())}'
+               f'<body name="cart_lock"><joint name="cart_lock" type="slide" axis="1 0 0"/>{INERT}{vis(A3.cart_lock_local())}</body></body>')
     def hub(tag):              # hub body contents: the hub plus its climb pinion on its own axle
         return (f'{vis(A3.hub_local())}<body name="pinion_{tag}" pos="{v3(*A3.PINION_AT)}">'
                 f'<joint name="pinion_{tag}" type="hinge" axis="1 0 0"/>{INERT}{vis(A3.hub_pinion_local())}</body>')
@@ -84,7 +100,7 @@ def build(out=None):
 </body>'''
     bmesh = add(A3.basket_solid())
     baskets = ""
-    for k, (b, l) in enumerate([(b, l) for b in range(P3.N_BAYS_ALL) for l in range(len(P3.LEVELS))]):
+    for k, (b, l) in enumerate(P3.BASKET_IDS):
         col = A3.A.BASKET_COLS[k % 10]
         baskets += (f'<body name="basket_{b}_{l}"><freejoint name="bj_{b}_{l}"/>{INERT}'
                     f'<geom type="mesh" mesh="{bmesh}" rgba="{MD.rgba(col)}" contype="0" conaffinity="0" group="1" density="0"/></body>')
@@ -93,6 +109,7 @@ def build(out=None):
                      for j in range(P3.N_BAYS_ALL) for k in range(2))
     act = f'''
 <position name="z" joint="z" ctrlrange="{P3.CZ_HOME*MM} {z_top*MM}"/>
+{"".join(f'<position name="dock{r+1}_jack" joint="dock{r}_platform" ctrlrange="{P3.JACK_DOWN*MM} {P3.JACK_UP*MM}"/>' for r in range(P3.N_ROWS))}
 <position name="hub_upper_swivel" joint="hub_upper" ctrlrange="-1.5708 0"/>
 <position name="hub_lower_swivel" joint="hub_lower" ctrlrange="-1.5708 0"/>{crossa}
 <position name="servo1_arms" joint="arm_mid" ctrlrange="0 {(P3.TIP_PUSHED - P3.TIP0) / 2 * MM:.4f}"/>

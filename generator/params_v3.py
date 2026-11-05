@@ -117,10 +117,48 @@ N_BAYS_ALL = N_ROWS * ROW_BAYS
 # to the next row's rail ends, and the robot drives on.  No turning, all rows face the same way.  The cart has no motor:
 # the robot's own pinion (the turn drive) drops into a fixed straight gear rack along the track and pushes robot + cart.
 # The cart is always at the robot's row (it is the only way between rows), so it never waits on the wrong side.
-X_CART = DX_LAST + 371.0                       # robot column on the cart (its battery then clears the last rack, x 191)
+# ---------------- docking station at the end of each row (home-delivery hand-over): a motorized scissor "lab jack"
+# The robot only drags baskets (no lifting), so it slides a basket off its tray onto the dock's platform exactly as it
+# puts a basket on a shelf (the platform starts just in front of the rack plane -> the same 68 mm gap to the tray, the
+# basket's centre of gravity never leaves its support).  The jack - on the floor, not on the robot - then LOWERS the
+# basket to a rectangular raised floor ('deck', top at JACK_DOWN) where the home-delivery robot can pick it up, and
+# raises a returned basket to tray height for the robot to pull.  One dock per row = 3 docks, same side as the racks.
+DOCK_DX = 357.0                                # platform centre beyond the last bay's centre
+PXC = DX_LAST + DOCK_DX                        # platform centre (row frame x)
+DOCK_HALF = 145.0                              # platform half width: the basket is +-130, the arms run beside it (+-133..146)
+DOCK_Y = (-2.0, 230.0)                         # platform extent in y: a basket sits at y 40..220 like on a shelf
+JACK_UP = LEVELS[0] - 2.0                      # platform top 2 mm below the tray top (tray at travel height)
+JACK_DOWN = 70.0                               # platform top when lowered = top of the raised floor
+BASKET_CLR = 2.0                               # basket bottom above its platform
+DECK_X = (PXC - DOCK_HALF - 14.0, PXC + DOCK_HALF + 10.0)    # raised floor (rectangle, 18 mm plywood on battens)
+DECK_Y = (-4.0, 420.0)
+DOCK_X_C = PXC - BXR                           # robot column while it serves the dock
+# scissor: two X-pairs (y = JACK_YS), arms JACK_L long; bottom-left end fixed, bottom-right end slides on a lead screw nut
+# (TR8x2, self-locking, NEMA17); the platform pivots on the top-left end and its top-right roller slides in a guide
+JACK_L, JACK_X0, JACK_ZB = 170.0, 100.0, 29.0
+PLATE_T, PIN_DROP = 8.0, 10.0                  # platform plate thickness; arm pin depth below the plate
+JACK_YS = (40.0, 190.0)
+JACK_YC = 115.0                                # lead screw y
+JACK_LEAD = 2.0
+SCREW_X = 0.0                                  # lead screw left end (dock frame x); the motor is at the right end
+# slots of the rack that start empty: a robot can move a basket from a full slot into one of these
+EMPTY_SLOTS = [(1, 3), (3, 1), (ROW_BAYS + 0, 3), (ROW_BAYS + 3, 4), (2 * ROW_BAYS + 0, 0), (2 * ROW_BAYS + 2, 2)]
+BASKET_IDS = [(b, l) for b in range(N_BAYS_ALL) for l in range(len(LEVELS)) if (b, l) not in EMPTY_SLOTS] + [(N_BAYS_ALL, 0)]
+#                                              (the last id is a parcel the home-delivery robot brings back)
+# The battery box (x C-170..C-70, z 155..245) sweeps along y while the robot rides the cart: the cart stands beyond the dock
+# so that strip stays clear of the platform, the deck and any basket on them.
+X_CART = PXC + 350.0                           # robot column on the cart
 CART_PIECE = (X_CART - SEG_V3, X_CART + SEG_V3)
 ROW_RAIL_X = (-300.0, CART_PIECE[0] - 2.0)     # fixed horizontal rails of a row (row frame x)
-TRACK_Y = (-420.0, (N_ROWS - 1) * ROW_P + 120.0)   # cart track / transfer rack extent (world y)
+TRACK_Y = (-420.0, (N_ROWS - 1) * ROW_P + 320.0)   # cart beam / transfer rack extent (world y)
+# The cart HANGS from the transfer beam on two trolleys (V-wheels above and below the beam, wheelbase ~230 mm), so it
+# cannot lean or tip; the floor rail below only guides it sideways (no load, so an uneven floor does not matter); the
+# beam stands on posts with levelling feet set to the rows' rail height.  At each row a spring LOCK PIN on the cart drops
+# into a socket on the row's rail-end arms and holds the cart's rail pieces exactly in line with the row's rails.
+CART_TROLLEY_Y = (-10.0, 220.0)                # trolley centres (cart frame y; the robot stays in front of y -40)
+BEAM_Z = (366.0, 406.0)                        # 20x40 V-slot beam: carries the cart and the transfer rack (z 382..390)
+LOCK_Z = 90.0                                  # lock pin height (on the lower rail-end arm, beyond the dock)
+RACK_END_X = DX_LAST + XI + ANG                # outer face of a row's last rack (rail-end arms start here)
 TURN_LIFT = 12.0                               # an SG90 lifts the robot's pinion this much (clear of the transfer rack it
 #                                                drives over); it drops into mesh only on the cart
 XFER_RACK_X = X_CART + TURN_PIN_XY[0] + TURN_PIN_R   # pitch line of the fixed transfer rack (teeth face -x)

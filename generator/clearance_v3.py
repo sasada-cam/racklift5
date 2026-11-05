@@ -17,13 +17,15 @@ SKIP = [("V wheel", "V-slot"), ("V wheel", "rail piece"), ("spacer", "V-slot"), 
         ("stage-2 belt", "stage-2 pulley"), ("stage-2 belt", "belt anchor"), ("stage-2 belt", "stage-2 belt"),
         ("stage-2 pulley", "telescopic arm, middle bar"), ("GT2 belt loop (stage 1)", "printed stage-1 belt clamp"),
         ("basket (moving)", "printed flip finger"),
-        # the robot's pinion meshes the transfer rack; the cart rides its track and is guided on the rack beam
-        ("turn drive pinion", "printed transfer rack"), ("cart wheels", "V-slot cart track"),
-        ("cart guide arm", "transfer rack beam")]
+        # the robot's pinion meshes the transfer rack; the cart hangs on its beam, the lock pin sits in its socket
+        ("turn drive pinion", "printed transfer rack"), ("trolley V-wheels", "transfer beam"),
+        ("floor guide rollers", "floor guide rail"), ("cart lock pin", "cart lock socket"), ("cart lock pin", "cart frame")]
 FIXED = ("static", "rotor")
 
 
 def skip(a, b):
+    if a.startswith("jack:") and b.startswith("jack:"):         # the jack's own pins, shafts and screws are one assembly
+        return True
     return any((a.startswith(x) and b.startswith(y)) or (b.startswith(x) and a.startswith(y)) for x, y in SKIP)
 
 
@@ -54,6 +56,51 @@ def check(items, h=1.0):
                     continue
                 pair(a, b)
     return hits
+
+
+def dock_cases(B):
+    """docking stations: push a basket onto the raised platform, pull one back, lower / raise the jack with a basket on it,
+    drive past the docks, and ride the cart across every row with baskets on all raised platforms (the battery box sweeps
+    along the end of the rows there)"""
+    S = A3.state
+    out = []
+    J0 = [JACK_DOWN] * N_ROWS
+
+    def jup(r, z=JACK_UP):
+        j = list(J0); j[r] = z
+        return j
+
+    def rest(*rows, z=JACK_UP):
+        return [('dockrest', r, z if not isinstance(z, dict) else z[r]) for r in rows]
+    tm = (TIP_TRAY + TIP_PUSHED) / 2
+    for r in (0, N_ROWS - 1):                       # the dock of the first and of the last row (the middle one is the same)
+        ry, xc = r * ROW_P, DOCK_X_C
+        n = f"dock{r+1}"
+        for tag, arm, f, bk in (("arrives, basket on the tray, jack up", TIP0, 0, B + ['tray']),
+                                ("arm tips to the tray basket", TIP_TRAY, 0, B + ['tray']),
+                                ("fingers down round the tray basket", TIP_TRAY, 90, B + ['tray']),
+                                ("pushing the basket across the gap", tm, 90, B + [('y', 0, 0, 0)]),
+                                ("pushed onto the platform", TIP_PUSHED, 90, B + [('dock', r, JACK_UP, BASKET_Y0)]),
+                                ("fingers up, arms out", TIP_SHELF, 0, B + rest(r)),
+                                ("arms stowed, basket on the platform", TIP0, 0, B + rest(r))):
+            if tag.startswith("pushing"):
+                bk = B + [('dock', r, JACK_UP, tm - REAR_OFF)]
+            out.append((f"{n} {tag}", S(xc, ry=ry, arm=arm, f=f, jack=jup(r)), bk))
+        for z in (JACK_UP - 40, JACK_UP - 80, JACK_DOWN):                  # jack lowers the basket (arms stowed)
+            out.append((f"{n} jack at {z:.0f} with the basket", S(xc, ry=ry, jack=jup(r, z)), B + rest(r, z=z)))
+        out.append((f"{n} pulling a returned basket", S(xc, ry=ry, arm=tm - 0, f=90, jack=jup(r)),
+                    B + [('dock', r, JACK_UP, tm - 3 - BASKET_D)]))
+        out.append((f"{n} returned basket pulled onto the tray", S(xc, ry=ry, arm=TIP_PULLED, f=90, jack=jup(r)), B + ['tray']))
+    # driving past the docks on the rails (jacks up, a basket on every platform) and onto the cart
+    allup = [JACK_UP] * N_ROWS
+    for x in (PXC - 330, PXC - 100, PXC + 120, X_CART):
+        out.append((f"travel past the docks x={x:.0f} (all jacks up, baskets on them)", S(x, jack=allup), B + rest(*range(N_ROWS))))
+    # riding the cart across the aisles: the battery sweeps the strip beside the docks
+    for y in np.linspace(0, (N_ROWS - 1) * ROW_P, 4 * (N_ROWS - 1) + 1)[1:]:
+        out.append((f"transfer y={y:.0f} past raised docks with baskets", S(X_CART, ry=y, jack=allup), B + rest(*range(N_ROWS))))
+        out.append((f"transfer y={y:.0f} past lowered docks with baskets", S(X_CART, ry=y),
+                    B + rest(*range(N_ROWS), z=JACK_DOWN)))
+    return out
 
 
 def cases():
@@ -105,6 +152,7 @@ def cases():
         for x in np.linspace(ROW_RAIL_X[0] + SEG_V3, X_CART, 6):
             out.append((f"travel row{r+1} x={x:.0f}", S(x, ry=r * ROW_P), o))
     picks(ROW_BAYS * 2 - 1, [0], A3.row_M(1))
+    out += dock_cases(B)
     return out
 
 

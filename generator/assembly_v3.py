@@ -43,6 +43,131 @@ def bay_rail_x(b):
     return ROW_BAY_X[b % ROW_BAYS] - RAIL_OFF
 
 
+# ------------------------------------------------------------------ docking station: motorized scissor jack + raised floor
+# Dock frame: origin at (PXC, row y = 0, z = 0): x along the row, y into the rack, z up.  Every part is named "jack: ...".
+def jack_angles(zt):
+    """scissor arm angle (rad) and the slider's distance from the fixed pivot, for a platform top at height zt"""
+    H = zt - PLATE_T - PIN_DROP - JACK_ZB                 # pin height difference (bottom pins -> top pins)
+    phi = math.asin(H / JACK_L)
+    return phi, JACK_L * math.cos(phi)
+
+
+def jack_screw_angle(zt):
+    """the nut moves JACK_LEAD per screw turn"""
+    return 360.0 * (jack_angles(zt)[1] - jack_angles(JACK_DOWN)[1]) / JACK_LEAD
+
+
+def dock_basket_M(r, zt, y0):
+    """a basket on dock r's platform (top at zt) with its near wall at row-frame y0"""
+    return row_M(r) @ MT(PXC, y0, zt + BASKET_CLR)
+
+
+def _bar(x0, x1, y0, y1, half=7.0):
+    """flat scissor arm: bar along x with rounded ends, centred on z = 0"""
+    return Solid(box(x0, x1, y0, y1, -half, half).polys + cyl(half, y0, y1, 'y', (x0, 0), 20).polys
+                 + cyl(half, y0, y1, 'y', (x1, 0), 20).polys)
+
+
+@lru_cache(None)
+def jack_static_local():
+    """fixed parts of the jack, dock frame: base plate, guide rails, bottom pivot lugs + shaft, bearing block, motor"""
+    it = []
+    add = lambda n, s, c: it.append((n, s, c))
+    add("jack: base plate (aluminium)", box(-135, 135, 8, 222, 0, 8), A.C_PLATE)
+    for ys in JACK_YS:
+        add("jack: slider guide rail", box(-30, 80, ys + 10, ys + 16, 8, 14), A.C_STEEL)
+        add("jack: bottom pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys - 16, ys - 10, 8, JACK_ZB + 8), A.C_PRINT)
+    add("jack: bottom pivot shaft (fixed)", cyl(3, JACK_YS[0] - 16, JACK_YS[1] + 1, 'y', (-JACK_X0, JACK_ZB), 14), A.C_STEEL)
+    add("jack: screw bearing block (printed)", box(-14, -6, JACK_YC - 12, JACK_YC + 12, 8, JACK_ZB + 11), A.C_PRINT)
+    add("jack: NEMA17 stepper motor", box(108, 150, JACK_YC - 21, JACK_YC + 21, JACK_ZB - 21, JACK_ZB + 21)
+        + cyl(11, 102, 108, 'x', (JACK_YC, JACK_ZB), 20), A.C_GB)
+    # limit switches at both ends of the nut's travel (nut centre x 10.7 raised ... 68.4 lowered, block +-10)
+    add("jack: limit switch (platform up)", box(-8, 0, JACK_YC + 12, JACK_YC + 22, 8, 20), A.C_SW)
+    add("jack: limit switch (platform down)", box(79, 87, JACK_YC + 12, JACK_YC + 22, 8, 20), A.C_SW)
+    add("jack: motor bracket (printed)", box(104, 108, JACK_YC - 24, JACK_YC + 24, 8, JACK_ZB + 24), A.C_PRINT)
+    return it
+
+
+@lru_cache(None)
+def jack_platform_local():
+    """platform body, origin at the platform's top centre (z 0 = top face); y is the row-frame y"""
+    it = []
+    add = lambda n, s, c: it.append((n, s, c))
+    add("jack: platform plate (8 mm aluminium)", box(-DOCK_HALF, DOCK_HALF, DOCK_Y[0], DOCK_Y[1], -PLATE_T, 0)
+        + box(-DOCK_HALF, DOCK_HALF, DOCK_Y[1], DOCK_Y[1] + 4, -PLATE_T, 9), A.C_PLATE)           # + back stop
+    zp = -PLATE_T - PIN_DROP                                                 # pin height under the plate
+    for ys in JACK_YS:
+        add("jack: roller guide bar", box(-4, 82, ys - 16, ys - 12, zp - 8, -PLATE_T), A.C_STEEL)
+        add("jack: top pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys + 10, ys + 14, zp - 8, -PLATE_T), A.C_PRINT)
+    add("jack: top pivot shaft", cyl(3, JACK_YS[0] + 1, JACK_YS[1] + 14, 'y', (-JACK_X0, zp), 14), A.C_STEEL)
+    return it
+
+
+@lru_cache(None)
+def jack_arm1_local():
+    """both outer scissor arms (bottom-left fixed pivot -> top-right roller), origin at the fixed pivot, along +x;
+    with the centre shaft and the roller axle"""
+    it = []
+    for ys in JACK_YS:
+        it.append(("jack: scissor arm (outer)", _bar(0, JACK_L, ys - 9, ys - 1), C_ARM))
+        it.append(("jack: roller", cyl(6, ys - 12, ys - 9, 'y', (JACK_L, 0), 20), A.C_WHEEL))
+    it.append(("jack: centre pin shaft", cyl(3, JACK_YS[0] - 9, JACK_YS[1] + 9, 'y', (JACK_L / 2, 0), 14), A.C_STEEL))
+    it.append(("jack: roller axle", cyl(2, JACK_YS[0] - 16, JACK_YS[1] - 1, 'y', (JACK_L, 0), 12), A.C_STEEL))
+    return it
+
+
+@lru_cache(None)
+def jack_arm2_local():
+    """both inner scissor arms (top-left platform pivot -> bottom-right slider), origin at the top pivot, along +x"""
+    it = []
+    for ys in JACK_YS:
+        it.append(("jack: scissor arm (inner)", _bar(0, JACK_L, ys + 1, ys + 9), C_ARM))
+    return it
+
+
+@lru_cache(None)
+def jack_slider_local():
+    """slider: cross tube + shoes on the base guide rails + the lead nut; origin at the cross tube axis (bottom-right pins)"""
+    it = [("jack: slider cross tube", cyl(4, JACK_YS[0] + 1, JACK_YS[1] + 16, 'y', (0, 0), 16), A.C_STEEL),
+          ("jack: lead nut block (printed)", box(-10, 10, JACK_YC - 10, JACK_YC + 10, -10, 10), A.C_PRINT)]
+    for ys in JACK_YS:
+        it.append(("jack: slider shoe (printed)", box(-12, 12, ys + 10, ys + 16, -JACK_ZB + 14, 7), A.C_PRINT))
+    return it
+
+
+@lru_cache(None)
+def jack_screw_local():
+    """TR8x2 lead screw + coupling with a visible index flag, origin on its axis (x) at the left end, turns about x"""
+    L = 112.0
+    shaft = cyl(4, 0, L, 'x', (0, 0), 16)
+    rings = [cyl(4.8, x, x + 1.2, 'x', (0, 0), 16) for x in np.arange(6.0, 96.0, 5.0)]     # thread crests (so the turn shows)
+    flag = box(L - 18, L - 8, -3, 3, -17, 17) + cyl(8, L - 18, L - 8, 'x', (0, 0), 20)
+    return [("jack: TR8x2 lead screw", Solid(shaft.polys + sum([r_.polys for r_ in rings], [])), A.C_STEEL),
+            ("jack: shaft coupling + index flag", flag, A.C_PRINT2)]
+
+
+SCREW_L = 112.0
+
+
+@lru_cache(None)
+def deck_local():
+    """the raised floor (rectangle, top at JACK_DOWN) round the lowered platform, dock frame (x relative to PXC, y = row y)"""
+    x0, x1 = DECK_X[0] - PXC, DECK_X[1] - PXC
+    y0, y1 = DECK_Y
+    hx0, hx1 = -DOCK_HALF - 3.0, DOCK_HALF + 3.0                     # hole for the platform (3 mm clearance)
+    hy1 = DOCK_Y[1] + 4 + 3.0
+    z1 = JACK_DOWN
+    z0 = z1 - 18.0
+    return [("raised floor: top plate (18 mm plywood)", union_all([box(x0, hx0, y0, y1, z0, z1), box(hx1, x1, y0, y1, z0, z1),
+                                                                  box(hx0, hx1, hy1, y1, z0, z1)]), A.C_WOOD),
+            ("raised floor: battens", union_all([box(x0, hx0, y0, y1, 0, z0), box(hx1, x1, y0, y1, 0, z0),
+                                                 box(hx0, hx1, y1 - 24, y1, 0, z0)]), A.C_PRINT)]
+
+
+def dock_static_local():
+    return jack_static_local() + deck_local()
+
+
 # ------------------------------------------------------------------ static world
 _S = None
 
@@ -70,8 +195,12 @@ def row_static_local():
         for zc in CROSS_Z:
             add("V-slot rail (horizontal)", A.vslot_z(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_RAIL)
             add("printed in-slot rack", P2.rack_strip(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_PRINT)
-    # rail end support beside the last rack (the rails run on ~130 mm past it to meet the cart)
-    add("printed rail end bracket", box(ROW_RAIL_X[1] - 20, ROW_RAIL_X[1], RAIL_Y + 10, RAIL_Y + 40, 0, JZ_UP + 12), A.C_PRINT)
+    # the rails run on ~120 mm past the last rack to meet the cart: short arms from the rack's end post carry their ends,
+    # and a third arm carries the socket for the cart's lock pin (nothing stands on the floor here)
+    ye0, ye1 = RAIL_Y + 10, RAIL_Y + 40
+    for zc in CROSS_Z:
+        add("rail end arm (from the rack end post)", box(RACK_END_X, ROW_RAIL_X[1], ye0, ye1, zc - 12, zc + 12), A.C_RAIL)
+    add("cart lock socket (on the lower rail-end arm, beyond the dock)", box(CART_PIECE[0] - 34, CART_PIECE[0] - 4, ye0 + 4, ye1 - 4, JZ_LO + 6, LOCK_Z + 9), A.C_JUNC)
     return it
 
 
@@ -91,16 +220,16 @@ def xfer_rack():
 
 
 def xfer_static():
-    """the side bar: floor track for the cart, the transfer gear rack on a beam, and its posts beyond the robot's tray"""
-    zg0, zg1 = CZ_HOME + TURN_GEAR_Z[0], CZ_HOME + TURN_GEAR_Z[1]
+    """the side bar: the transfer beam (carries the hanging cart and the gear rack) on posts with levelling feet beyond
+    the robot's tray, and a floor guide rail that only keeps the cart's bottom from swinging"""
     y0, y1 = TRACK_Y
     xb = XFER_RACK_X + 1.25 * 1.5 + 4
-    it = [("V-slot cart track (floor, 20x40)", box(X_CART - 20, X_CART + 20, y0, y1, 0, 20), A.C_RAIL),
+    it = [("floor guide rail (guides only, no load)", box(X_CART - 10, X_CART + 10, y0, y1, 0, 20), A.C_RAIL),
           ("printed transfer rack (module 1.5)", xfer_rack(), A.C_PRINT),
-          ("transfer rack beam (20x20 V-slot)", box(xb, xb + 20, y0, y1, zg0 - 8, zg1 + 4), A.C_RAIL)]
+          ("transfer beam (20x40 V-slot, carries the cart)", box(xb, xb + 20, y0, y1, BEAM_Z[0], BEAM_Z[1]), A.C_RAIL)]
     for y in [y0 + 20] + [r * ROW_P + RACK_D / 2 for r in range(N_ROWS)] + [y1 - 20]:   # posts in the racks' depth band
-        it += [("transfer beam arm", box(xb + 20, XFER_POST_X, y - 10, y + 10, zg1 - 4, zg1 + 4), A.C_RAIL),
-               ("transfer beam post", box(XFER_POST_X, XFER_POST_X + 20, y - 10, y + 10, 0, zg1 + 4)
+        it += [("transfer beam arm", box(xb + 20, XFER_POST_X, y - 10, y + 10, BEAM_Z[0] + 8, BEAM_Z[1] - 8), A.C_RAIL),
+               ("transfer beam post (levelling foot)", box(XFER_POST_X, XFER_POST_X + 20, y - 10, y + 10, 0, BEAM_Z[1] - 8)
                 + box(XFER_POST_X - 40, XFER_POST_X + 60, y - 30, y + 30, 0, 6), A.C_RAIL)]
     return it
 
@@ -111,6 +240,8 @@ def static_items():
         loc = row_static_local()
         _S = [(f"{n} (row {r+1})", s.transform(row_M(r)), c) for r in range(N_ROWS) for n, s, c in loc]
         _S += xfer_static()
+        for r in range(N_ROWS):
+            _S += [(f"{n} (dock {r+1})", s.transform(row_M(r) @ MT(PXC, 0, 0)), c) for n, s, c in dock_static_local()]
     return _S
 
 
@@ -118,23 +249,45 @@ _CA = None
 
 
 def cart_local():
-    """transfer cart at y = 0 (lined up with row 1): two short rail pieces (with racks) that continue the rows' rails, a
-    frame behind them, wheels on the floor track and a guide roller on the rack beam.  No motor."""
+    """transfer cart at y = 0 (lined up with row 1), HANGING from the transfer beam: two trolleys (V-wheels above and below
+    the beam, ~230 mm apart) carry it, so it cannot lean or tip; a frame behind the robot's rails holds the two short
+    rail pieces; guide rollers on the floor rail stop the bottom swinging (no load).  No motor."""
     global _CA
     if _CA is None:
         x0, x1 = CART_PIECE
+        xb = XFER_RACK_X + 1.25 * 1.5 + 4                # beam -x face
+        xt1 = XFER_RACK_X - 1.5 - 1.0                    # trolley side plate: between the robot (x <= C+68) and the
+        xt0 = xt1 - 7.5                                  # rack teeth (from XFER_RACK_X - 1.5); axles bridge over the teeth
+        ya, yz = -40.0, CART_TROLLEY_Y[1] + 20           # frame extent in y (the robot stays at y < -40)
         it = []
         for zc in CROSS_Z:
             it += [("rail piece on cart", A.vslot_z(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_RAIL),
                    ("printed in-slot rack (cart)", P2.rack_strip(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_PRINT)]
-        yb = RAIL_Y + 10                       # behind the rails (the robot stays in front of y -40)
-        it += [("cart frame (20x40 V-slot)", box(x0, x0 + 20, yb, yb + 30, 20, JZ_UP + 15) + box(x1 - 20, x1, yb, yb + 30, 20, JZ_UP + 15)
-                + box(x0, x1, yb, yb + 30, JZ_UP + 15, JZ_UP + 35) + box(x0, x1, yb, yb + 30, 20, 40), A.C_JUNC),
-               ("cart wheels (on the floor track)", box(X_CART - 30, X_CART + 30, yb - 6, yb + 36, 0, 20) - box(X_CART - 21, X_CART + 21, yb - 7, yb + 37, -1, 21), A.C_WHEEL),
-               ("cart guide arm + roller (on the rack beam)", box(x1 - 20, XFER_RACK_X + 30, yb, yb + 20, JZ_UP + 15, JZ_UP + 30), A.C_JUNC),
-               ("spring detent (holds the cart at a row)", box(X_CART - 6, X_CART + 6, yb, yb + 30, 40, 52), A.C_SW)]
+        top = BEAM_Z[1] + 24
+        frame = [box(x0, x0 + 20, ya, ya + 20, 22, top), box(x1 - 20, x1, ya, ya + 20, 22, top),      # posts behind the pieces
+                 box(x0, xt1, ya, ya + 20, top - 12, top),                                            # top cross member
+                 box(x0, x1, ya, ya + 20, 22, 40),                                                    # bottom cross member
+                 box(xt0 - 8, xt0, ya, yz, top - 12, top),                                            # top member along y
+                 box(X_CART - 10, X_CART + 10, ya, yz, 22, 40),                                       # bottom member along y
+                 box(X_CART - 10, X_CART + 10, yz - 20, yz, 22, top), box(X_CART - 10, xt0, yz - 20, yz, top - 12, top)]
+        it.append(("cart frame (20x20 V-slot)", union_all(frame), A.C_JUNC))
+        for yc in CART_TROLLEY_Y:
+            plate = box(xt0, xt1, yc - 22, yc + 22, BEAM_Z[0] - 24, top)
+            wheels = [cyl(10, xb + 1, xb + 19, 'x', (yc + d, z), 20) for d in (-12, 12) for z in (BEAM_Z[1] + 10, BEAM_Z[0] - 10)]
+            wheels += [cyl(3, xt1, xb + 20, 'x', (yc + d, z), 12) for d in (-12, 12) for z in (BEAM_Z[1] + 10, BEAM_Z[0] - 10)]
+            it += [("cart trolley plate", plate, A.C_JUNC), ("trolley V-wheels (above + below the beam)", union_all(wheels), A.C_WHEEL)]
+        for yc in (-20.0, CART_TROLLEY_Y[1]):
+            it.append(("floor guide rollers (sideways only)", box(X_CART - 18, X_CART - 11, yc - 8, yc + 8, 2, 22)
+                       + box(X_CART + 11, X_CART + 18, yc - 8, yc + 8, 2, 22), A.C_WHEEL))
         _CA = it
     return _CA
+
+
+def cart_lock_local():
+    """spring lock pin (cart frame, slides along x): engaged (dx 0) it sits in the row's socket; it is pulled back
+    (dx 22) only while the cart moves.  Released by a lever the robot's lower hub presses when it is fully on the cart."""
+    x0 = CART_PIECE[0]
+    return [("cart lock pin (spring)", box(x0 - 18, x0 + 14, RAIL_Y + 18, RAIL_Y + 32, LOCK_Z - 5, LOCK_Z + 5), A.C_STEEL)]
 
 
 _R = None
@@ -522,14 +675,15 @@ def stage2_runs(arm):
 
 
 # ------------------------------------------------------------------ poses
-def state(cx, cz=CZ_HOME, h1=-90.0, h2=-90.0, rot=None, arm=TIP0, f=0.0, ry=0.0, cart=None, lift=None):
+def state(cx, cz=CZ_HOME, h1=-90.0, h2=-90.0, rot=None, arm=TIP0, f=0.0, ry=0.0, cart=None, lift=None, jack=None):
     """robot column at row-frame x = cx, at y = ry (a row's y, or the cart's while riding it).  cart: cart y (default: the
     robot's row).  lift: pinion lift (0 = in mesh with the transfer rack; default lifted unless the robot is on the cart
     away from a row)"""
     rot = rot or [[-90.0, -90.0] for _ in range(N_BAYS_ALL)]
     cart = ry if cart is None else cart
     lift = (0.0 if abs(cx - X_CART) < 1 and abs(ry - round(ry / ROW_P) * ROW_P) > 0.5 else TURN_LIFT) if lift is None else lift
-    return dict(cx=cx, cz=cz, h1=h1, h2=h2, rot=rot, arm=arm, f=f, ry=ry, cart=cart, lift=lift)
+    return dict(cx=cx, cz=cz, h1=h1, h2=h2, rot=rot, arm=arm, f=f, ry=ry, cart=cart, lift=lift,
+                jack=list(jack) if jack is not None else [JACK_DOWN] * N_ROWS)
 
 
 def basket_M(b, l, y0=BASKET_Y0):
@@ -545,6 +699,8 @@ def build(S, baskets=None):
             items += [(n, s, c, "rotor") for n, s, c in crossing_items(j, k, a)]
     moving = abs(S["cart"] - round(S["cart"] / ROW_P) * ROW_P) > 0.5
     items += [(n, s.transform(MT(0, S["cart"], 0)), c, "cart" if moving else "rotor") for n, s, c in cart_local()]
+    items += [(n, s.transform(MT(22.0 if moving else 0.0, S["cart"], 0)), c, "cart" if moving else "rotor")
+              for n, s, c in cart_lock_local()]
     R = robot_world(S)
     g = mech_angles(S["arm"], S["f"])
     d = g["d"]
@@ -569,6 +725,15 @@ def build(S, baskets=None):
             items += place(dpulley_local(sx, k), Rm @ MT(*dpul_at(sx, k)) @ rot('x', g["dpul"]), "arm_mid")
     for n, sx, k, b in stage2_runs(S["arm"]):
         items.append((n, box(*b).transform(R), C_BELT, "belt"))
+    for r in range(N_ROWS):                       # the docks' moving parts: platform, scissor arms, slider, lead screw
+        zt = S["jack"][r]
+        phi, sx = jack_angles(zt)
+        D, g = row_M(r) @ MT(PXC, 0, 0), f"jack{r}"
+        items += place(jack_platform_local(), D @ MT(0, 0, zt), g)
+        items += place(jack_arm1_local(), D @ MT(-JACK_X0, 0, JACK_ZB) @ rot('y', -math.degrees(phi)), g)
+        items += place(jack_arm2_local(), D @ MT(-JACK_X0, 0, zt - PLATE_T - PIN_DROP) @ rot('y', math.degrees(phi)), g)
+        items += place(jack_slider_local(), D @ MT(-JACK_X0 + sx, 0, JACK_ZB), g)
+        items += place(jack_screw_local(), D @ MT(SCREW_X, JACK_YC, JACK_ZB) @ rot('x', jack_screw_angle(zt)), g)
     for i, dz in ((1, D_HUB / 2), (2, -D_HUB / 2)):
         Mh = R @ MT(0, 0, dz) @ rot('y', S["h%d" % i])
         items += [(f"{n} (hub {i})", s.transform(Mh), c, f"hub{i}") for n, s, c in hub_local()]
@@ -579,6 +744,10 @@ def build(S, baskets=None):
             items.append(("basket (on tray)", bs.transform(R @ MT(BXR, BASKET_TRAY_Y0, T_V3)), A.BASKET_COLS[k % 10], "robot"))
         elif b[0] == 'y':
             items.append(("basket (moving)", bs.transform(basket_M(b[1], b[2], b[3])), A.BASKET_COLS[k % 10], "robot"))
+        elif b[0] == 'dock':         # ('dock', row, platform top, near-wall y): being pushed / pulled on a dock platform
+            items.append(("basket (moving)", bs.transform(dock_basket_M(b[1], b[2], b[3])), A.BASKET_COLS[k % 10], "robot"))
+        elif b[0] == 'dockrest':     # ('dockrest', row, platform top): resting on the platform
+            items.append((f"basket on dock {b[1]+1}", bs.transform(dock_basket_M(b[1], b[2], BASKET_Y0)), A.BASKET_COLS[k % 10], "static"))
         else:
             items.append((f"basket bay{b[0]+1}-L{b[1]+1}", bs.transform(basket_M(*b)), A.BASKET_COLS[k % 10], "static"))
     return items
@@ -597,7 +766,10 @@ def pose(name):
         return build(state(bay_rail_x(1) + 200), others + ['tray'])
     if name == "transfer":   # on the cart, half way from row 1 to row 2, pinion in the transfer rack
         return build(state(X_CART, ry=ROW_P / 2), others + ['tray'])
+    if name == "dock":       # at dock 1: the basket is on the raised platform (rear fingers just pushed it), jack up
+        return build(state(DOCK_X_C, arm=TIP_PUSHED, f=90, jack=[JACK_UP, JACK_DOWN, JACK_DOWN]),
+                     B_all + [('dock', 0, JACK_UP, BASKET_Y0)])
     raise ValueError(name)
 
 
-POSES = ("pick", "swivel", "travel", "transfer")
+POSES = ("pick", "swivel", "travel", "transfer", "dock")
