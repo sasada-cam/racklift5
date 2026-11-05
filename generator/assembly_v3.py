@@ -202,7 +202,10 @@ def row_static_local():
     ye0, ye1 = RAIL_Y + 10, RAIL_Y + 40
     for zc in CROSS_Z:
         add("rail end arm (from the rack end post)", box(RACK_END_X, ROW_RAIL_X[1], ye0, ye1, zc - 12, zc + 12), A.C_RAIL)
-    add("cart lock socket (on the lower rail-end arm, beyond the dock)", box(CART_PIECE[0] - 34, CART_PIECE[0] - 4, ye0 + 4, ye1 - 4, JZ_LO + 6, LOCK_Z + 6), A.C_JUNC)
+    sx0, sx1, yl = CART_PIECE[0] - 34, CART_PIECE[0] - 4, RAIL_Y + 25.0           # socket block, its +x face, pin axis y
+    sock = box(sx0, sx1, yl - 13, yl + 13, JZ_LO + 6, LOCK_Z + 13) \
+        - cyl(PIN_HOLE_R, sx1 - 12, sx1 + 1, 'x', (yl, LOCK_Z), 24, r1=PIN_MOUTH_R) - cyl(PIN_HOLE_R, sx0 - 1, sx1 - 11, 'x', (yl, LOCK_Z), 20)
+    add("cart lock socket (printed, funnel lead-in, on the lower rail-end arm)", sock, A.C_JUNC)
     return it
 
 
@@ -282,7 +285,8 @@ def cart_local():
             it.append(("floor guide rollers (sideways only)", box(X_CART - 18, X_CART - 11, yc - 8, yc + 8, 2, 22)
                        + box(X_CART + 11, X_CART + 18, yc - 8, yc + 8, 2, 22), A.C_WHEEL))
         zbolt = CZ_HOME + BOLT_DZ
-        bar = box(X_CART - 58, X_CART + 58, BAR_Y[0], BAR_Y[1], BAR_Z[0], BAR_Z[1]) - cyl(5.5, BAR_Y[0] - 1, BAR_Y[0] + 14, 'y', (X_CART + BOLT_X, zbolt), 20)
+        bar = box(X_CART - 58, X_CART + 58, BAR_Y[0], BAR_Y[1], BAR_Z[0], BAR_Z[1]) - cyl(BOLT_R + 1.0, BAR_Y[0] - 1, BAR_Y[0] + 10, 'y', (X_CART + BOLT_X, zbolt), 24, r1=BOLT_MOUTH_R) \
+            - cyl(BOLT_R + 1.0, BAR_Y[0] + 9, BAR_Y[0] + 15, 'y', (X_CART + BOLT_X, zbolt), 20)
         it.append(("cart docking bar (printed, with the bolt socket)", bar, A.C_PRINT))
         _CA = it
     return _CA
@@ -292,8 +296,9 @@ def cart_lock_local():
     """spring pin of the cart (slides along x): engaged (dx 0) its tip sits in the row's socket; the robot's release plunger
     pushes the tab (dx = LOCK_STROKE) and the pin leaves the socket while the cart moves.  Absolute row-frame x."""
     x0 = CART_PIECE[0]
-    pin = box(x0 - 18, x0 + 14, RAIL_Y + 18, RAIL_Y + 32, LOCK_Z - 5, LOCK_Z + 5)
-    tab = box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, RAIL_Y + 32, LOCK_Z - 5, LOCK_Z + 5) \
+    yl = RAIL_Y + 25.0
+    pin = cyl(PIN_R / 2, x0 - 18, x0 - 9, 'x', (yl, LOCK_Z), 16, r1=PIN_R) + cyl(PIN_R, x0 - 9, x0 + 14, 'x', (yl, LOCK_Z), 20)   # bullet nose
+    tab = box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, yl + 7, LOCK_Z - 5, LOCK_Z + 5) \
         + box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, -78, TAB_Z[0], TAB_Z[1])
     return [("cart lock pin + release tab (spring)", pin + tab, A.C_STEEL)]
 
@@ -614,7 +619,8 @@ def robot_local():
 @lru_cache(None)
 def dock_bolt_local():
     """docking bolt, robot frame, along y: tip at BOLT_REST_Y retracted, +BOLT_STROKE extended (into the cart's socket)"""
-    return [("lock solenoid bolt (docking)", cyl(4.5, -84.0, BOLT_REST_Y, 'y', (BOLT_X, BOLT_DZ), 14), A.C_STEEL)]
+    rod = cyl(BOLT_R, -84.0, BOLT_REST_Y - 6, 'y', (BOLT_X, BOLT_DZ), 14) + cyl(BOLT_R, BOLT_REST_Y - 6, BOLT_REST_Y, 'y', (BOLT_X, BOLT_DZ), 14, r1=2.0)
+    return [("lock solenoid bolt (docking, bullet nose)", rod, A.C_STEEL)]
 
 
 @lru_cache(None)

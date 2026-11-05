@@ -47,6 +47,7 @@ NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V10_stage2_pulley": (lambda: _pick(A3.dpulley_local(1, 0), "stage-2 pulley (extend)"), R.RY(90), 4),
     # locks (cart: one docking bar; robot: two solenoid brackets)
     "V24_cart_docking_bar": (lambda: _pick(A3.cart_local(), "cart docking bar (printed, with the bolt socket)"), I, 1),
+    "V27_cart_lock_socket_funnel": (lambda: _pick(A3.row_static_local(), "cart lock socket (printed, funnel lead-in, on the lower rail-end arm)"), I, A3.N_ROWS),
     "V25_bolt_solenoid_bracket": (lambda: _pick(A3.robot_local(), "lock solenoid bracket (docking bolt)"), I, 1),
     "V26_release_solenoid_bracket": (lambda: _pick(A3.robot_local(), "lock solenoid bracket (release plunger)"), I, 1),
     # dock jack (per dock; x3 docks): printed parts of the scissor lift - plates, arms, shafts and the stepper are bought

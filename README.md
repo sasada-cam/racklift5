@@ -139,6 +139,15 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
     * the **docking bolt** (on the column's rear face, offset 25 mm so it clears the vertical rails) extends through the open
       gap between the rails into a socket in the cart's docking bar: the robot cannot roll off the cart while it moves;
     * the **release plunger** (behind the battery box) pushes the release tab of the cart's spring pin out of the row's socket.
+    **Easy to come in (wear and stopping error):** the cart is a separate piece, so every arrival differs a little (trolley play,
+    floor rollers, stop accuracy, wear). Both locks therefore copy a refuelling drogue: the pin has a **bullet nose** and its
+    socket a **conical funnel mouth** (hole 11 mm, mouth 25 mm: a pin that arrives up to 7.5 mm off still enters, the nose even
+    10 mm; the cone then pushes the cart into line). The docking bolt and its hole in the bar are the same (+-9 mm capture).
+    Without a funnel an 11 mm hole would take only +-0.5 mm. The cone only corrects the cart's sideways (y) position - its
+    height comes from the beam, which is levelled once - and the two trolleys hold its twist. For wear, make the pin hardened
+    steel and the socket a replaceable pressed steel bushing in the printed block; a tapered shoulder on the pin seating in
+    the funnel under spring force would also take up play as it wears (not modelled). File 1 mm x 45 deg chamfers on all four
+    rail ends where the cart meets a row so the V-wheels roll over the 2 mm gap.
     The sequence is an interlock: robot locks to the cart -> cart released from the row -> pinion drives the cart across ->
     the pin snaps into the new row's socket (it holds the cart's rail pieces in line with the rows' rails) -> only then the
     robot unlocks and drives off. Tray, servo, battery and the solenoids all clear the sockets and rail ends as the cart
@@ -225,7 +234,9 @@ Known v3 limits:
   lower limit switch accurate. The delivery robot reaches the lowered basket from the back (the rack side is open).
 * Transfer cart: the robot (~3.5 kg + basket) rides 2 short rail pieces on a hanging cart. The beam must be stiff (posts
   at every row) and levelled to the rows; the lock pin sets the final alignment, which must be ~0.2 mm (with the racks'
-  tooth phase). The solenoids and the bolt/pin forces are sized by eye (bolt 17 mm stroke, plunger 22 mm).
+  tooth phase). The capture ranges above are geometry only: measure the cart's real stopping repeatability (and its wear after
+  a few thousand crossings) before trusting them. The solenoids and the bolt/pin forces are sized by eye (bolt 17 mm stroke,
+  plunger 22 mm).
 * People share the aisles with the robot: a real system needs a stop sensor or zone lights.
 * Basket masses in the sim are demo values.
 * Masses and motor ratings are estimates.

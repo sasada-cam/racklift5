@@ -159,7 +159,7 @@ TRACK_Y = (-420.0, (N_ROWS - 1) * ROW_P + 320.0)   # cart beam / transfer rack e
 # into a socket on the row's rail-end arms and holds the cart's rail pieces exactly in line with the row's rails.
 CART_TROLLEY_Y = (-10.0, 220.0)                # trolley centres (cart frame y; the robot stays in front of y -40)
 BEAM_Z = (366.0, 406.0)                        # 20x40 V-slot beam: carries the cart and the transfer rack (z 382..390)
-LOCK_Z = 134.0                                 # cart-to-row lock pin height (below the battery box's 155 mm underside, which
+LOCK_Z = 128.0                                 # cart-to-row lock pin height (below the battery box's 155 mm underside, which
 #                                                sweeps past every row's socket while the cart carries the robot across)
 # Two push-type solenoids on the ROBOT (powered, in reach of the electronics box) do all the locking; the cart stays passive:
 #  * DOCKING BOLT: on the column's rear face; extends through the open gap between the rails into a socket in the cart's
@@ -174,9 +174,13 @@ BOLT_REST_Y, BOLT_STROKE = -70.0, 17.0         # bolt tip y when retracted (clea
 #                                                into the socket (13 mm engaged)
 REL_DZ = -44.0                                 # release plunger height above C (z 156 at travel height)
 TAB_X = (-44.0, -34.0)                         # the pin's release tab, relative to the cart centre (x); y (-92, -78)
-TAB_Z = (126.0, 160.0)                         # (the tray's underside, 166, sweeps over it as the robot drives onto the cart)
+TAB_Z = (120.0, 160.0)                         # (the tray's underside, 166, sweeps over it as the robot drives onto the cart)
 PLUNGER_REST_X = -46.0                         # plunger tip x (relative to the column) when retracted: 2 mm from the tab
 LOCK_STROKE = 22.0                             # the pin is pulled back this far
+# Lead-in (like a refuelling drogue): the cart is a separate piece, so wear and stopping error shift where it arrives.  Both
+# sockets have a conical funnel mouth and both pins a bullet nose, so a few mm of error guide themselves in.
+PIN_R, PIN_HOLE_R, PIN_MOUTH_R = 5.0, 5.5, 12.5      # pin radius, hole radius, funnel mouth radius  -> capture +-7.5 mm (nose: +-10)
+BOLT_R, BOLT_MOUTH_R = 4.5, 13.5                      # docking bolt radius, funnel mouth radius      -> capture +-9 mm (nose: +-11)
 RACK_END_X = DX_LAST + XI + ANG                # outer face of a row's last rack (rail-end arms start here)
 TURN_LIFT = 12.0                               # an SG90 lifts the robot's pinion this much (clear of the transfer rack it
 #                                                drives over); it drops into mesh only on the cart
