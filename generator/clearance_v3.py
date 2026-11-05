@@ -19,7 +19,9 @@ SKIP = [("V wheel", "V-slot"), ("V wheel", "rail piece"), ("spacer", "V-slot"), 
         ("basket (moving)", "printed flip finger"),
         # the robot's pinion meshes the transfer rack; the cart hangs on its beam, the lock pin sits in its socket
         ("turn drive pinion", "printed transfer rack"), ("trolley V-wheels", "transfer beam"),
-        ("floor guide rollers", "floor guide rail"), ("cart lock pin", "cart lock socket"), ("cart lock pin", "cart frame")]
+        ("floor guide rollers", "floor guide rail"), ("cart lock pin", "cart lock socket"), ("cart lock pin", "cart frame"),
+        # solenoids are bolted to the battery box / column; the bolt sits in its socket; the pin's tab passes the cart frame
+        ("lock solenoid", "battery"), ("lock solenoid", "printed column"), ("lock solenoid", "lock solenoid")]
 FIXED = ("static", "rotor")
 
 
@@ -56,6 +58,20 @@ def check(items, h=1.0):
                     continue
                 pair(a, b)
     return hits
+
+
+def lock_cases(B):
+    """the locking sequence on the cart: robot arrives (plunger 2 mm from the tab), docking bolt out, pin released, and back"""
+    S = A3.state
+    o = [x for x in B if x != (0, 2)] + ['tray']
+    out = []
+    for tag, lock, bolt in (("arrived, nothing extended", 0.0, 0.0), ("docking bolt in its socket", 0.0, BOLT_STROKE),
+                            ("bolt in, pin released by the plunger", LOCK_STROKE, BOLT_STROKE),
+                            ("pin half way", LOCK_STROKE / 2, BOLT_STROKE)):
+        for ry in (0.0, ROW_P):
+            out.append((f"cart lock row{int(ry / ROW_P) + 1}: {tag}", S(X_CART, ry=ry, lock=lock, bolt=bolt), o))
+    out.append(("cart lock: robot approaching the cart (x=C-30, nothing extended)", S(X_CART - 30, lock=0.0, bolt=0.0), o))
+    return out
 
 
 def dock_cases(B):
@@ -148,6 +164,7 @@ def cases():
         for x in np.linspace(ROW_RAIL_X[0] + SEG_V3, X_CART, 6):
             out.append((f"travel row{r+1} x={x:.0f}", S(x, ry=r * ROW_P), o))
     picks(ROW_BAYS * 2 - 1, [0], A3.row_M(1))
+    out += lock_cases(B)
     out += dock_cases(B)
     return out
 
@@ -178,7 +195,37 @@ def swept_over_docks(verbose=True):
     return worst
 
 
+def swept_row_ends(verbose=True):
+    """The cart carries the robot past every row's lock socket and rail-end arms.  Everything that rides the cart moves in y
+    only, so if its (x, z) footprint never overlaps theirs, nothing can touch at any y.  Returns the overlaps found."""
+    B = [(b, l) for b in range(N_BAYS_ALL) for l in range(len(LEVELS))]
+    items = A3.build(A3.state(X_CART, ry=ROW_P), B + ['tray'])
+    fixed = {}
+    for n, sld, c, g in items:
+        if g == "static" and (n.startswith("cart lock socket") or n.startswith("rail end arm")):
+            t = sld.triangles().reshape(-1, 3)
+            if t[:, 0].max() > X_CART - 200:
+                fixed.setdefault(n.split(" (row")[0], []).append(t)
+    ride = []
+    for n, sld, c, g in items:
+        if g == "static" or g.startswith("jack") or n.startswith("cart lock pin") or (g == "rotor" and not n.startswith("cart")):
+            continue                                       # fixed things, the docks, the pin (it enters the socket by design)
+        ride.append((n, sld.triangles().reshape(-1, 3)))
+    found = []
+    for fn, tl in fixed.items():
+        for t in tl[:1]:                                     # rows are identical (shifted in y only)
+            fx0, fx1, fz0, fz1 = t[:, 0].min(), t[:, 0].max(), t[:, 2].min(), t[:, 2].max()
+            for n, r_ in ride:
+                if r_[:, 0].max() > fx0 and r_[:, 0].min() < fx1 and r_[:, 2].max() > fz0 and r_[:, 2].min() < fz1:
+                    found.append((fn, n))
+    if verbose:
+        print(f"swept (x, z) overlap of the ride-along parts with the rows' lock socket / rail-end arms: {len(found)}"
+              + "".join(f"\n    {a}  <->  {b}" for a, b in found[:6]))
+    return found
+
+
 if __name__ == "__main__":
+    swept_row_ends()
     m = swept_over_docks()
     if m <= 2.0:
         print("  SWEPT CLEARANCE FAIL")

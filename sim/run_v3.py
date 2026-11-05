@@ -23,7 +23,7 @@ import model_v3 as M3
 P3, A3 = M3.P3, M3.A3
 MM = 1e-3
 HALF_PI = math.pi / 2
-SPEED = dict(x=250.0, z=120.0, h=90.0, arm=150.0, f=300.0, ry=150.0, lift=40.0, lock=60.0, jack=30.0, dsl=100.0)   # mm/s, deg/s
+SPEED = dict(x=250.0, z=120.0, h=90.0, arm=150.0, f=300.0, ry=150.0, lift=40.0, lock=60.0, bolt=40.0, jack=30.0, dsl=100.0)   # mm/s, deg/s
 N_LEV = len(P3.LEVELS)
 NB, RB = P3.N_BAYS_ALL, P3.ROW_BAYS
 CROSS = [f"r{j}{k}" for j in range(NB) for k in range(2)]     # crossing piece angles per bay, k 0 lower 1 upper
@@ -52,7 +52,7 @@ class Sim:
         self.d = mujoco.MjData(self.m)
         self.speed = speed
         joints = ["x", "y", "z", "hub_upper", "hub_lower", "arm_mid", "arm_in", "pinion_upper", "pinion_lower"] + [f"cross{c[1:]}" for c in CROSS] \
-            + ["cart", "cart_lock", "turn_lift", "turn_pinion"] + M3.TURNING \
+            + ["cart", "cart_lock", "dock_bolt", "lock_plunger", "turn_lift", "turn_pinion"] + M3.TURNING \
             + [f"dock{r}_{p}" for r in range(P3.N_ROWS) for p in ("platform", "arm1", "arm2", "slider", "screw")]
         self.belt_geoms = {(sx, k): self.m.geom(M3.belt_name(sx, k)).id for _, sx, k, _ in A3.stage2_runs(P3.TIP0)}
         self.qa = {j: self.m.joint(j).qposadr[0] for j in joints}
@@ -92,7 +92,7 @@ class Sim:
         self.x_home = A3.bay_rail_x(0) + 130.0     # home: row 1, tray in front of its first bay (operator hand-over)
         self.row = 0
         self.cmd = dict(x=self.x_home, z=P3.CZ_HOME, h1=-90.0, h2=-90.0, arm=P3.TIP0, f=0.0, ry=0.0, cart=0.0,
-                        lift=P3.TURN_LIFT, lock=0.0, dsl=P3.BASKET_Y0, **{c: -90.0 for c in CROSS},
+                        lift=P3.TURN_LIFT, lock=0.0, bolt=0.0, dsl=P3.BASKET_Y0, **{c: -90.0 for c in CROSS},
                         **{f"j{r}": P3.JACK_DOWN for r in range(P3.N_ROWS)})
         # baskets: id = the slot the basket started in; state: shelf (at self.slot[id]) / held / tray / dock / dslide
         # (sliding on or off a dock's raised floor) / out (operator) / away (home-delivery robot)
@@ -125,7 +125,7 @@ class Sim:
         r = math.radians
         half = (c["arm"] - P3.TIP0) / 2 * MM
         Rw = self.robot_M()
-        vals = dict(x=Rw[0, 3] * MM, y=Rw[1, 3] * MM, z=Rw[2, 3] * MM, cart=c["cart"] * MM, turn_lift=c["lift"] * MM, cart_lock=c["lock"] * MM,
+        vals = dict(x=Rw[0, 3] * MM, y=Rw[1, 3] * MM, z=Rw[2, 3] * MM, cart=c["cart"] * MM, turn_lift=c["lift"] * MM, cart_lock=c["lock"] * MM, lock_plunger=c["lock"] * MM, dock_bolt=c["bolt"] * MM,
                     turn_pinion=r(A3.turn_pinion_angle(c["cart"])), hub_upper=r(c["h1"]), hub_lower=r(c["h2"]), arm_mid=half, arm_in=half,
                     **{f"cross{k[1:]}": r(c[k]) for k in CROSS})
         # every gear / pulley turns with the motion it drives (see A3.mech_angles): climb pinions roll along the rack;
@@ -225,14 +225,17 @@ class Sim:
         if self.row == r:
             return
         yield self.mv("drive off the row onto the transfer cart's rail pieces (arms stowed)", x=P3.X_CART, arm=P3.TIP0, f=0.0)
-        yield self.mv("SG90 lowers the robot's pinion into the transfer rack; the robot's hub presses the cart's lock lever: "
-                      "the lock pin leaves the row's socket", lift=0.0, lock=22.0)
+        yield self.mv("1: the robot's docking solenoid pushes its bolt into the cart's socket - the robot is locked to the cart",
+                      bolt=P3.BOLT_STROKE)
+        yield self.mv("2: the release solenoid pushes the cart's spring pin out of the row's socket - the cart is free; "
+                      "the pinion drops into the transfer rack", lock=P3.LOCK_STROKE, lift=0.0)
         yield ("snap", "t1_on_cart")
-        yield self.mv(f"the robot's pinion pushes itself + the cart along the side track to row {r+1} "
+        yield self.mv(f"3: the robot's pinion pushes itself + the cart along the side track to row {r+1} "
                       f"(hub motors hold it on the cart)", ry=r * P3.ROW_P, cart=r * P3.ROW_P)
         yield ("snap", "t2_at_new_row")
-        yield self.mv("lock pin springs into this row's socket (cart held in line with the row's rails); pinion lifts clear",
-                      lift=P3.TURN_LIFT, lock=0.0)
+        yield self.mv("4: the release plunger retracts; the spring pin snaps into this row's socket - the cart is held in line "
+                      "with the row's rails; the pinion lifts clear", lock=0.0, lift=P3.TURN_LIFT)
+        yield self.mv("5: only now the docking bolt retracts - the robot is free to drive off", bolt=0.0)
         yield ("call", lambda: setattr(self, "row", r))
         self.row = r                              # plan ahead (the call above does it again when it runs)
 

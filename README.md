@@ -135,9 +135,14 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
   * **The cart hangs** from the transfer beam on two trolleys (V-wheels above and below the beam, ~230 mm apart), so it
     cannot lean, tip or lift; the floor rail below only guides it sideways and carries no load, so an uneven floor does
     not tilt it. The beam stands on posts with levelling feet, set to the rows' rail height.
-  * **Lock pin:** at each row a spring pin on the cart sits in a socket on the row's rail-end arms and holds the cart's
-    rail pieces in line with the row's rails. It is pulled back by a lever the robot's lower hub presses when the robot
-    is fully on the cart, and springs back when the cart reaches the next row.
+  * **Locks - all actuators are on the robot, the cart stays passive.** Two small push-type solenoids on the robot:
+    * the **docking bolt** (on the column's rear face, offset 25 mm so it clears the vertical rails) extends through the open
+      gap between the rails into a socket in the cart's docking bar: the robot cannot roll off the cart while it moves;
+    * the **release plunger** (behind the battery box) pushes the release tab of the cart's spring pin out of the row's socket.
+    The sequence is an interlock: robot locks to the cart -> cart released from the row -> pinion drives the cart across ->
+    the pin snaps into the new row's socket (it holds the cart's rail pieces in line with the rows' rails) -> only then the
+    robot unlocks and drives off. Tray, servo, battery and the solenoids all clear the sockets and rail ends as the cart
+    carries the robot past every row (checked as a swept check, not just by sampling).
   * The rail ends past the last rack are carried by short arms from the rack's end post (nothing stands on the floor
     behind the robot).
   * Why not corner turrets (as tried for the 4-rack tower): the robot is not mirror-symmetric (tray on one side of the
@@ -152,7 +157,7 @@ Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
-pixi run clearance-v3        # collision check, 148 poses + swept check (picks, swivels, climb, rows, cart, docks)
+pixi run clearance-v3        # collision check, 157 poses + 3 swept checks (picks, swivels, climb, rows, cart, locks, docks)
 pixi run -e sim legs --v3    # wheel loads, v3 vs v2
 pixi run -e sim sim-v2       # the v2 robot (with physics)
 ```
@@ -189,7 +194,7 @@ servo 2, its gear pair and the finger shafts turn with the fingers. The two pick
   jack, where the home-delivery robot (not simulated; the raised floor stands in for it) can slide it off backwards. So a
   delivered basket can wait there and the robot rides the cart straight over it. Servo 1 was moved up 34 mm for this.
 * **No collision when the robot moves to other rows:** checked with baskets on all three lowered docks and a basket on the
-  tray (148 poses in `clearance-v3`), and as a swept check (the sampled poses could miss a 3 mm basket wall): the lowest thing
+  tray (157 poses in `clearance-v3`), and as a swept check (the sampled poses could miss a 3 mm basket wall): the lowest thing
   that rides the cart over a basket is 156 mm vs the basket top 150 mm (margin 6 mm), and 109 mm over the deck / motor. Two
   deliberate controls fail as they should (jack down only to 70 mm; servo 1 at its old height).
 * **Lift force:** with a 3 kg load the arms start almost flat, so the screw pushes ~350 N at the bottom (3.8 kg*cm at the
@@ -220,7 +225,7 @@ Known v3 limits:
   lower limit switch accurate. The delivery robot reaches the lowered basket from the back (the rack side is open).
 * Transfer cart: the robot (~3.5 kg + basket) rides 2 short rail pieces on a hanging cart. The beam must be stiff (posts
   at every row) and levelled to the rows; the lock pin sets the final alignment, which must be ~0.2 mm (with the racks'
-  tooth phase). The lock-release lever is a concept (not yet modelled in detail).
+  tooth phase). The solenoids and the bolt/pin forces are sized by eye (bolt 17 mm stroke, plunger 22 mm).
 * People share the aisles with the robot: a real system needs a stop sensor or zone lights.
 * Basket masses in the sim are demo values.
 * Masses and motor ratings are estimates.

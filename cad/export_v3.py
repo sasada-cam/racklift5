@@ -45,6 +45,10 @@ NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V16_lift_carriage": (lambda: _pick(A3.turn_carriage_local(), "printed lift carriage"), I, 1),
     "V14_turn_drive_mast": (lambda: _pick(A3.robot_local(), "printed turn-drive mast"), R.RX(90), 1),
     "V10_stage2_pulley": (lambda: _pick(A3.dpulley_local(1, 0), "stage-2 pulley (extend)"), R.RY(90), 4),
+    # locks (cart: one docking bar; robot: two solenoid brackets)
+    "V24_cart_docking_bar": (lambda: _pick(A3.cart_local(), "cart docking bar (printed, with the bolt socket)"), I, 1),
+    "V25_bolt_solenoid_bracket": (lambda: _pick(A3.robot_local(), "lock solenoid bracket (docking bolt)"), I, 1),
+    "V26_release_solenoid_bracket": (lambda: _pick(A3.robot_local(), "lock solenoid bracket (release plunger)"), I, 1),
     # dock jack (per dock; x3 docks): printed parts of the scissor lift - plates, arms, shafts and the stepper are bought
     "V17_jack_bottom_lug": (lambda: _pick(A3.jack_static_local(), "jack: bottom pivot lug"), I, 2 * A3.N_ROWS),
     "V18_jack_top_lug": (lambda: _pick(A3.jack_platform_local(), "jack: top pivot lug"), I, 2 * A3.N_ROWS),

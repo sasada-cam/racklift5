@@ -94,6 +94,8 @@ def build(out=None):
     {hinge("turn_pinion", (0, 0, 0), "0 0 1", A3.turn_pinion_local())}</body>
   {"".join(hinge(f"fshaft_{side(sx)}", A3.fshaft_at(sx), "0 1 0", A3.fshaft_local(sx)) for sx in A3.SIDES)}
   {belts}
+  <body name="dock_bolt"><joint name="dock_bolt" type="slide" axis="0 1 0"/>{INERT}{vis(A3.dock_bolt_local())}</body>
+  <body name="lock_plunger"><joint name="lock_plunger" type="slide" axis="1 0 0"/>{INERT}{vis(A3.release_plunger_local())}</body>
   <body name="arm_mid"><joint name="arm_mid" type="slide" axis="0 1 0"/>{INERT}{vis(A3.arm_mid_local())}{mid_kids}
     <body name="arm_in"><joint name="arm_in" type="slide" axis="0 1 0"/>{INERT}{vis(A3.arm_in_local())}{in_kids}</body>
   </body>

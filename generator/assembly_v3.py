@@ -202,7 +202,7 @@ def row_static_local():
     ye0, ye1 = RAIL_Y + 10, RAIL_Y + 40
     for zc in CROSS_Z:
         add("rail end arm (from the rack end post)", box(RACK_END_X, ROW_RAIL_X[1], ye0, ye1, zc - 12, zc + 12), A.C_RAIL)
-    add("cart lock socket (on the lower rail-end arm, beyond the dock)", box(CART_PIECE[0] - 34, CART_PIECE[0] - 4, ye0 + 4, ye1 - 4, JZ_LO + 6, LOCK_Z + 9), A.C_JUNC)
+    add("cart lock socket (on the lower rail-end arm, beyond the dock)", box(CART_PIECE[0] - 34, CART_PIECE[0] - 4, ye0 + 4, ye1 - 4, JZ_LO + 6, LOCK_Z + 6), A.C_JUNC)
     return it
 
 
@@ -281,15 +281,21 @@ def cart_local():
         for yc in (-20.0, CART_TROLLEY_Y[1]):
             it.append(("floor guide rollers (sideways only)", box(X_CART - 18, X_CART - 11, yc - 8, yc + 8, 2, 22)
                        + box(X_CART + 11, X_CART + 18, yc - 8, yc + 8, 2, 22), A.C_WHEEL))
+        zbolt = CZ_HOME + BOLT_DZ
+        bar = box(X_CART - 58, X_CART + 58, BAR_Y[0], BAR_Y[1], BAR_Z[0], BAR_Z[1]) - cyl(5.5, BAR_Y[0] - 1, BAR_Y[0] + 14, 'y', (X_CART + BOLT_X, zbolt), 20)
+        it.append(("cart docking bar (printed, with the bolt socket)", bar, A.C_PRINT))
         _CA = it
     return _CA
 
 
 def cart_lock_local():
-    """spring lock pin (cart frame, slides along x): engaged (dx 0) it sits in the row's socket; it is pulled back
-    (dx 22) only while the cart moves.  Released by a lever the robot's lower hub presses when it is fully on the cart."""
+    """spring pin of the cart (slides along x): engaged (dx 0) its tip sits in the row's socket; the robot's release plunger
+    pushes the tab (dx = LOCK_STROKE) and the pin leaves the socket while the cart moves.  Absolute row-frame x."""
     x0 = CART_PIECE[0]
-    return [("cart lock pin (spring)", box(x0 - 18, x0 + 14, RAIL_Y + 18, RAIL_Y + 32, LOCK_Z - 5, LOCK_Z + 5), A.C_STEEL)]
+    pin = box(x0 - 18, x0 + 14, RAIL_Y + 18, RAIL_Y + 32, LOCK_Z - 5, LOCK_Z + 5)
+    tab = box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, RAIL_Y + 32, LOCK_Z - 5, LOCK_Z + 5) \
+        + box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, -78, TAB_Z[0], TAB_Z[1])
+    return [("cart lock pin + release tab (spring)", pin + tab, A.C_STEEL)]
 
 
 _R = None
@@ -596,8 +602,25 @@ def robot_local():
         + box(-10, px + 8, py - 9, COL_Y[1] - 2, top, top + 4)
         + box(px - 14, px - 8, py - 9, py + 9, zg0 + 10, top), A.C_PRINT)
     add("SG90 micro servo (turn pinion lift)", box(px - 26, px - 14, py - 6, py + 17, top - 30, top - 8), A.C_SERVO)
+    # lock solenoids (push type): docking bolt on the column's rear face, release plunger behind the battery box
+    add("lock solenoid (docking bolt, push type)", box(BOLT_X - 9, BOLT_X + 9, -96, -68, BOLT_DZ - 8, BOLT_DZ + 8), A.C_GB)
+    add("lock solenoid bracket (docking bolt)", box(13, BOLT_X + 12, -97, -93, BOLT_DZ - 12, BOLT_DZ + 12), A.C_PRINT)
+    add("lock solenoid (release plunger, push type)", box(-100, -72, -99, -78, REL_DZ - 8, REL_DZ + 8), A.C_GB)
+    add("lock solenoid bracket (release plunger)", box(-104, -68, -100, -96, REL_DZ - 12, REL_DZ + 12), A.C_PRINT)
     _RB = it
     return it
+
+
+@lru_cache(None)
+def dock_bolt_local():
+    """docking bolt, robot frame, along y: tip at BOLT_REST_Y retracted, +BOLT_STROKE extended (into the cart's socket)"""
+    return [("lock solenoid bolt (docking)", cyl(4.5, -84.0, BOLT_REST_Y, 'y', (BOLT_X, BOLT_DZ), 14), A.C_STEEL)]
+
+
+@lru_cache(None)
+def release_plunger_local():
+    """release plunger, robot frame, along x at y -85: tip at PLUNGER_REST_X retracted (2 mm from the pin's tab), pushes +x"""
+    return [("lock solenoid plunger (cart release)", box(-94, PLUNGER_REST_X, -87, -83, REL_DZ - 2, REL_DZ + 2), A.C_STEEL)]
 
 
 TURN_PIN_AT = (TURN_PIN_XY[0], TURN_PIN_XY[1], TURN_GEAR_Z[0])     # pinion lowered (in mesh)
@@ -677,14 +700,18 @@ def stage2_runs(arm):
 
 
 # ------------------------------------------------------------------ poses
-def state(cx, cz=CZ_HOME, h1=-90.0, h2=-90.0, rot=None, arm=TIP0, f=0.0, ry=0.0, cart=None, lift=None, jack=None):
+def state(cx, cz=CZ_HOME, h1=-90.0, h2=-90.0, rot=None, arm=TIP0, f=0.0, ry=0.0, cart=None, lift=None, jack=None,
+          lock=None, bolt=None):
     """robot column at row-frame x = cx, at y = ry (a row's y, or the cart's while riding it).  cart: cart y (default: the
     robot's row).  lift: pinion lift (0 = in mesh with the transfer rack; default lifted unless the robot is on the cart
     away from a row)"""
     rot = rot or [[-90.0, -90.0] for _ in range(N_BAYS_ALL)]
     cart = ry if cart is None else cart
     lift = (0.0 if abs(cx - X_CART) < 1 and abs(ry - round(ry / ROW_P) * ROW_P) > 0.5 else TURN_LIFT) if lift is None else lift
-    return dict(cx=cx, cz=cz, h1=h1, h2=h2, rot=rot, arm=arm, f=f, ry=ry, cart=cart, lift=lift,
+    cart_moving = abs(cart - round(cart / ROW_P) * ROW_P) > 0.5
+    lock = (LOCK_STROKE if cart_moving else 0.0) if lock is None else lock                 # pin out of the row's socket
+    bolt = (BOLT_STROKE if (cart_moving and abs(cx - X_CART) < 1) else 0.0) if bolt is None else bolt   # robot locked to the cart
+    return dict(cx=cx, cz=cz, h1=h1, h2=h2, rot=rot, arm=arm, f=f, ry=ry, cart=cart, lift=lift, lock=lock, bolt=bolt,
                 jack=list(jack) if jack is not None else [JACK_DOWN] * N_ROWS)
 
 
@@ -701,7 +728,7 @@ def build(S, baskets=None):
             items += [(n, s, c, "rotor") for n, s, c in crossing_items(j, k, a)]
     moving = abs(S["cart"] - round(S["cart"] / ROW_P) * ROW_P) > 0.5
     items += [(n, s.transform(MT(0, S["cart"], 0)), c, "cart" if moving else "rotor") for n, s, c in cart_local()]
-    items += [(n, s.transform(MT(22.0 if moving else 0.0, S["cart"], 0)), c, "cart" if moving else "rotor")
+    items += [(n, s.transform(MT(S["lock"], S["cart"], 0)), c, "cart" if moving else "rotor")
               for n, s, c in cart_lock_local()]
     R = robot_world(S)
     g = mech_angles(S["arm"], S["f"])
@@ -714,6 +741,8 @@ def build(S, baskets=None):
     items += place(fservo_local(), R @ MT(*FSERVO_POS) @ rot('y', g["servo2"]), "robot")
     Mt = R @ MT(*TURN_PIN_AT) @ MT(0, 0, S.get("lift", TURN_LIFT))
     items += place(turn_carriage_local(), Mt, "robot")
+    items += place(dock_bolt_local(), R @ MT(0, S["bolt"], 0), "robot")
+    items += place(release_plunger_local(), R @ MT(S["lock"], 0, 0), "robot")
     items += place(turn_pinion_local(), Mt @ rot('z', turn_pinion_angle(S["cart"])), "robot")
     Rm, Ri = R @ MT(0, d, 0), R @ MT(0, 2 * d, 0)
     items += place(arm_mid_local(), Rm, "arm_mid")
