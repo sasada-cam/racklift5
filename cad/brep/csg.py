@@ -68,6 +68,8 @@ def _fix(shape):
     """return a single clean Solid (or Compound of solids) with coplanar faces merged"""
     if shape is None:
         return None
+    if isinstance(shape, list):            # some build123d booleans (intersect) return a ShapeList
+        shape = shape[0] if len(shape) == 1 else bd.Compound(children=list(shape))
     try:
         shape = shape.clean()
     except Exception:

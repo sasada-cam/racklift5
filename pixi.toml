@@ -22,10 +22,12 @@ gmsh = ">=4.13"         # mesher; PyPI wheel is self-contained (the conda one dr
 # exact CAD (writes models/)
 export = { cmd = "python cad/export_brep.py", description = "Build all parts + 3 assembly poses as STEP/STL into models/" }
 export-parts = { cmd = "python cad/export_brep.py parts", description = "Only the printable parts" }
+export-v3 = { cmd = "python cad/export_v3.py", description = "v3: new printed parts + 4 assembly poses (incl. cart transfer) -> models/v3/" }
 test = { cmd = "python cad/tools/test_parts.py", description = "Validity + volume check of every part against archive/v2_original_stl" }
 # original mesh generator (writes generator/out/, git-ignored)
 gen-stl = { cmd = "python export_v2.py", cwd = "generator", description = "Original mesh STL export" }
 gen-clearance = { cmd = "python clearance_v2.py", cwd = "generator", description = "67-pose collision check" }
+clearance-v3 = { cmd = "python clearance_v3.py", cwd = "generator", description = "v3: collision check, 108 poses (floor of racks: picks, hub swivels, climb, rows, cart transfer)" }
 gen-renders = { cmd = "python r2.py", cwd = "generator", description = "Preview renders" }
 check-tools = { cmd = "python -c \"import build123d, gmsh, meshio, numpy, PIL; print('build123d', build123d.__version__, '| gmsh', gmsh.__version__)\" && ccx -v", description = "Smoke test of the toolchain" }
 
@@ -40,7 +42,19 @@ freecad = "1.0.*"
 [feature.freecad.tasks]
 verify = { cmd = "freecadcmd cad/tools/freecad_verify.py", description = "Open every STEP in FreeCAD, check solids, write assembly .FCStd files" }
 
+# ---------------------------------------------------------------- optional: MuJoCo simulation (built-in viewer)
+[feature.sim.pypi-dependencies]
+mujoco = ">=3.2"
+
+[feature.sim.tasks]
+sim = { cmd = "mjpython sim/run_v3.py", description = "v3 compact Squid layout (two horizontal rails, swivelling hubs, telescopic arms) in the MuJoCo viewer + task buttons in the browser" }
+sim-headless = { cmd = "python sim/run_v3.py --headless", description = "v3: run tasks without a window (--task 1,4,5), save snapshots" }
+sim-v2 = { cmd = "mjpython sim/run.py", description = "v2 robot with physics in the MuJoCo viewer" }
+sim-v2-headless = { cmd = "python sim/run.py --headless", description = "v2: fetch + hand/rail loads without a window" }
+legs = { cmd = "python sim/legs.py", description = "static wheel/hinge loads of the two-leg layout" }
+
 [environments]
 default = { solve-group = "main" }
 viz = { features = ["viz"], solve-group = "main" }
 freecad = { features = ["freecad"], solve-group = "main" }
+sim = { features = ["sim"], solve-group = "main" }

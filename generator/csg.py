@@ -190,13 +190,18 @@ class Solid:
     # ---- transforms ----
     def transform(self, M):
         M = np.asarray(M, float)
-        det = np.linalg.det(M[:3, :3])
+        R, t = M[:3, :3], M[:3, 3]
+        det = np.linalg.det(R)
+        if not self.polys:
+            return Solid([])
+        N = np.array([p.n for p in self.polys]) @ np.linalg.inv(R)      # plane normals map by the inverse transpose
+        N /= np.linalg.norm(N, axis=1, keepdims=True)
         out = []
-        for p in self.polys:
-            v = p.v @ M[:3, :3].T + M[:3, 3]
+        for p, n in zip(self.polys, N):
+            v = p.v @ R.T + t
             if det < 0:
                 v = v[::-1]
-            out.append(Poly(v))
+            out.append(Poly(v, n, float(n @ v[0])))
         return Solid(out)
 
     def translate(self, x=0, y=0, z=0):
