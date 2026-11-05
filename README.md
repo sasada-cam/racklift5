@@ -79,7 +79,7 @@ Without pixi (CAD export only, no CalculiX solver): `pip install .` (or `pip ins
 | ![picker drive](docs/renders/v3_05_picker_drive.png) | ![transfer cart](docs/renders/v3_06_transfer_cart.png) |
 | **Picker drive:** servo 1 under the tray (step-up belt, cross shaft, belt loop per arm), servo 2 + belt for the fingers | **Transfer:** the robot on the cart half way across an aisle, its own pinion in the fixed transfer rack |
 | ![weight balance](docs/renders/v3_08_weight_balance.png) | ![dock push](docs/renders/v3_09_dock_push.png) |
-| **Weight balance:** centre of gravity (yellow) and the rail forces on the two hubs (blue twist, red forward) | **Dock:** the robot pushes a basket off its tray onto the raised platform of the docking station at the end of the row |
+| **Weight balance:** centre of gravity (yellow) and the rail forces on the two hubs (blue twist, red forward) | **Dock:** standing on the cart, the robot pushes a basket off its tray onto the raised platform of the docking station beside the cart |
 | ![jack lowering](docs/renders/v3_10_dock_jack_lowering.png) | ![dock lowered](docs/renders/v3_11_dock_lowered.png) |
 | **Jack lowering:** the scissor lift brings the basket down from tray height while the robot drives on | **Lowered:** the basket sits on the raised floor (rectangle) where the home-delivery robot will pick it up |
 | ![jack mechanism](docs/renders/v3_12_dock_jack.png) | |
@@ -152,7 +152,7 @@ Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
-pixi run clearance-v3        # collision check, 152 poses (picks, swivels, climb, every row, the cart, the docks)
+pixi run clearance-v3        # collision check, 148 poses + swept check (picks, swivels, climb, rows, cart, docks)
 pixi run -e sim legs --v3    # wheel loads, v3 vs v2
 pixi run -e sim sim-v2       # the v2 robot (with physics)
 ```
@@ -176,19 +176,24 @@ servo 2, its gear pair and the finger shafts turn with the fingers. The two pick
 
 **Docking stations (home-delivery hand-over), one per row = 3:**
 * The robot cannot lift a basket (it only drags), so it hands baskets over exactly as it stores them on a shelf: it
-  pushes the tray basket across the same ~68 mm gap onto a **platform** at the end of the row (right of the last rack,
-  before the cart), from the same side (front) as the racks. Nothing on the robot changes.
+  pushes the tray basket across the same ~68 mm gap onto a **platform**, from the front. Nothing on the robot changes.
+* **Where:** on the empty floor **right of the transfer cart**. When the robot stands on the cart its tray hangs over that
+  space, so it serves the dock from the cart - the dock adds **no rail length** (the rails end ~120 mm past the last rack, as
+  before). One dock per row, so each row's dock is reached from its own cart stop.
 * The platform sits on a **motorized scissor lab jack on the floor** (not on the robot): two X-pairs of 170 mm arms, the
-  bottom-right ends on a slider with a lead nut (TR8x2, self-locking, NEMA17), the platform pivots at the top-left and its
-  roller slides in a guide. Stroke 106 mm (platform top 70 -> 176 mm, arm angle 8 -> 49 deg, the nut moves 58 mm).
-* **Up** = tray height (176 mm: 2 mm below the tray, so the basket slides over). **Down** = the top of a **rectangular
-  raised floor** (plywood deck, top 70 mm) round the jack: the basket then sits at floor level where the home-delivery
-  robot (not simulated; the raised floor stands in for it) can slide it off. The jack lowers it as soon as the robot has
-  let go, so nothing at robot height stays in the way.
-* **No collision with the robot on the cart:** the robot's battery box (z 155-245 mm) sweeps along the end of the rows while
-  the cart carries the robot across the aisles. The cart stands 350 mm beyond the platform centre so that strip is clear of
-  the platform, the deck and any basket on them - checked with baskets on all three raised platforms and on the lowered
-  ones (a deliberate test 250 mm closer does hit, so the check is real).
+  bottom-right ends on a slider with a lead nut (TR8x2, self-locking), the platform pivots at the top-left and its roller
+  slides in a guide. A NEMA17 with a 3:1 planetary gearhead stands on the floor *beside* the platform. Stroke 138 mm
+  (platform top 38 -> 176 mm, arm angle 2.7 -> 59 deg, the nut moves 83 mm); limit switches at both ends of the nut travel.
+* **Up** = tray height (176 mm: 2 mm below the tray, so the basket slides over). **Down** = a basket top of 150 mm, **below the
+  robot's tray (166 mm), servo 1 and its belt (156 mm)**, on a **rectangular raised floor** (plywood deck, top 38 mm) round the
+  jack, where the home-delivery robot (not simulated; the raised floor stands in for it) can slide it off backwards. So a
+  delivered basket can wait there and the robot rides the cart straight over it. Servo 1 was moved up 34 mm for this.
+* **No collision when the robot moves to other rows:** checked with baskets on all three lowered docks and a basket on the
+  tray (148 poses in `clearance-v3`), and as a swept check (the sampled poses could miss a 3 mm basket wall): the lowest thing
+  that rides the cart over a basket is 156 mm vs the basket top 150 mm (margin 6 mm), and 109 mm over the deck / motor. Two
+  deliberate controls fail as they should (jack down only to 70 mm; servo 1 at its old height).
+* **Lift force:** with a 3 kg load the arms start almost flat, so the screw pushes ~350 N at the bottom (3.8 kg*cm at the
+  screw, thin for a bare NEMA17) - hence the 3:1 gearhead (~12 kg*cm). At 12 s per stroke the jack is the slowest part.
 * The reverse works the same way: the delivery robot slides a parcel onto the lowered platform, the jack raises it and the
   robot pulls it onto its tray (task 16), then stores it in an empty slot.
 * **Empty slots:** 6 of the 60 shelf slots start empty (so the robot can rearrange baskets, tasks 17 and 18; a basket goes
@@ -210,11 +215,9 @@ Known v3 limits:
 * At full reach the bars overlap only ~29 mm per stage; real bars need side guide lips (so they can't lift off) and stiff
   sections (aluminium 13 x 8 is the minimum; measure the deflection with a 2 kg basket).
 * Belts stretch: tension the stage-1 loops and stage-2 belts, and home servo 1 once against the stowed stop.
-* Dock jack: the scissor needs a stiff platform and the screw's support bearing; a basket of up to 2 kg + platform (~3 kg)
-  needs about 100 N at the lowest arm angle (a TR8x2 screw + NEMA17 has margin). The basket must be dropped on the
-  platform within the same +-2 mm height tolerance as a shelf; limit switches sit at both ends of the nut travel.
-* The rail ends past the last rack are cantilevered ~460 mm from the rack's end post on 24 x 30 mm arms (deflection ~0.6 mm
-  at 50 N): fit a brace or a post if the rack's end post is thin.
+* Dock jack: the scissor needs a stiff platform and the screw's support bearing; the basket must be dropped on the platform
+  within the same +-2 mm height tolerance as a shelf. The lowered basket clears servo 1 by only 6 mm, so keep the jack's
+  lower limit switch accurate. The delivery robot reaches the lowered basket from the back (the rack side is open).
 * Transfer cart: the robot (~3.5 kg + basket) rides 2 short rail pieces on a hanging cart. The beam must be stiff (posts
   at every row) and levelled to the rows; the lock pin sets the final alignment, which must be ~0.2 mm (with the racks'
   tooth phase). The lock-release lever is a concept (not yet modelled in detail).

@@ -59,9 +59,8 @@ def check(items, h=1.0):
 
 
 def dock_cases(B):
-    """docking stations: push a basket onto the raised platform, pull one back, lower / raise the jack with a basket on it,
-    drive past the docks, and ride the cart across every row with baskets on all raised platforms (the battery box sweeps
-    along the end of the rows there)"""
+    """docking stations (right of the cart, under the tray): push a basket onto the raised platform, pull one back, lower the jack
+    with a basket on it, and ride the cart across every row over lowered docks with baskets"""
     S = A3.state
     out = []
     J0 = [JACK_DOWN] * N_ROWS
@@ -91,15 +90,12 @@ def dock_cases(B):
         out.append((f"{n} pulling a returned basket", S(xc, ry=ry, arm=tm - 0, f=90, jack=jup(r)),
                     B + [('dock', r, JACK_UP, tm - 3 - BASKET_D)]))
         out.append((f"{n} returned basket pulled onto the tray", S(xc, ry=ry, arm=TIP_PULLED, f=90, jack=jup(r)), B + ['tray']))
-    # driving past the docks on the rails (jacks up, a basket on every platform) and onto the cart
-    allup = [JACK_UP] * N_ROWS
-    for x in (PXC - 330, PXC - 100, PXC + 120, X_CART):
-        out.append((f"travel past the docks x={x:.0f} (all jacks up, baskets on them)", S(x, jack=allup), B + rest(*range(N_ROWS))))
-    # riding the cart across the aisles: the battery sweeps the strip beside the docks
+    # riding the cart across the aisles: the tray, servo 1 and the belts under it pass over the lowered docks and the baskets on
+    # them (basket top 150 mm, tray bottom 166 mm, servo 1 bottom 156 mm)
     for y in np.linspace(0, (N_ROWS - 1) * ROW_P, 4 * (N_ROWS - 1) + 1)[1:]:
-        out.append((f"transfer y={y:.0f} past raised docks with baskets", S(X_CART, ry=y, jack=allup), B + rest(*range(N_ROWS))))
-        out.append((f"transfer y={y:.0f} past lowered docks with baskets", S(X_CART, ry=y),
-                    B + rest(*range(N_ROWS), z=JACK_DOWN)))
+        out.append((f"transfer y={y:.0f} over lowered docks with baskets", S(X_CART, ry=y), B + rest(*range(N_ROWS), z=JACK_DOWN)))
+        out.append((f"transfer y={y:.0f} with a tray basket over lowered docks with baskets", S(X_CART, ry=y),
+                    B + ['tray'] + rest(*range(N_ROWS), z=JACK_DOWN)))
     return out
 
 
@@ -156,7 +152,36 @@ def cases():
     return out
 
 
+def swept_over_docks(verbose=True):
+    """Sampling the cart's ride can miss a thin wall, so check the sweep directly: everything that rides the cart (robot, tray,
+    servos, belts, cart) moves in y only, so (1) over a basket's footprint the lowest point of ALL of it must stay above the
+    basket top, and (2) over the whole dock (deck, platform, motor) above their tops.  Returns the smaller margin in mm (> 2)."""
+    B = [(b, l) for b in range(N_BAYS_ALL) for l in range(len(LEVELS))]
+    items = A3.build(A3.state(X_CART, ry=ROW_P), B + ['tray'])
+    zones = {"basket": (PXC - 130.0 - 2, PXC + 130.0 + 2, JACK_DOWN + BASKET_CLR + BASKET_H),
+             "dock (deck, platform, motor)": (DECK_X[0], DECK_X[1], JACK_ZS + 21.0)}
+    worst = 1e9
+    for zn, (x0, x1, top) in zones.items():
+        low, who = 1e9, ""
+        for n, sld, c, g in items:
+            if (g in ("static", "rotor") and not n.startswith("cart")) or g.startswith("jack"):
+                continue                                   # fixed things are not swept (the docks themselves are fixed)
+            t = sld.triangles().reshape(-1, 3)
+            if t[:, 0].max() < x0 or t[:, 0].min() > x1:
+                continue                                   # not over this zone
+            if t[:, 2].min() < low:
+                low, who = t[:, 2].min(), n
+        if verbose:
+            print(f"swept clearance over the {zn}: lowest part riding the cart = {low:.0f} mm ({who}), top {top:.0f} mm "
+                  f"-> margin {low - top:.0f} mm")
+        worst = min(worst, low - top)
+    return worst
+
+
 if __name__ == "__main__":
+    m = swept_over_docks()
+    if m <= 2.0:
+        print("  SWEPT CLEARANCE FAIL")
     sel = sys.argv[1] if len(sys.argv) > 1 else ""
     t = time.time(); n = bad = 0
     for name, S, bk in cases():

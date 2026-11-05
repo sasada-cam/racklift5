@@ -70,21 +70,23 @@ def _bar(x0, x1, y0, y1, half=7.0):
 
 @lru_cache(None)
 def jack_static_local():
-    """fixed parts of the jack, dock frame: base plate, guide rails, bottom pivot lugs + shaft, bearing block, motor"""
+    """fixed parts of the jack, dock frame: base plate, guide rails, bottom pivot lugs + shaft, bearing block, limit switches,
+    and the NEMA17 on the floor beside the platform"""
     it = []
     add = lambda n, s, c: it.append((n, s, c))
-    add("jack: base plate (aluminium)", box(-135, 135, 8, 222, 0, 8), A.C_PLATE)
+    add("jack: base plate (aluminium)", box(-135, 135, 8, 222, 0, JACK_BASE_T), A.C_PLATE)
     for ys in JACK_YS:
-        add("jack: slider guide rail", box(-30, 80, ys + 10, ys + 16, 8, 14), A.C_STEEL)
-        add("jack: bottom pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys - 16, ys - 10, 8, JACK_ZB + 8), A.C_PRINT)
+        add("jack: slider guide rail", box(-34, 84, ys + 10, ys + 16, JACK_BASE_T, JACK_RAIL_TOP), A.C_STEEL)
+        add("jack: bottom pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys - 16, ys - 10, JACK_BASE_T, JACK_ZB + 8), A.C_PRINT)
     add("jack: bottom pivot shaft (fixed)", cyl(3, JACK_YS[0] - 16, JACK_YS[1] + 1, 'y', (-JACK_X0, JACK_ZB), 14), A.C_STEEL)
-    add("jack: screw bearing block (printed)", box(-14, -6, JACK_YC - 12, JACK_YC + 12, 8, JACK_ZB + 11), A.C_PRINT)
-    add("jack: NEMA17 stepper motor", box(108, 150, JACK_YC - 21, JACK_YC + 21, JACK_ZB - 21, JACK_ZB + 21)
-        + cyl(11, 102, 108, 'x', (JACK_YC, JACK_ZB), 20), A.C_GB)
-    # limit switches at both ends of the nut's travel (nut centre x 10.7 raised ... 68.4 lowered, block +-10)
-    add("jack: limit switch (platform up)", box(-8, 0, JACK_YC + 12, JACK_YC + 22, 8, 20), A.C_SW)
-    add("jack: limit switch (platform down)", box(79, 87, JACK_YC + 12, JACK_YC + 22, 8, 20), A.C_SW)
-    add("jack: motor bracket (printed)", box(104, 108, JACK_YC - 24, JACK_YC + 24, 8, JACK_ZB + 24), A.C_PRINT)
+    add("jack: screw bearing block (printed)", box(SCREW_X - 8, SCREW_X, JACK_YC - 12, JACK_YC + 12, JACK_BASE_T, JACK_ZS + 11), A.C_PRINT)
+    # limit switches at both ends of the nut's travel (nut block +-8 about x = -13 raised ... +69.8 lowered)
+    add("jack: limit switch (platform up)", box(-30, -22, JACK_YC + 12, JACK_YC + 22, JACK_BASE_T, 20), A.C_SW)
+    add("jack: limit switch (platform down)", box(78, 86, JACK_YC + 12, JACK_YC + 22, JACK_BASE_T, 20), A.C_SW)
+    xm = SCREW_X + SCREW_L + 8                                            # motor front face (its shaft end is at x = 140 + 8)
+    add("jack: NEMA17 stepper + 3:1 planetary gearhead", box(xm, xm + MOTOR_L, JACK_YC - 21, JACK_YC + 21, JACK_ZS - 21, JACK_ZS + 21)
+        + cyl(11, xm - 6, xm, 'x', (JACK_YC, JACK_ZS), 20), A.C_GB)
+    add("jack: motor bracket (printed)", box(xm - 4, xm, JACK_YC - 24, JACK_YC + 24, 0, JACK_ZS + 24), A.C_PRINT)
     return it
 
 
@@ -97,7 +99,7 @@ def jack_platform_local():
         + box(-DOCK_HALF, DOCK_HALF, DOCK_Y[1], DOCK_Y[1] + 4, -PLATE_T, 9), A.C_PLATE)           # + back stop
     zp = -PLATE_T - PIN_DROP                                                 # pin height under the plate
     for ys in JACK_YS:
-        add("jack: roller guide bar", box(-4, 82, ys - 16, ys - 12, zp - 8, -PLATE_T), A.C_STEEL)
+        add("jack: roller guide bar", box(-24, 80, ys - 16, ys - 12, zp - 8, -PLATE_T), A.C_STEEL)
         add("jack: top pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys + 10, ys + 14, zp - 8, -PLATE_T), A.C_PRINT)
     add("jack: top pivot shaft", cyl(3, JACK_YS[0] + 1, JACK_YS[1] + 14, 'y', (-JACK_X0, zp), 14), A.C_STEEL)
     return it
@@ -127,34 +129,34 @@ def jack_arm2_local():
 
 @lru_cache(None)
 def jack_slider_local():
-    """slider: cross tube + shoes on the base guide rails + the lead nut; origin at the cross tube axis (bottom-right pins)"""
+    """slider: cross tube (the bottom-right pins) + a nut block clamping the tube and the lead nut + shoes on the guide rails;
+    origin at the cross tube axis"""
     it = [("jack: slider cross tube", cyl(4, JACK_YS[0] + 1, JACK_YS[1] + 16, 'y', (0, 0), 16), A.C_STEEL),
-          ("jack: lead nut block (printed)", box(-10, 10, JACK_YC - 10, JACK_YC + 10, -10, 10), A.C_PRINT)]
+          ("jack: lead nut block (printed)", box(-8, 8, JACK_YC - 8, JACK_YC + 8, -4, JACK_ZS - JACK_ZB + 8), A.C_PRINT)]
     for ys in JACK_YS:
-        it.append(("jack: slider shoe (printed)", box(-12, 12, ys + 10, ys + 16, -JACK_ZB + 14, 7), A.C_PRINT))
+        it.append(("jack: slider shoe (printed)", box(-12, 12, ys + 10, ys + 16, JACK_RAIL_TOP - JACK_ZB, 7), A.C_PRINT))
     return it
 
 
 @lru_cache(None)
 def jack_screw_local():
     """TR8x2 lead screw + coupling with a visible index flag, origin on its axis (x) at the left end, turns about x"""
-    L = 112.0
+    L = SCREW_L
     shaft = cyl(4, 0, L, 'x', (0, 0), 16)
-    rings = [cyl(4.8, x, x + 1.2, 'x', (0, 0), 16) for x in np.arange(6.0, 96.0, 5.0)]     # thread crests (so the turn shows)
-    flag = box(L - 18, L - 8, -3, 3, -17, 17) + cyl(8, L - 18, L - 8, 'x', (0, 0), 20)
+    rings = [cyl(4.8, x, x + 1.2, 'x', (0, 0), 16) for x in np.arange(6.0, 112.0, 5.0)]     # thread crests (so the turn shows)
+    flag = box(L - 22, L - 12, -3, 3, -17, 17) + cyl(8, L - 22, L - 12, 'x', (0, 0), 20)
     return [("jack: TR8x2 lead screw", Solid(shaft.polys + sum([r_.polys for r_ in rings], [])), A.C_STEEL),
             ("jack: shaft coupling + index flag", flag, A.C_PRINT2)]
 
 
-SCREW_L = 112.0
 
 
 @lru_cache(None)
 def deck_local():
-    """the raised floor (rectangle, top at JACK_DOWN) round the lowered platform, dock frame (x relative to PXC, y = row y)"""
+    """the raised floor (rectangle, top at JACK_DOWN) round the lowered platform and the motor; dock frame (x relative to PXC)"""
     x0, x1 = DECK_X[0] - PXC, DECK_X[1] - PXC
     y0, y1 = DECK_Y
-    hx0, hx1 = -DOCK_HALF - 3.0, DOCK_HALF + 3.0                     # hole for the platform (3 mm clearance)
+    hx0, hx1 = -DOCK_HALF - 3.0, SCREW_X + SCREW_L + 8 + MOTOR_L + 6.0   # hole: platform (3 mm clearance) and the motor
     hy1 = DOCK_Y[1] + 4 + 3.0
     z1 = JACK_DOWN
     z0 = z1 - 18.0
@@ -733,7 +735,7 @@ def build(S, baskets=None):
         items += place(jack_arm1_local(), D @ MT(-JACK_X0, 0, JACK_ZB) @ rot('y', -math.degrees(phi)), g)
         items += place(jack_arm2_local(), D @ MT(-JACK_X0, 0, zt - PLATE_T - PIN_DROP) @ rot('y', math.degrees(phi)), g)
         items += place(jack_slider_local(), D @ MT(-JACK_X0 + sx, 0, JACK_ZB), g)
-        items += place(jack_screw_local(), D @ MT(SCREW_X, JACK_YC, JACK_ZB) @ rot('x', jack_screw_angle(zt)), g)
+        items += place(jack_screw_local(), D @ MT(SCREW_X, JACK_YC, JACK_ZS) @ rot('x', jack_screw_angle(zt)), g)
     for i, dz in ((1, D_HUB / 2), (2, -D_HUB / 2)):
         Mh = R @ MT(0, 0, dz) @ rot('y', S["h%d" % i])
         items += [(f"{n} (hub {i})", s.transform(Mh), c, f"hub{i}") for n, s, c in hub_local()]

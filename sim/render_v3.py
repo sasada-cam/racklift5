@@ -56,5 +56,7 @@ s.cmd.update(j0=P3.JACK_DOWN)
 shot("v3_11_dock_lowered", look, 150, -25, 1.5)
 s.basket[k] = "away"; s.away_pos[k] = (P3.X_CART + 700.0, 80.0, 0.0); s.dock_of.pop(k)
 s.cmd.update(j0=140.0)
+for kk in list(s.away_pos):                                   # parked parcels out of the picture
+    s.away_pos[kk] = (P3.X_CART + 3000.0, 80.0, 0.0)
 shot("v3_12_dock_jack", np.array([pxc, 100, 90]) * MM, 205, -18, 0.95)
 print("ok")

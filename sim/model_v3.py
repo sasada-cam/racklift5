@@ -59,7 +59,7 @@ def build(out=None):
                    f'{INERT}{vis(A3.jack_arm1_local())}</body>'
                    f'<body name="dock{r}_slider" pos="{v3(P3.PXC - P3.JACK_X0, ry, P3.JACK_ZB)}"><joint name="dock{r}_slider" type="slide" axis="1 0 0"/>'
                    f'{INERT}{vis(A3.jack_slider_local())}</body>'
-                   f'<body name="dock{r}_screw" pos="{v3(P3.PXC + P3.SCREW_X, ry + P3.JACK_YC, P3.JACK_ZB)}"><joint name="dock{r}_screw" type="hinge" axis="1 0 0"/>'
+                   f'<body name="dock{r}_screw" pos="{v3(P3.PXC + P3.SCREW_X, ry + P3.JACK_YC, P3.JACK_ZS)}"><joint name="dock{r}_screw" type="hinge" axis="1 0 0"/>'
                    f'{INERT}{vis(A3.jack_screw_local())}</body>')
     # transfer cart (no motor): slides along y, pushed by the robot's pinion in the fixed transfer rack
     rotors += (f'<body name="cart"><joint name="cart" type="slide" axis="0 1 0"/>{INERT}{vis(A3.cart_local())}'
