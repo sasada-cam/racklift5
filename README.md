@@ -6,6 +6,11 @@ tray level, and picks baskets off 5 shelf levels with a 2-link SCARA hook arm.
 
 ![reach pose](docs/renders/v2_01_reach.png)
 
+**v3 (work in progress):** a compact Squid-style robot on a floor of racks, with a two-servo telescopic picker and a
+transfer cart between rows - see [v3](#v3-compact-squid-layout-work-in-progress).
+
+![v3 floor of racks](docs/renders/v3_01_floor.png)
+
 ## Repository layout
 
 | Path | What it is |
@@ -64,6 +69,20 @@ Workflow: edit `generator/params.py` → `pixi run export` → `pixi run test` �
 Without pixi (CAD export only, no CalculiX solver): `pip install .` (or `pip install ".[fem]"` to add gmsh/meshio) with Python 3.11–3.14. Dependencies are declared in `pyproject.toml`.
 
 ### v3: compact Squid layout (work in progress)
+
+| | |
+|---|---|
+| ![floor of racks](docs/renders/v3_01_floor.png) | ![top view](docs/renders/v3_02_top_view.png) |
+| **Floor of racks:** 3 rows of 4 racks, rails on each row's front, transfer cart track on the right | **Top view:** rows 650 mm apart; the cart and its gear-rack beam at the rows' right ends |
+| ![fingers capture the basket](docs/renders/v3_03_pick_captured.png) | ![pulling the basket](docs/renders/v3_04_pulling.png) |
+| **Pick:** arms out beside the basket, all four fingers down (front behind the far wall, rear before the near wall) | **Pull:** servo 1 retracts the arms; the 2:1 belts bring the captured basket onto the tray |
+| ![picker drive](docs/renders/v3_05_picker_drive.png) | ![transfer cart](docs/renders/v3_06_transfer_cart.png) |
+| **Picker drive:** servo 1 under the tray (step-up belt, cross shaft, belt loop per arm), servo 2 + belt for the fingers | **Transfer:** the robot on the cart half way across an aisle, its own pinion in the fixed transfer rack |
+| ![weight balance](docs/renders/v3_08_weight_balance.png) | |
+| **Weight balance:** centre of gravity (yellow) and the rail forces on the two hubs (blue twist, red forward) | |
+
+Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e sim render-v3`.
+
 ```
         ||  vertical rail (one per bay)              top view:
    [H1]=++=============  upper horizontal rail      ======+=================  rails
