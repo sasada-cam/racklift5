@@ -66,7 +66,7 @@ SERVO1_AT = (-318.0, -2.0)    # servo 1 output (y, zt), under the tray front
 SERVO1_X = -60.0               # step-up belt plane (x from the bay centre)
 # fingers: each arm carries a telescoping square shaft (fixed rod / middle tube / inner tube) above the bars; servo 2 turns
 # the left rod through a spur-gear pair and the right rod through a GT2 belt, so the two sides turn opposite ways (inward)
-FS_ZT = 77.0                   # finger shaft axis above the tray top
+FS_ZT = 79.0                   # finger shaft axis above the tray top (2 mm above the old value: room for a printable finger collar)
 FS_SQ = (5.0, 8.0, 11.0)       # rod / middle tube / inner tube (square, mm)
 FINGER_L, FINGER_T, FINGER_W = 32.0, 4.0, 8.0
 REAR_OFF = BASKET_D + FINGER_T + 2.0            # 186: rear finger's face is this far behind the tip -> 2 mm capture play
@@ -101,6 +101,11 @@ TURN_GEAR_Z = (182.0, 190.0)           # pinion plane above C (above the upper h
 TURN_PIN_XY = (60.0, -102.5)           # pinion axis in the robot frame (on a mast above the column)
 
 
+# ---------------- made for printing
+PRINT_BED = (220.0, 220.0, 250.0)              # assumed printer build volume, mm (PETG); the export fails if a printed part is bigger
+RACK_SEG_TEETH = 40                            # printed racks are cut into pieces of whole teeth (40 x 4.712 = 188.5 mm) so the pitch
+#                                                carries across the joints; the V-slot keeps the pieces in line
+FINGER_COLLAR_R = 9.6                          # flip-finger collar: wall >= 1.5 mm round the 11.2 mm square hole for the tube
 # ---------------- floor of racks (top view): rows of racks, rails along each row's front, side rails between rows
 # All rows face the same way (front at the row's y = 0, rack behind it), ROW_P apart.  The robot snakes through them:
 # row 1 -> right side rail -> row 2 -> left side rail -> row 3 (a single line, so every passive turret always waits on

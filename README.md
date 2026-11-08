@@ -161,10 +161,15 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
     the transfer-rack beam is held from posts beyond the robot's tray end.
 
 **All components (CAD):** `models/v3/components/` has every unique part of the rack, rails, robot, picker, cart, locks and dock
-as its own STEP + STL (121 parts, grouped by category, bounding-box corner at the origin), plus `BOM_v3.csv` / `README.md` with the
+as its own STEP + STL (123 parts, grouped by category, bounding-box corner at the origin), plus `BOM_v3.csv` / `README.md` with the
 quantity, size, volume and a suggested process for each (print, laser-cut, machine, or buy). Bought parts (motors, servos, bearings,
-extrusions, wheels, belts, the basket) are simplified envelopes. The assembled poses are in `models/v3/assembly/`, the 25 printable
-parts in print orientation in `models/v3/print/`.
+extrusions, wheels, belts, the basket) are simplified envelopes. The assembled poses are in `models/v3/assembly/`, the 26 printable
+parts (flat on their largest face, checked against the printer bed) in `models/v3/print/`.
+
+**Made for printing:** every printed rack is cut into whole-tooth pieces of 188.5 mm (the V-slot keeps them in line; the old 690 / 481 / 318 mm
+racks and the 2 m transfer rack could not be printed whole), the column is an aluminium bar, thin loaded parts are thicker, printed pulleys
+have axle bores, the finger collars have a square hole for the tube, and the part export fails if a printed part is bigger than
+`PRINT_BED` in `params_v3.py` (220 x 220 x 250 mm). Screw and bolt holes are not drawn yet.
 
 **Manufacturing plan:** [docs/design/002-manufacturing-plan.md](docs/design/002-manufacturing-plan.md) (generated from the parts list: print / cut / machine / buy for every part, part sizes against the printer, joints for modular parts, a strength-check shortlist, and the order of work).
 

@@ -22,6 +22,21 @@ basket_solid = A.basket_solid
 SIDES = (-1, 1)                        # left / right arm
 
 
+# ------------------------------------------------------------------ printable racks: whole-tooth segments
+RACK_SEG_LEN = RACK_SEG_TEETH * P                     # P = rack pitch (4.712 mm)
+
+
+def rack_pieces(L):
+    """[(offset, length)] pieces of a rack of length L: full pieces of RACK_SEG_TEETH teeth (cut through a tooth space, so the
+    pitch continues across the joint), the remainder last"""
+    out, off = [], 0.0
+    while off < L - 0.01:
+        sl = min(RACK_SEG_LEN, L - off)
+        out.append((off, sl))
+        off += sl
+    return out
+
+
 # ------------------------------------------------------------------ floor layout: rows + transfer cart
 def row_M(r):
     """row r: front plane y = 0 in its frame, bays at ROW_BAY_X, rack behind (y > 0); rows are ROW_P apart, all facing -y"""
@@ -77,7 +92,7 @@ def jack_static_local():
     add("jack: base plate (aluminium)", box(-135, 135, 8, 222, 0, JACK_BASE_T), A.C_PLATE)
     for ys in JACK_YS:
         add("jack: slider guide rail", box(-34, 84, ys + 10, ys + 16, JACK_BASE_T, JACK_RAIL_TOP), A.C_STEEL)
-        add("jack: bottom pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys - 16, ys - 10, JACK_BASE_T, JACK_ZB + 8), A.C_PRINT)
+        add("jack: bottom pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys - 18, ys - 10, JACK_BASE_T, JACK_ZB + 8), A.C_PRINT)
     add("jack: bottom pivot shaft (fixed)", cyl(3, JACK_YS[0] - 16, JACK_YS[1] + 1, 'y', (-JACK_X0, JACK_ZB), 14), A.C_STEEL)
     add("jack: screw bearing block (printed)", box(SCREW_X - 8, SCREW_X, JACK_YC - 12, JACK_YC + 12, JACK_BASE_T, JACK_ZS + 11), A.C_PRINT)
     # limit switches at both ends of the nut's travel (nut block +-8 about x = -13 raised ... +69.8 lowered)
@@ -86,7 +101,7 @@ def jack_static_local():
     xm = SCREW_X + SCREW_L + 8                                            # motor front face (its shaft end is at x = 140 + 8)
     add("jack: NEMA17 stepper + 3:1 planetary gearhead", box(xm, xm + MOTOR_L, JACK_YC - 21, JACK_YC + 21, JACK_ZS - 21, JACK_ZS + 21)
         + cyl(11, xm - 6, xm, 'x', (JACK_YC, JACK_ZS), 20), A.C_GB)
-    add("jack: motor bracket (printed)", box(xm - 4, xm, JACK_YC - 24, JACK_YC + 24, 0, JACK_ZS + 24), A.C_PRINT)
+    add("jack: motor bracket (printed)", box(xm - 6, xm, JACK_YC - 24, JACK_YC + 24, 0, JACK_ZS + 24), A.C_PRINT)
     return it
 
 
@@ -100,7 +115,7 @@ def jack_platform_local():
     zp = -PLATE_T - PIN_DROP                                                 # pin height under the plate
     for ys in JACK_YS:
         add("jack: roller guide bar", box(-24, 80, ys - 16, ys - 12, zp - 8, -PLATE_T), A.C_STEEL)
-        add("jack: top pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys + 10, ys + 14, zp - 8, -PLATE_T), A.C_PRINT)
+        add("jack: top pivot lug", box(-JACK_X0 - 8, -JACK_X0 + 8, ys + 10, ys + 16, zp - 8, -PLATE_T), A.C_PRINT)
     add("jack: top pivot shaft", cyl(3, JACK_YS[0] + 1, JACK_YS[1] + 14, 'y', (-JACK_X0, zp), 14), A.C_STEEL)
     return it
 
@@ -185,9 +200,11 @@ def row_static_local():
         jx = bx - RAIL_OFF
         z0 = JZ_UP + g
         add("V-slot rail (vertical)", A.vslot_z(z0, RAIL_TOP_V3).translate(jx), A.C_RAIL)
-        add("printed in-slot rack", P2.rack_strip(0, RAIL_TOP_V3 - z0).translate(jx, 0, z0), A.C_PRINT)
+        for off, sl in rack_pieces(RAIL_TOP_V3 - z0):
+            add("printed in-slot rack", P2.rack_strip(0, sl).translate(jx, 0, z0 + off), A.C_PRINT)
         add("V-slot rail (vertical, between crossings)", A.vslot_z(JZ_LO + g, JZ_UP - g).translate(jx), A.C_RAIL)
-        add("printed in-slot rack", P2.rack_strip(0, JZ_UP - JZ_LO - 2 * g).translate(jx, 0, JZ_LO + g), A.C_PRINT)
+        for off, sl in rack_pieces(JZ_UP - JZ_LO - 2 * g):
+            add("printed in-slot rack", P2.rack_strip(0, sl).translate(jx, 0, JZ_LO + g + off), A.C_PRINT)
         for zb in (RAIL_TOP - 45, 650.0):
             add("printed rail bridge", P2.rail_bridge().translate(jx, 0, zb), A.C_PRINT)
         for zc in CROSS_Z:      # small printed bracket from the bearing to the next rack post
@@ -198,7 +215,8 @@ def row_static_local():
             continue                       # no stubs: the rail simply starts at the first crossing piece
         for zc in CROSS_Z:
             add("V-slot rail (horizontal)", A.vslot_z(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_RAIL)
-            add("printed in-slot rack", P2.rack_strip(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_PRINT)
+            for off, sl in rack_pieces(x2 - x1):
+                add("printed in-slot rack", P2.rack_strip(0, sl).rotate('y', 90).translate(x1 + off, 0, zc), A.C_PRINT)
     # the rails run on ~120 mm past the last rack to meet the cart: short arms from the rack's end post carry their ends,
     # and a third arm carries the socket for the cart's lock pin (nothing stands on the floor here)
     ye0, ye1 = RAIL_Y + 10, RAIL_Y + 40
@@ -211,19 +229,27 @@ def row_static_local():
     return it
 
 
-def xfer_rack():
-    """fixed straight gear rack (module 1.5) along the cart track, teeth facing -x toward the robot's pinion"""
+def xfer_rack_pieces():
+    """fixed straight gear rack (module 1.5) along the cart track, teeth facing -x toward the robot's pinion, in printable
+    pieces of RACK_SEG_TEETH whole teeth (the pitch carries across the joints)"""
     p, m = math.pi * 1.5, 1.5
     x0 = XFER_RACK_X
     y0, y1 = TRACK_Y
-    pts = [(x0 + 1.25 * m + 4, y0)]
-    y = y0
-    while y + p <= y1:
-        pts += [(x0 + 1.25 * m, y), (x0 - m, y + p * 0.25), (x0 - m, y + p * 0.5), (x0 + 1.25 * m, y + p * 0.75)]
-        y += p
-    pts += [(x0 + 1.25 * m, y), (x0 + 1.25 * m + 4, y)]
     zg0, zg1 = CZ_HOME + TURN_GEAR_Z[0], CZ_HOME + TURN_GEAR_Z[1]
-    return extrude(pts, zg0, zg1)
+    out, ys = [], y0
+    while ys < y1 - 0.01:
+        n = min(RACK_SEG_TEETH, int((y1 - ys) // p))
+        if n < 1:
+            break
+        pts = [(x0 + 1.25 * m + 4, ys)]
+        for k in range(n):
+            y = ys + k * p
+            pts += [(x0 + 1.25 * m, y), (x0 - m, y + p * 0.25), (x0 - m, y + p * 0.5), (x0 + 1.25 * m, y + p * 0.75)]
+        ye = ys + n * p
+        pts += [(x0 + 1.25 * m, ye), (x0 + 1.25 * m + 4, ye)]
+        out.append(extrude(pts, zg0, zg1))
+        ys = ye
+    return out
 
 
 def xfer_static():
@@ -232,7 +258,7 @@ def xfer_static():
     y0, y1 = TRACK_Y
     xb = XFER_RACK_X + 1.25 * 1.5 + 4
     it = [("floor guide rail (guides only, no load)", box(X_CART - 10, X_CART + 10, y0, y1, 0, 20), A.C_RAIL),
-          ("printed transfer rack (module 1.5)", xfer_rack(), A.C_PRINT),
+          ] + [("printed transfer rack segment (module 1.5)", pc, A.C_PRINT) for pc in xfer_rack_pieces()] + [
           ("transfer beam (20x40 V-slot, carries the cart)", box(xb, xb + 20, y0, y1, BEAM_Z[0], BEAM_Z[1]), A.C_RAIL)]
     for y in [y0 + 20] + [r * ROW_P + RACK_D / 2 for r in range(N_ROWS)] + [y1 - 20]:   # posts in the racks' depth band
         it += [("transfer beam arm", box(xb + 20, XFER_POST_X, y - 10, y + 10, BEAM_Z[0] + 8, BEAM_Z[1] - 8), A.C_RAIL),
@@ -460,9 +486,10 @@ def pulley_x(r, x0, w):
     """smooth flanged pulley (stage-2), three holes so its turning shows"""
     s = cyl(r - BELT_T / 2, x0, x0 + w, 'x', (0, 0), 28) + cyl(r + 1.0, x0, x0 + 0.6, 'x', (0, 0), 28) \
         + cyl(r + 1.0, x0 + w - 0.6, x0 + w, 'x', (0, 0), 28)
-    for k in range(3):
+    s = s - cyl(2.1, x0 - 1, x0 + w + 1, 'x', (0, 0), 16)                        # 4 mm axle bore (0.2 mm clearance)
+    for k in range(3):                                                           # index holes (so the turning shows)
         a = 2 * math.pi * k / 3
-        s = s - cyl(1.1, x0 - 1, x0 + w + 1, 'x', (2.9 * math.cos(a), 2.9 * math.sin(a)), 12)
+        s = s - cyl(0.9, x0 - 1, x0 + w + 1, 'x', (3.9 * math.cos(a), 3.9 * math.sin(a)), 10)
     return s
 
 
@@ -543,7 +570,8 @@ def finger_local(sx, end=None):
     for e, y1 in (("front", TIP0), ("rear", TIP0 - REAR_OFF)):
         if end and e != end:
             continue
-        f = box(-w, w, y1 - FINGER_T, y1, 0, FINGER_L) + cyl(h + 2, y1 - FINGER_T, y1, 'y', (0, 0), 24)   # round collar
+        f = box(-w, w, y1 - FINGER_T, y1, 0, FINGER_L) + cyl(FINGER_COLLAR_R, y1 - FINGER_T, y1, 'y', (0, 0), 28)   # round collar
+        f = f - box(-(h + 0.1), h + 0.1, y1 - FINGER_T - 1, y1 + 1, -(h + 0.1), h + 0.1)                       # square hole for the tube
         it.append((f"printed flip finger ({e})", f, A.C_PRINT2))
     return it if end is None else it[1:]
 
@@ -560,7 +588,7 @@ def robot_local():
     it = []
     add = lambda n, s, c: it.append((n, s, c))
     hz = D_HUB / 2
-    add("printed column", box(-14, 14, COL_Y[0], COL_Y[1], -hz - 20, hz + 20), A.C_PRINT)
+    add("aluminium column bar 28 x 24 (replaces the printed column)", box(-14, 14, COL_Y[0], COL_Y[1], -hz - 20, hz + 20), A.C_PLATE)
     for z in (hz, -hz):
         add("JGY-370 swivel motor", box(-11.25, 11.25, COL_Y[0] - 22.5, COL_Y[0], z - 23, z + 23), A.C_GB)
         add("JGY-370 swivel motor can", cyl(12.2, 11.25, 44.25, 'x', (COL_Y[0] - 11.25, z), 24), A.C_CAN)
@@ -611,9 +639,9 @@ def robot_local():
     add("SG90 micro servo (turn pinion lift)", box(px - 26, px - 14, py - 6, py + 17, top - 30, top - 8), A.C_SERVO)
     # lock solenoids (push type): docking bolt on the column's rear face, release plunger behind the battery box
     add("lock solenoid (docking bolt, push type)", box(BOLT_X - 9, BOLT_X + 9, -96, -68, BOLT_DZ - 8, BOLT_DZ + 8), A.C_GB)
-    add("lock solenoid bracket (docking bolt)", box(13, BOLT_X + 12, -97, -93, BOLT_DZ - 12, BOLT_DZ + 12), A.C_PRINT)
+    add("lock solenoid bracket (docking bolt)", box(13, BOLT_X + 12, -99, -93, BOLT_DZ - 12, BOLT_DZ + 12), A.C_PRINT)
     add("lock solenoid (release plunger, push type)", box(-100, -72, -99, -78, REL_DZ - 8, REL_DZ + 8), A.C_GB)
-    add("lock solenoid bracket (release plunger)", box(-104, -68, -100, -96, REL_DZ - 12, REL_DZ + 12), A.C_PRINT)
+    add("lock solenoid bracket (release plunger)", box(-104, -68, -100, -94, REL_DZ - 12, REL_DZ + 12), A.C_PRINT)
     _RB = it
     return it
 
@@ -640,7 +668,7 @@ def turn_carriage_local():
     h = TURN_GEAR_Z[1] - TURN_GEAR_Z[0]
     return [("N20 gear motor (turn drive, on the lift carriage)", box(-6, 6, -6, 6, h + 2, h + 11)
              + cyl(6, h + 11, h + 29, 'z', (0, 0), 20), A.C_GB),
-            ("printed lift carriage", box(-8, -6, -8, 8, h + 2, h + 29), A.C_PRINT)]
+            ("printed lift carriage", box(-10, -6, -8, 8, h + 2, h + 29), A.C_PRINT)]
 
 
 @lru_cache(None)

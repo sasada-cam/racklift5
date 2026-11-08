@@ -31,13 +31,14 @@ CATEGORY = [
     (r"^cart|trolley|floor guide|transfer|beam", "Transfer cart + beam", "CRT"),
     (r"slotted angle rack", "Rack", "RAC"),
     (r"crossing|turntable|rail piece|V-slot rail|in-slot rack|rail bridge|rail end", "Rails + crossings", "RAI"),
-    (r"hub|V wheel|spacer|climber|swivel axle|printed column|swivel motor|battery", "Robot body + hubs", "ROB"),
+    (r"hub|V wheel|spacer|climber|swivel axle|column bar|swivel motor|battery", "Robot body + hubs", "ROB"),
     (r"telescopic|finger|stage|belt|servo|pulley|idler|cross shaft|arm|tray|load cell|GT2|limit switch|basket stop|turn|front post|lift carriage",
      "Tray + picker + drives", "PIC"),
 ]
 PROCESS = [
     (r"lock solenoid bracket|finger shaft bearing|pivot lug|belt anchor", "3D print (PETG)"),
-    (r"in-slot rack|climber pinion|turn drive pinion|transfer pinion", "Print fine (0.12 mm, 100 % infill) or order nylon (SLS)"),
+    (r"column bar", "Aluminium bar 28 x 24 (cut to length, drill)"),
+    (r"in-slot rack|transfer rack segment|climber pinion|turn drive pinion|transfer pinion", "Print fine (0.12 mm, 100 % infill) or order nylon (SLS)"),
     (r"printed", "3D print (PETG)"),
     (r"load cell|limit switch", "Buy (sensor / switch)"),
     (r"slotted angle rack", "Buy (slotted-angle rack)"),

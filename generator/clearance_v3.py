@@ -10,7 +10,7 @@ from interfere import interference, bb
 SKIP = [("V wheel", "V-slot"), ("V wheel", "rail piece"), ("spacer", "V-slot"), ("spacer", "rail piece"),
         ("printed climber pinion", "printed in-slot rack"), ("printed climber pinion", "rail piece"),
         ("printed climber pinion", "V-slot"),
-        ("swivel axle", "printed column"), ("swivel axle", "JGY-370 swivel motor"),
+        ("swivel axle", "aluminium column bar"), ("swivel axle", "JGY-370 swivel motor"),
         # the finger shaft telescopes (rod in tube in tube) and runs through its bearings and the fingers' collars
         ("finger shaft", "finger shaft"), ("finger shaft", "printed front post"), ("printed flip finger", "finger shaft"),
         # belts lie on their pulleys / in their clamps and anchors; stage-2 pulleys turn on axles through the middle bar
@@ -21,7 +21,7 @@ SKIP = [("V wheel", "V-slot"), ("V wheel", "rail piece"), ("spacer", "V-slot"), 
         ("turn drive pinion", "printed transfer rack"), ("trolley V-wheels", "transfer beam"),
         ("floor guide rollers", "floor guide rail"), ("cart lock pin", "cart lock socket"), ("cart lock pin", "cart frame"),
         # solenoids are bolted to the battery box / column; the bolt sits in its socket; the pin's tab passes the cart frame
-        ("lock solenoid", "battery"), ("lock solenoid", "printed column"), ("lock solenoid", "lock solenoid")]
+        ("lock solenoid", "battery"), ("lock solenoid", "aluminium column bar"), ("lock solenoid", "lock solenoid")]
 FIXED = ("static", "rotor")
 
 

@@ -17,17 +17,15 @@ Print what is cheap to get wrong (covers, brackets, belt clamps). Buy or cut any
 
 ## 2. Printer and part size
 
-Assumed printer: **220 x 220 x 250 mm, PETG** (change `BED` in the script). Of the 46 part types that are printed (or print-or-buy), **5 do not fit**:
+Assumed printer: **220 x 220 x 250 mm, PETG** (change `PRINT_BED` in `params_v3.py`; the export fails if a printed part is bigger). Of the 47 part types that are printed (or print-or-buy), **0 do not fit**.
 
-| ID | part | qty | size mm | what to do |
-|---|---|---|---|---|
-| RAI07 | printed in-slot rack | 12 | 10 x 4 x 690 | Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI09 | printed in-slot rack | 18 | 318 x 4 x 10 | Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI10 | printed in-slot rack | 6 | 481 x 4 x 10 | Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| ROB12 | printed column | 1 | 28 x 24 x 300 | 300 mm, longer than the bed. Best: aluminium bar 28 x 24 x 300 (drill the bolt pattern). Else split above the tray bracket, lap >= 50 mm, 2 dowels + 2 M4 bolts. |
-| CRT05 | printed transfer rack (module 1.5) | 1 | 7 x 2036 x 8 | 2.04 m: print in segments of whole teeth (as the in-slot racks) or buy a module 1.5 steel / nylon rack and cut it. |
-
-Everything else printed is under 120 mm. The racks are the surprise: 36 in-slot rack pieces (318, 481 and 690 mm) and the 2 m transfer rack cannot be printed whole on a normal bed. They are segments of whole teeth in the V-slot, or bought racks cut to length.
+**What the CAD and the sim now do for printing** (done in `generator/assembly_v3.py`, so the MuJoCo model has the same parts):
+- **Racks in segments:** every printed rack is cut into pieces of 40 whole teeth (188.5 mm) so the pitch carries across the joints; the earlier 690 / 481 / 318 mm in-slot racks and the 2 m transfer rack could not be printed whole.
+- **Column:** now an aluminium bar 28 x 24 x 300 instead of a 300 mm printed part.
+- **Thin loaded parts thickened:** solenoid brackets 4 -> 6 mm, jack top lugs 4 -> 6 mm and bottom lugs 6 -> 8 mm, jack motor bracket 4 -> 6 mm, lift carriage 2 -> 4 mm.
+- **Bores:** the stage-2 pulleys have a 4 mm axle bore (and bigger index holes); the flip-finger collar is 19.2 mm with a square hole for the tube; the finger shaft is 2 mm higher to make room.
+- **Export:** each printed part is laid flat on its largest face (good layer direction) and checked against the bed.
+- **Still not done:** the screw and bolt holes (to be drawn per part), the fork or slot that holds the stage-2 pulleys in the middle bar, and the flip fingers stay 4 mm (the gap behind the basket is only 8 mm): print them in nylon or on their side and check them first.
 
 ## 3. Joints between printed pieces (modular parts)
 
@@ -64,13 +62,13 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 
 | Process / source | part types | pieces |
 |---|---|---|
-| 3D print (PETG) | 27 | 113 |
+| 3D print (PETG) | 25 | 111 |
 | Steel rod / tube (cut, turn) | 17 | 40 |
 | Aluminium extrusion (cut to length) | 12 | 93 |
 | Buy (actuator) | 11 | 17 |
 | Print, or buy a GT2 pulley / gear / coupling | 11 | 17 |
+| Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | 11 | 154 |
 | Aluminium plate / bar (laser cut, drill) | 8 | 14 |
-| Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | 8 | 77 |
 | Buy (sensor / switch) | 4 | 8 |
 | Buy (wheel / roller) | 4 | 18 |
 | Buy (GT2 belt, cut to length) | 4 | 8 |
@@ -84,6 +82,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | Buy (slotted-angle rack) | 1 | 12 |
 | Buy (bearing) | 1 | 24 |
 | Buy (PTFE pad) | 1 | 8 |
+| Aluminium bar 28 x 24 (cut to length, drill) | 1 | 1 |
 | Buy (battery + electronics box) | 1 | 1 |
 | Buy (assorted; count from the drawings) | 1 | - |
 
@@ -102,13 +101,13 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | DOC01 | jack: NEMA17 stepper + 3:1 planetary gearhead | 3 | 73 x 42 x 42 | Buy (actuator) | off-the-shelf |  |
 | DOC02 | jack: TR8x2 lead screw | 3 | 170 x 10 x 10 | Buy (TR8x2 lead screw) | off-the-shelf | TR8x2; support the free end in the printed bearing block; grease. |
 | DOC03 | jack: base plate (aluminium) | 3 | 270 x 214 x 6 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
-| DOC04 | jack: bottom pivot lug | 6 | 16 x 6 x 16 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | Thin (4-6 mm) and loaded by the scissor: check stress first, or make them from 4 mm aluminium. |
+| DOC04 | jack: bottom pivot lug | 6 | 16 x 8 x 16 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | Thin (4-6 mm) and loaded by the scissor: check stress first, or make them from 4 mm aluminium. |
 | DOC05 | jack: bottom pivot shaft (fixed) | 3 | 6 x 167 x 6 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | DOC06 | jack: centre pin shaft | 3 | 6 x 168 x 6 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | DOC07 | jack: lead nut block (printed) | 3 | 16 x 16 x 21 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | DOC08 | jack: limit switch (platform down) | 3 | 8 x 10 x 14 | Buy (sensor / switch) | off-the-shelf |  |
 | DOC09 | jack: limit switch (platform up) | 3 | 8 x 10 x 14 | Buy (sensor / switch) | off-the-shelf |  |
-| DOC10 | jack: motor bracket (printed) | 3 | 4 x 48 x 47 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| DOC10 | jack: motor bracket (printed) | 3 | 6 x 48 x 47 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | DOC11 | jack: platform plate (8 mm aluminium) | 3 | 290 x 236 x 17 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
 | DOC12 | jack: roller | 6 | 12 x 3 x 12 | Buy (wheel / roller) | off-the-shelf |  |
 | DOC13 | jack: roller axle | 3 | 4 x 165 x 4 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
@@ -120,7 +119,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | DOC19 | jack: slider cross tube | 3 | 8 x 165 x 8 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | DOC20 | jack: slider guide rail | 6 | 118 x 6 x 4 | Steel / aluminium flat bar (cut, drill) | steel or aluminium flat bar |  |
 | DOC21 | jack: slider shoe (printed) | 6 | 24 x 6 x 11 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
-| DOC22 | jack: top pivot lug | 6 | 16 x 4 x 16 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | Thin (4-6 mm) and loaded by the scissor: check stress first, or make them from 4 mm aluminium. |
+| DOC22 | jack: top pivot lug | 6 | 16 x 6 x 16 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | Thin (4-6 mm) and loaded by the scissor: check stress first, or make them from 4 mm aluminium. |
 | DOC23 | jack: top pivot shaft | 3 | 6 x 163 x 6 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | DOC24 | raised floor: battens | 3 | 399 x 424 x 20 | Timber battens (cut) | pine battens | Level to the jack's lowered platform (38 mm top); screw the plate to the battens. |
 | DOC25 | raised floor: top plate (18 mm plywood) | 3 | 399 x 424 x 18 | Plywood (cut to size) | birch plywood | Level to the jack's lowered platform (38 mm top); screw the plate to the battens. |
@@ -135,8 +134,8 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | LCK04 | lock solenoid (docking bolt, push type) | 1 | 18 x 28 x 16 | Buy (actuator) | off-the-shelf |  |
 | LCK05 | lock solenoid (release plunger, push type) | 1 | 28 x 21 x 16 | Buy (actuator) | off-the-shelf |  |
 | LCK06 | lock solenoid bolt (docking, bullet nose) | 1 | 9 x 14 x 9 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) | 9 mm hardened steel, bullet nose; the plunger is pushed by a push-type solenoid: check its force and stroke. |
-| LCK07 | lock solenoid bracket (docking bolt) | 1 | 24 x 4 x 24 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
-| LCK08 | lock solenoid bracket (release plunger) | 1 | 36 x 4 x 24 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| LCK07 | lock solenoid bracket (docking bolt) | 1 | 24 x 6 x 24 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| LCK08 | lock solenoid bracket (release plunger) | 1 | 36 x 6 x 24 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | LCK09 | lock solenoid plunger (cart release) | 1 | 48 x 4 x 4 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) | 9 mm hardened steel, bullet nose; the plunger is pushed by a push-type solenoid: check its force and stroke. |
 
 ### Rack
@@ -155,16 +154,17 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | RAI04 | V-slot rail (vertical) | 12 | 20 x 20 x 690 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Cut square (+-0.2 mm) and deburr; order stock lengths (2 m for the beam and floor rail). |
 | RAI05 | V-slot rail (vertical, between crossings) | 12 | 20 x 20 x 140 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Cut square (+-0.2 mm) and deburr; order stock lengths (2 m for the beam and floor rail). |
 | RAI06 | printed crossing bracket | 24 | 78 x 9 x 30 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
-| RAI07 | printed in-slot rack | 12 | 10 x 4 x 690 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | **too big to print whole.** Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI08 | printed in-slot rack | 12 | 10 x 4 x 140 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI09 | printed in-slot rack | 18 | 318 x 4 x 10 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | **too big to print whole.** Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI10 | printed in-slot rack | 6 | 481 x 4 x 10 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | **too big to print whole.** Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI11 | printed in-slot rack (cart) | 2 | 116 x 4 x 10 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI12 | printed in-slot rack (turntable) | 24 | 10 x 4 x 116 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key). |
-| RAI13 | printed rail bridge | 24 | 122 x 40 x 40 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
-| RAI14 | rail end arm (from the rack end post) | 6 | 120 x 30 x 24 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Cantilevered ~120 mm from the rack end post: bolt through the post web with two bolts. |
-| RAI15 | rail piece on cart | 2 | 116 x 20 x 20 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) |  |
-| RAI16 | rail piece on turntable | 24 | 20 x 20 x 116 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) |  |
+| RAI07 | printed in-slot rack | 66 | 10 x 4 x 188 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI08 | printed in-slot rack | 12 | 10 x 4 x 125 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI09 | printed in-slot rack | 12 | 10 x 4 x 140 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI10 | printed in-slot rack | 18 | 130 x 4 x 10 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI11 | printed in-slot rack | 6 | 104 x 4 x 10 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI12 | printed in-slot rack (cart) | 2 | 116 x 4 x 10 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI13 | printed in-slot rack (turntable) | 24 | 10 x 4 x 116 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. |
+| RAI14 | printed rail bridge | 24 | 122 x 40 x 40 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| RAI15 | rail end arm (from the rack end post) | 6 | 120 x 30 x 24 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Cantilevered ~120 mm from the rack end post: bolt through the post web with two bolts. |
+| RAI16 | rail piece on cart | 2 | 116 x 20 x 20 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) |  |
+| RAI17 | rail piece on turntable | 24 | 20 x 20 x 116 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) |  |
 
 ### Robot body + hubs
 
@@ -176,12 +176,12 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | ROB04 | JGY-370 swivel motor can | 2 | 33 x 24 x 24 | Buy (actuator) | off-the-shelf |  |
 | ROB05 | PTFE slide pad | 8 | 2 x 180 x 4 | Buy (PTFE pad) | off-the-shelf |  |
 | ROB06 | V wheel | 8 | 24 x 10 x 24 | Buy (wheel / roller) | off-the-shelf |  |
-| ROB07 | battery + electronics box (fixed counterweight) | 1 | 100 x 60 x 90 | Buy (battery + electronics box) | off-the-shelf |  |
-| ROB08 | battery bracket | 1 | 56 x 24 x 30 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
-| ROB09 | climber shaft | 2 | 13 x 6 x 6 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
-| ROB10 | hub plate (6 mm aluminium) | 2 | 65 x 6 x 90 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate | 6 mm; axle holes +-0.05 mm for the V-wheel eccentrics; the rail alignment depends on it. |
-| ROB11 | printed climber pinion | 2 | 11 x 24 x 24 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Bore for the 6 mm shaft with a flat (H8); 100 % infill; try a test pair for 0.1-0.2 mm backlash; metal gear if it wears. |
-| ROB12 | printed column | 1 | 28 x 24 x 300 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | **too big to print whole.** 300 mm, longer than the bed. Best: aluminium bar 28 x 24 x 300 (drill the bolt pattern). Else split above the tray bracket, lap >= 50 mm, 2 dowels + 2 M4 bolts. |
+| ROB07 | aluminium column bar 28 x 24 (replaces the printed column) | 1 | 28 x 24 x 300 | Aluminium bar 28 x 24 (cut to length, drill) |  | Aluminium bar 28 x 24 x 300 (was a printed column that did not fit the bed): drill the bolt pattern; no joint needed. |
+| ROB08 | battery + electronics box (fixed counterweight) | 1 | 100 x 60 x 90 | Buy (battery + electronics box) | off-the-shelf |  |
+| ROB09 | battery bracket | 1 | 56 x 24 x 30 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
+| ROB10 | climber shaft | 2 | 13 x 6 x 6 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
+| ROB11 | hub plate (6 mm aluminium) | 2 | 65 x 6 x 90 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate | 6 mm; axle holes +-0.05 mm for the V-wheel eccentrics; the rail alignment depends on it. |
+| ROB12 | printed climber pinion | 2 | 11 x 24 x 24 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | Bore for the 6 mm shaft with a flat (H8); 100 % infill; try a test pair for 0.1-0.2 mm backlash; metal gear if it wears. |
 | ROB13 | printed hub cover | 2 | 94 x 12 x 94 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | ROB14 | spacer | 8 | 10 x 6 x 10 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | ROB15 | swivel axle | 2 | 16 x 29 x 16 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
@@ -194,11 +194,12 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | CRT02 | cart trolley plate | 2 | 8 x 44 x 88 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
 | CRT03 | floor guide rail (guides only, no load) | 1 | 20 x 2040 x 20 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) |  |
 | CRT04 | floor guide rollers (sideways only) | 2 | 36 x 16 x 20 | Buy (wheel / roller) | off-the-shelf |  |
-| CRT05 | printed transfer rack (module 1.5) | 1 | 7 x 2036 x 8 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | **too big to print whole.** 2.04 m: print in segments of whole teeth (as the in-slot racks) or buy a module 1.5 steel / nylon rack and cut it. |
-| CRT06 | transfer beam (20x40 V-slot, carries the cart) | 1 | 20 x 2040 x 40 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Cut square (+-0.2 mm) and deburr; order stock lengths (2 m for the beam and floor rail). |
-| CRT07 | transfer beam arm | 5 | 422 x 20 x 24 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Check the arm-to-post bolts: the whole cart rides on them. |
-| CRT08 | transfer beam post (levelling foot) | 5 | 100 x 60 x 398 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Levelling foot + base plate; bolt to the floor; set the beam height to the rails once. |
-| CRT09 | trolley V-wheels (above + below the beam) | 2 | 28 x 44 x 80 | Buy (wheel / roller) | off-the-shelf |  |
+| CRT05 | printed transfer rack segment (module 1.5) | 10 | 7 x 188 x 8 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | 40 whole teeth (188.5 mm); 10 full pieces + 1 shorter, butted on the 2 m beam (screw each piece to the beam). Or buy a module 1.5 rack. |
+| CRT06 | printed transfer rack segment (module 1.5) | 1 | 7 x 151 x 8 | Print fine (0.12 mm, 100 % infill) or order nylon (SLS) | PETG (PA12 nylon if ordered as SLS) | 40 whole teeth (188.5 mm); 10 full pieces + 1 shorter, butted on the 2 m beam (screw each piece to the beam). Or buy a module 1.5 rack. |
+| CRT07 | transfer beam (20x40 V-slot, carries the cart) | 1 | 20 x 2040 x 40 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Cut square (+-0.2 mm) and deburr; order stock lengths (2 m for the beam and floor rail). |
+| CRT08 | transfer beam arm | 5 | 422 x 20 x 24 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Check the arm-to-post bolts: the whole cart rides on them. |
+| CRT09 | transfer beam post (levelling foot) | 5 | 100 x 60 x 398 | Aluminium extrusion (cut to length) | 6063 aluminium extrusion (V-slot) | Levelling foot + base plate; bolt to the floor; set the beam height to the rails once. |
+| CRT10 | trolley V-wheels (above + below the beam) | 2 | 28 x 44 x 80 | Buy (wheel / roller) | off-the-shelf |  |
 
 ### Tray + picker + drives
 
@@ -221,7 +222,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | PIC15 | belt anchor (outer bar) | 4 | 4 x 4 x 2 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC16 | finger drive gear (left rod) | 1 | 24 x 4 x 24 | Print, or buy a GT2 pulley / gear / coupling | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC17 | finger drive gear (servo 2) | 1 | 24 x 4 x 24 | Print, or buy a GT2 pulley / gear / coupling | PETG (PA12 nylon if ordered as SLS) |  |
-| PIC18 | finger shaft bearing (inner bar) | 4 | 13 x 6 x 18 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| PIC18 | finger shaft bearing (inner bar) | 4 | 13 x 6 x 20 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC19 | finger shaft: fixed square rod | 2 | 5 x 221 x 5 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | PIC20 | finger shaft: inner square tube | 2 | 11 x 192 x 11 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
 | PIC21 | finger shaft: middle square tube | 2 | 8 x 198 x 8 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
@@ -231,10 +232,10 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | PIC25 | printed arm post | 2 | 13 x 15 x 35 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC26 | printed arm post (rear, idler axle) | 2 | 13 x 12 x 35 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC27 | printed basket stop | 2 | 40 x 24 x 26 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | Stand-in; use your real baskets (the model assumes 260 x 180 x 110 mm). |
-| PIC28 | printed flip finger (front) | 2 | 15 x 4 x 40 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | 4 mm thick, pushes a 2 kg basket: check stress first; consider 6 mm or nylon (SLS). Print on its side so layers run along the finger. |
-| PIC29 | printed flip finger (rear) | 2 | 15 x 4 x 40 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | 4 mm thick, pushes a 2 kg basket: check stress first; consider 6 mm or nylon (SLS). Print on its side so layers run along the finger. |
-| PIC30 | printed front post (rod + cross-shaft bearings) | 2 | 13 x 21 x 85 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
-| PIC31 | printed lift carriage | 1 | 2 x 16 x 27 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| PIC28 | printed flip finger (front) | 2 | 19 x 4 x 42 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | 4 mm thick, pushes a 2 kg basket: check stress first; consider 6 mm or nylon (SLS). Print on its side so layers run along the finger. |
+| PIC29 | printed flip finger (rear) | 2 | 19 x 4 x 42 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | 4 mm thick, pushes a 2 kg basket: check stress first; consider 6 mm or nylon (SLS). Print on its side so layers run along the finger. |
+| PIC30 | printed front post (rod + cross-shaft bearings) | 2 | 13 x 21 x 87 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| PIC31 | printed lift carriage | 1 | 4 x 16 x 27 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC32 | printed stage-1 belt clamp (middle bar) | 2 | 5 x 10 x 30 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC33 | printed turn-drive mast | 1 | 78 x 24 x 90 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC34 | servo 1 bracket | 1 | 20 x 20 x 24 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |

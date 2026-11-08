@@ -32,7 +32,6 @@ def _pick(items, name):
 
 NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V01_hub_cover": (lambda: _pick(A3.hub_local(), "printed hub cover"), R.RX(90), 2),
-    "V02_column": (lambda: _pick(A3.robot_local(), "printed column"), R.RX(90), 1),
     "V03_flip_finger": (lambda: _pick(A3.finger_local(1, "front"), "printed flip finger (front)"), I, 4),
     "V04_arm_post": (lambda: _pick(A3.robot_local(), "printed arm post"), I, 2),
     "V05_crossing_bracket": (lambda: _pick(A3.row_static_local(), "printed crossing bracket"), R.RX(90), 2 * A3.N_BAYS_ALL),
@@ -58,7 +57,35 @@ NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V21_jack_slider_shoe": (lambda: _pick(A3.jack_slider_local(), "jack: slider shoe (printed)"), I, 2 * A3.N_ROWS),
     "V22_jack_lead_nut_block": (lambda: _pick(A3.jack_slider_local(), "jack: lead nut block (printed)"), I, A3.N_ROWS),
     "V23_jack_coupling_flag": (lambda: _pick(A3.jack_screw_local(), "jack: shaft coupling + index flag"), R.RY(90), A3.N_ROWS),
+    # printable rack segments: whole teeth, so the pitch carries across the joints (shorter end pieces: see the BOM)
+    "V28_in_slot_rack_segment_40_teeth": (lambda: A3.P2.rack_strip(0, A3.RACK_SEG_LEN), I,
+                                          A3.N_ROWS * sum(1 for n_, s_, c_ in A3.row_static_local()
+                                                          if n_ == "printed in-slot rack" and abs(max(s_.bbox()[1] - s_.bbox()[0]) - A3.RACK_SEG_LEN) < 0.1)),
+    "V29_transfer_rack_segment_40_teeth": (lambda: A3.xfer_rack_pieces()[0], I,
+                                           sum(1 for pc in A3.xfer_rack_pieces() if abs(max(pc.bbox()[1] - pc.bbox()[0]) - A3.RACK_SEG_LEN) < 0.1)),
 }
+
+
+def auto_flat(s):
+    """print orientation: lay the part on its largest face (smallest extent vertical): good layer direction for plates and thin
+    loaded parts, and gears print face down"""
+    import numpy as np
+    best = None
+    for M in (I, R.RX(90), R.RX(-90), R.RY(90), R.RY(-90)):
+        lo, hi = s.transform(M).bbox()
+        ext = hi - lo
+        if best is None or ext[2] < best[0] - 1e-6:
+            best = (ext[2], M)
+    return best[1]
+
+
+def check_bed(name, p):
+    lo, hi = p.bbox()
+    ext = sorted(hi - lo, reverse=True)
+    bed = sorted(A3.PRINT_BED, reverse=True)
+    if any(e > b + 1e-6 for e, b in zip(ext, bed)):
+        raise SystemExit(f"{name}: {ext[0]:.0f} x {ext[1]:.0f} x {ext[2]:.0f} mm does not fit the {A3.PRINT_BED} bed - split it or buy it")
+    return hi - lo
 
 def export_parts():
     dp, dd = E.ensure(os.path.join(OUT, "print")), E.ensure(os.path.join(OUT, "design"))
@@ -67,10 +94,14 @@ def export_parts():
         s = fn()
         sh = s.shape; sh.label = name
         bd.export_step(sh, os.path.join(dd, name + ".step"))
-        p = E.to_bed(s, M).shape; p.label = name
+        M = auto_flat(s)                                       # print orientation: flat on the largest face
+        pb = E.to_bed(s, M)
+        size = check_bed(name, pb)                             # fails if the part does not fit the printer bed
+        p = pb.shape; p.label = name
         bd.export_step(p, os.path.join(dp, name + ".step"))
         bd.export_stl(p, os.path.join(dp, name + ".stl"), tolerance=0.005, angular_tolerance=0.1)
-        print(f"{name:20s} x{qty}  valid={sh.is_valid}  {sh.volume/1000:.1f} cm3  {time.time()-t:.1f}s", flush=True)
+        print(f"{name:34s} x{qty:<3d} valid={sh.is_valid}  {sh.volume/1000:.1f} cm3  print {size[0]:.0f} x {size[1]:.0f} x {size[2]:.0f} mm  "
+              f"{time.time()-t:.1f}s", flush=True)
 
 
 def export_pose(pose):

@@ -33,10 +33,10 @@ PROCESS_TOL = [
 ]
 # (regex on part name, note) - first match wins; fit / strength notes
 NOTES = [
-    (r"in-slot rack", "Tooth pitch 4.712 mm: cut every segment to a whole number of teeth (e.g. 42 teeth = 197.9 mm) so the pitch carries across joints; "
-                      "segments sit in the V-slot, which keeps them in line (butt joint + a drop of adhesive, or a dovetail key)."),
-    (r"printed transfer rack", "2.04 m: print in segments of whole teeth (as the in-slot racks) or buy a module 1.5 steel / nylon rack and cut it."),
-    (r"printed column", "300 mm, longer than the bed. Best: aluminium bar 28 x 24 x 300 (drill the bolt pattern). Else split above the tray bracket, lap >= 50 mm, 2 dowels + 2 M4 bolts."),
+    (r"in-slot rack", "Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so "
+                      "the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive."),
+    (r"transfer rack segment", "40 whole teeth (188.5 mm); 10 full pieces + 1 shorter, butted on the 2 m beam (screw each piece to the beam). Or buy a module 1.5 rack."),
+    (r"column bar", "Aluminium bar 28 x 24 x 300 (was a printed column that did not fit the bed): drill the bolt pattern; no joint needed."),
     (r"climber pinion|turn drive pinion|transfer pinion", "Bore for the 6 mm shaft with a flat (H8); 100 % infill; try a test pair for 0.1-0.2 mm backlash; metal gear if it wears."),
     (r"lock socket", "Hole 11 mm for the 10 mm pin; funnel mouth 25 mm. Press a hardened steel bushing in (the wear part). Keep the printed block as thick as shown."),
     (r"cart lock pin", "10 mm, hardened, bullet nose; slides in a bush on the cart frame; spring-return. Chamfer the tip 30 deg."),
@@ -54,7 +54,6 @@ NOTES = [
     (r"raised floor", "Level to the jack's lowered platform (38 mm top); screw the plate to the battens."),
     (r"basket", "Stand-in; use your real baskets (the model assumes 260 x 180 x 110 mm)."),
 ]
-COLUMN_FLAG = "printed column"
 
 
 def note_for(name):
@@ -113,14 +112,23 @@ def main():
         w(f"| {p} | {t} | {n} |")
     w("")
     w(f"## 2. Printer and part size\n")
-    w(f"Assumed printer: **{BED[0]:.0f} x {BED[1]:.0f} x {BED[2]:.0f} mm, PETG** (change `BED` in the script). "
-      f"Of the {len(printed)} part types that are printed (or print-or-buy), **{len(too_big)} do not fit**:\n")
-    w("| ID | part | qty | size mm | what to do |\n|---|---|---|---|---|")
-    for r in too_big:
-        w(f"| {r[0]} | {r[2]} | {r[3]} | {r[4]} | {note_for(r[2])} |")
-    w("")
-    w("Everything else printed is under 120 mm. The racks are the surprise: 36 in-slot rack pieces (318, 481 and 690 mm) and the 2 m "
-      "transfer rack cannot be printed whole on a normal bed. They are segments of whole teeth in the V-slot, or bought racks cut to length.\n")
+    w(f"Assumed printer: **{BED[0]:.0f} x {BED[1]:.0f} x {BED[2]:.0f} mm, PETG** (change `PRINT_BED` in `params_v3.py`; the export fails if a printed part is bigger). "
+      f"Of the {len(printed)} part types that are printed (or print-or-buy), **{len(too_big)} do not fit**.\n")
+    if too_big:
+        w("| ID | part | qty | size mm | what to do |\n|---|---|---|---|---|")
+        for r in too_big:
+            w(f"| {r[0]} | {r[2]} | {r[3]} | {r[4]} | {note_for(r[2])} |")
+        w("")
+    w("**What the CAD and the sim now do for printing** (done in `generator/assembly_v3.py`, so the MuJoCo model has the same parts):\n"
+      "- **Racks in segments:** every printed rack is cut into pieces of 40 whole teeth (188.5 mm) so the pitch carries across the joints; the earlier "
+      "690 / 481 / 318 mm in-slot racks and the 2 m transfer rack could not be printed whole.\n"
+      "- **Column:** now an aluminium bar 28 x 24 x 300 instead of a 300 mm printed part.\n"
+      "- **Thin loaded parts thickened:** solenoid brackets 4 -> 6 mm, jack top lugs 4 -> 6 mm and bottom lugs 6 -> 8 mm, jack motor bracket 4 -> 6 mm, lift carriage 2 -> 4 mm.\n"
+      "- **Bores:** the stage-2 pulleys have a 4 mm axle bore (and bigger index holes); the flip-finger collar is 19.2 mm with a square hole for the tube; "
+      "the finger shaft is 2 mm higher to make room.\n"
+      "- **Export:** each printed part is laid flat on its largest face (good layer direction) and checked against the bed.\n"
+      "- **Still not done:** the screw and bolt holes (to be drawn per part), the fork or slot that holds the stage-2 pulleys in the middle bar, and the flip fingers stay "
+      "4 mm (the gap behind the basket is only 8 mm): print them in nylon or on their side and check them first.\n")
     w("## 3. Joints between printed pieces (modular parts)\n")
     w("**Hybrid joints.** Use plastic shapes to align and to take shear, and steel hardware to clamp. Never rely on a plastic-only joint in a load path.\n")
     w("| Joint | Use for | Do not use for |\n|---|---|---|\n"
