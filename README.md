@@ -160,12 +160,19 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
   * Rows are 650 mm apart (230 rack + 420 aisle); the rails run ~130 mm past each row's last rack to meet the cart, and
     the transfer-rack beam is held from posts beyond the robot's tray end.
 
+**All components (CAD):** `models/v3/components/` has every unique part of the rack, rails, robot, picker, cart, locks and dock
+as its own STEP + STL (121 parts, grouped by category, bounding-box corner at the origin), plus `BOM_v3.csv` / `README.md` with the
+quantity, size, volume and a suggested process for each (print, laser-cut, machine, or buy). Bought parts (motors, servos, bearings,
+extrusions, wheels, belts, the basket) are simplified envelopes. The assembled poses are in `models/v3/assembly/`, the 25 printable
+parts in print orientation in `models/v3/print/`.
+
 Background: [docs/design/001-load-carrying-single-vs-two-rail.md](docs/design/001-load-carrying-single-vs-two-rail.md) (section 8h).
 Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 ```
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
+pixi run export-components   # every unique component as its own STEP + STL + BOM -> models/v3/components/
 pixi run clearance-v3        # collision check, 157 poses + 3 swept checks (picks, swivels, climb, rows, cart, locks, docks)
 pixi run -e sim legs --v3    # wheel loads, v3 vs v2
 pixi run -e sim sim-v2       # the v2 robot (with physics)

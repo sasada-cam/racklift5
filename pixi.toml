@@ -23,6 +23,7 @@ gmsh = ">=4.13"         # mesher; PyPI wheel is self-contained (the conda one dr
 export = { cmd = "python cad/export_brep.py", description = "Build all parts + 3 assembly poses as STEP/STL into models/" }
 export-parts = { cmd = "python cad/export_brep.py parts", description = "Only the printable parts" }
 export-v3 = { cmd = "python cad/export_v3.py", description = "v3: new printed parts + 5 assembly poses (incl. cart transfer and dock) -> models/v3/" }
+export-components = { cmd = "python cad/export_v3_components.py", description = "v3: every unique component as its own STEP + STL, plus the parts list (BOM) -> models/v3/components/" }
 test = { cmd = "python cad/tools/test_parts.py", description = "Validity + volume check of every part against archive/v2_original_stl" }
 # original mesh generator (writes generator/out/, git-ignored)
 gen-stl = { cmd = "python export_v2.py", cwd = "generator", description = "Original mesh STL export" }

@@ -194,6 +194,8 @@ def row_static_local():
             add("printed crossing bracket", box(jx - 18, jx + 60, -31, -22, zc - 15, zc + 15), A.C_PRINT)
     cuts = [ROW_RAIL_X[0]] + [v for bx in ROW_BAY_X for v in (bx - RAIL_OFF - g, bx - RAIL_OFF + g)] + [ROW_RAIL_X[1]]
     for x1, x2 in zip(cuts[0::2], cuts[1::2]):
+        if x2 - x1 < 20.0:
+            continue                       # no stubs: the rail simply starts at the first crossing piece
         for zc in CROSS_Z:
             add("V-slot rail (horizontal)", A.vslot_z(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_RAIL)
             add("printed in-slot rack", P2.rack_strip(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_PRINT)
