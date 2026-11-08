@@ -17,7 +17,7 @@ Print what is cheap to get wrong (covers, brackets, belt clamps). Buy or cut any
 
 ## 2. Printer and part size
 
-Assumed printer: **220 x 220 x 250 mm, PETG** (change `PRINT_BED` in `params_v3.py`; the export fails if a printed part is bigger). Of the 47 part types that are printed (or print-or-buy), **0 do not fit**.
+Assumed printer: **220 x 220 x 250 mm, PETG** (change `PRINT_BED` in `params_v3.py`; the export fails if a printed part is bigger). Of the 50 part types that are printed (or print-or-buy), **0 do not fit**.
 
 **What the CAD and the sim now do for printing** (done in `generator/assembly_v3.py`, so the MuJoCo model has the same parts):
 - **Racks in segments:** every printed rack is cut into pieces of 40 whole teeth (188.5 mm) so the pitch carries across the joints; the earlier 690 / 481 / 318 mm in-slot racks and the 2 m transfer rack could not be printed whole.
@@ -49,7 +49,24 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 4. the lock pin / socket / bushing and the docking bolt: wear and a one-off shock when the cart arrives;
 5. the scissor arms and pivots (about 350 N at the lowest angle), the lead nut block, and the gears (tooth bending).
 
-## 5. Print settings
+## 5. Covers and fasteners
+
+Printed covers protect the exposed drives and can be switched on / see-through / off in the viewer and the task page (separately for the robot and the docks). Every cover is held by **M3 screws, never by printed threads or snap-fits** (they wear out): the screw goes through a 3.4 mm clearance hole in the cover into an M3 nut in a printed slot or pocket, or (in plywood) a chipboard screw into a 2.5 mm pilot hole.
+
+| Cover | Covers | Fixed to | Hardware |
+|---|---|---|---|
+| front drive | servo 1, step-up belt, cross-shaft end | tray plywood front edge | 2 x M3 x 16 chipboard screws |
+| turn-drive cap | pinion motor, lift servo, carriage | two bosses on the mast | 2 x M3 x 12 + 2 nuts + 2 washers |
+| jack motor (x3) | NEMA17 + gearhead | enlarged motor bracket | 4 x M3 x 12 + 4 nuts + 4 washers each |
+
+**Not covered yet:** servo 2 and its gear pair (the corner is too tight against the finger shaft), the two lock solenoids, the climb motors and pinions in the hubs, and the scissor itself. They need their own cover design.
+
+**Totals:** 14 x M3 x 12 machine screws, 2 x M3 x 16 chipboard screws, 14 M3 hex nuts, 14 M3 washers - buy about 20 % spares.
+
+**Sourcing in Sri Lanka** (checked on the web on 2026-11-08; stock and prices change, and this is not a quote): M3 / M4 are standard metric sizes, which I expect any hardware or electronics shop to stock, but a search could not confirm local shops, so check before ordering. **Heat-set brass inserts** are available only as imports (Desertcart / Ubuy Sri Lanka): a 420-piece M3-M5 kit was about LKR 14,900 and a 400-piece kit about LKR 31,900; a 100-piece M3 pack (about LKR 940) was out of stock; the heat-press tool was about LKR 18,900. That is why the design uses plain nuts in printed pockets, and inserts are only an optional upgrade for parts you take apart often.
+Sources: [M3 insert 100-pack](https://www.desertcart.lk/products/812137818-100-pack-m3-threaded-inserts-heat-set-inserts-m3x4x5-female.md), [M3-M5 insert kit](https://www.desertcart.lk/products/600782778-420pcs-m3-m4-m5-threaded-inserts-assortment-kit-for-3d.md), [heat-press insert tool](https://www.ubuy.com.lk/en/product/7VBIO3LMU-3dzwman-vertical-heat-pressing-machine-heat-set-insert-tool-brass-inserts-3d-printing-heat-set-insert-tip-for-thread-knurled-nut).
+
+## 6. Print settings
 
 | Class | Settings |
 |---|---|
@@ -58,7 +75,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | Thin loaded parts (fingers, lugs, brackets) | 100 % infill, layers along the main bending direction, or nylon / aluminium |
 | Mating holes | model 0.2 mm larger; ream bearing / pin holes to size |
 
-## 6. Summary by process
+## 7. Summary by process
 
 | Process / source | part types | pieces |
 |---|---|---|
@@ -72,6 +89,8 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | Buy (sensor / switch) | 4 | 8 |
 | Buy (wheel / roller) | 4 | 18 |
 | Buy (GT2 belt, cut to length) | 4 | 8 |
+| Buy (hardware) | 4 | 44 |
+| 3D print (PETG), 2.4 mm walls, closed face down | 3 | 5 |
 | Aluminium flat bar 13 x 8 (cut to length) | 3 | 6 |
 | Steel / aluminium flat bar (cut, drill) | 2 | 12 |
 | Aluminium flat bar 14 x 8 (cut, drill) | 2 | 12 |
@@ -86,13 +105,25 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | Buy (battery + electronics box) | 1 | 1 |
 | Buy (assorted; count from the drawings) | 1 | - |
 
-## 7. Part by part
+## 8. Part by part
 
 ### Baskets
 
 | ID | part | qty | size mm | process / source | material | notes |
 |---|---|---|---|---|---|---|
 | BAS01 | basket (stand-in for the real basket) | 55 | 260 x 180 x 110 | Buy (basket) | the user's baskets | Stand-in; use your real baskets (the model assumes 260 x 180 x 110 mm). |
+
+### Covers
+
+| ID | part | qty | size mm | process / source | material | notes |
+|---|---|---|---|---|---|---|
+| COV01 | cover: front drive (servo 1 + belt) | 1 | 58 x 55 x 58 | 3D print (PETG), 2.4 mm walls, closed face down | PETG (PA12 nylon if ordered as SLS) | Screws into the plywood tray's front edge: 2 x M3 x 16 chipboard screws, 2.5 mm pilot holes. Lower edge 3.6 mm above a lowered basket. Print closed face down; the two ears may need a little support. |
+| COV02 | cover: jack motor | 3 | 71 x 66 x 56 | 3D print (PETG), 2.4 mm walls, closed face down | PETG (PA12 nylon if ordered as SLS) | Stands on the floor; its flange meets the motor bracket: 4 x M3 x 12 screws + nuts (hex pockets on the bracket's back face). One per dock. |
+| COV03 | cover: turn-drive cap | 1 | 47 x 36 x 46 | 3D print (PETG), 2.4 mm walls, closed face down | PETG (PA12 nylon if ordered as SLS) | Sits on the two mast bosses: M3 x 12 screw from the top into an M3 nut in the boss's side slot. Notch in the left wall for the mast arm. |
+| - | Cover screws: M3 x 16 chipboard (wood) screw, pan head - front drive cover into the plywood | 2 | - | Buy (hardware) | off-the-shelf |  |
+| - | Cover screws: M3 x 12 machine screw, pan head - turn-drive cap (2) and the 3 jack motor covers (12) | 14 | - | Buy (hardware) | off-the-shelf |  |
+| - | Cover nuts: M3 hex nut, standard or nylon-insert - caught in the printed slots / pockets | 14 | - | Buy (hardware) | off-the-shelf |  |
+| - | Cover washers: M3 flat washer | 14 | - | Buy (hardware) | off-the-shelf |  |
 
 ### Dock (jack + raised floor)
 
@@ -107,7 +138,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | DOC07 | jack: lead nut block (printed) | 3 | 16 x 16 x 21 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | DOC08 | jack: limit switch (platform down) | 3 | 8 x 10 x 14 | Buy (sensor / switch) | off-the-shelf |  |
 | DOC09 | jack: limit switch (platform up) | 3 | 8 x 10 x 14 | Buy (sensor / switch) | off-the-shelf |  |
-| DOC10 | jack: motor bracket (printed) | 3 | 6 x 48 x 47 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| DOC10 | jack: motor bracket (printed) | 3 | 6 x 66 x 56 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | 4 hex nut pockets (5.8 mm across flats, 2.6 mm deep) on the back face for the motor cover's screws; plate 66 x 56 mm. |
 | DOC11 | jack: platform plate (8 mm aluminium) | 3 | 290 x 236 x 17 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
 | DOC12 | jack: roller | 6 | 12 x 3 x 12 | Buy (wheel / roller) | off-the-shelf |  |
 | DOC13 | jack: roller axle | 3 | 4 x 165 x 4 | Steel rod / tube (cut, turn) | steel rod / tube (hardened or silver steel where it slides) |  |
@@ -237,7 +268,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 | PIC30 | printed front post (rod + cross-shaft bearings) | 2 | 13 x 21 x 87 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC31 | printed lift carriage | 1 | 4 x 16 x 27 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
 | PIC32 | printed stage-1 belt clamp (middle bar) | 2 | 5 x 10 x 30 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
-| PIC33 | printed turn-drive mast | 1 | 78 x 24 x 90 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) |  |
+| PIC33 | printed turn-drive mast | 1 | 79 x 24 x 98 | 3D print (PETG) | PETG (PA12 nylon if ordered as SLS) | Two bosses with side slots for M3 nuts (the cap's screws): print the slots open to the side and drop the nuts in before fitting the cap. |
 | PIC34 | servo 1 bracket | 1 | 20 x 20 x 24 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
 | PIC35 | servo 1: DS3218 270 deg (arm stroke) | 1 | 20 x 40 x 34 | Buy (actuator) | off-the-shelf |  |
 | PIC36 | servo 2 bracket | 1 | 8 x 8 x 12 | Aluminium plate / bar (laser cut, drill) | 5052 / 6061 aluminium sheet or plate |  |
@@ -258,7 +289,7 @@ Hand-calculate these, then run FEA on the worst three or four (layer direction m
 |---|---|---|---|---|---|---|
 | - | Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins | as needed | - | Buy (assorted; count from the drawings) | off-the-shelf |  |
 
-## 8. Order of work
+## 9. Order of work
 
 1. Build a **one-bay test rig** first (one rack bay, one vertical rail, the hubs, the tray and picker): it proves the printed parts, the fits and the picker before you buy three rows.
 2. Print one of each small part; measure with calipers; test-fit the mating parts; only then print batches.

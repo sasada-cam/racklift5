@@ -9,6 +9,7 @@ P3, A3 = R.P3, R.A3
 out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "renders")
 os.makedirs(out, exist_ok=True)
 s = R.Sim(); s.show_balance = False
+s.cover_mode = {"robot": 0, "dock": 0}; s.apply_covers()          # the mechanism pictures show the mechanism: covers off
 r = mujoco.Renderer(s.m, 900, 1400); cam = mujoco.MjvCamera()
 MM = 1e-3
 def shot(name, look, az, el, dist, balance=False):
@@ -59,4 +60,14 @@ s.cmd.update(j0=140.0)
 for kk in list(s.away_pos):                                   # parked parcels out of the picture
     s.away_pos[kk] = (P3.X_CART + 3000.0, 80.0, 0.0)
 shot("v3_12_dock_jack", np.array([pxc, 100, 90]) * MM, 205, -18, 0.95)
+# 13-15: the printed covers (solid and see-through) and the dock's motor cover
+s.cmd.update(x=s.x_home, ry=0.0, cart=0.0, lift=P3.TURN_LIFT, arm=P3.TIP0, f=0.0, j0=P3.JACK_DOWN)
+s.basket[(0, 4)] = "shelf"; s.basket[(0, 2)] = "shelf"; s.apply(); rp = np.array([s.cmd["x"], s.cmd["ry"], s.cmd["z"]]) * MM
+look = rp + np.array([0.22, -0.27, -0.03])
+s.cover_mode = {"robot": 2, "dock": 2}; s.apply_covers()
+shot("v3_13_covers_robot", look, 150, -25, 0.8)
+s.cover_mode = {"robot": 1, "dock": 1}; s.apply_covers()
+shot("v3_14_covers_see_through", look, 150, -25, 0.8)
+s.cover_mode = {"robot": 2, "dock": 2}; s.apply_covers()
+shot("v3_15_cover_dock", np.array([P3.PXC + 180.0, 115, 30]) * MM, 200, -25, 0.8)
 print("ok")

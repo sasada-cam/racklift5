@@ -83,8 +83,33 @@ class Sim:
         }
         self.snaps = []
         self.log = deque(maxlen=8)
+        # printed covers: 2 solid / 1 see-through / 0 off, per group; switched from the web page or the 'c' key
+        names = lambda p: [i for i in range(self.m.ngeom) if (mujoco.mj_id2name(self.m, mujoco.mjtObj.mjOBJ_GEOM, i) or "").startswith(p)]
+        self.cover_ids = {"robot": names("cover_robot"), "dock": names("cover_dock")}
+        self.cover_mode = {"robot": 1, "dock": 1}
+        self.apply_covers()
         self.bat_on, self.show_balance, self.slowmo = True, True, 1.0
         self.reset()
+
+    COVER_ALPHA = (0.0, 0.3, 1.0)
+    COVER_NAME = ("off", "see-through", "solid")
+
+    def apply_covers(self):
+        for g, ids in self.cover_ids.items():
+            self.m.geom_rgba[ids, 3] = self.COVER_ALPHA[self.cover_mode[g]]
+
+    def toggle_cover(self, g):
+        """cycle solid -> see-through -> off -> solid for 'robot', 'dock' or 'all'"""
+        if g == "all":
+            new = (self.cover_mode["robot"] - 1) % 3                 # both groups go to the same mode
+            self.cover_mode.update({k: new for k in self.cover_mode})
+        elif g in self.cover_mode:
+            self.cover_mode[g] = (self.cover_mode[g] - 1) % 3
+        self.apply_covers()
+        self.say("covers: robot " + self.COVER_NAME[self.cover_mode["robot"]] + ", dock " + self.COVER_NAME[self.cover_mode["dock"]])
+
+    def cover_labels(self):
+        return {k: self.COVER_NAME[v] for k, v in self.cover_mode.items()}
 
     # ------------------------------------------------------------------ state -> qpos
     def reset(self):
@@ -778,6 +803,8 @@ def viewer(args):
         c = chr(k) if 0 < k < 128 else ""
         if c in keys:
             sim.run_task(keys[c])
+        elif c == "c":
+            sim.toggle_cover("all")
 
     print(f"task buttons: {rc.url}", flush=True)
     with mujoco.viewer.launch_passive(sim.m, sim.d, key_callback=key) as v:
@@ -786,13 +813,17 @@ def viewer(args):
         while v.is_running():
             now = time.time()
             for n in rc.poll():
-                sim.run_task(n)
+                if isinstance(n, tuple):
+                    with v.lock():
+                        sim.toggle_cover(n[1])
+                else:
+                    sim.run_task(n)
             with v.lock():
                 sim.tick(min(now - last, 0.05))
                 v.user_scn.ngeom = 0
                 sim.draw_balance(v.user_scn)
             rc.status = dict(task=sim.task_name, step=sim.step_name, queued=len(sim.queue),
-                             queue=[f"{n}: {name}" for n, name, _ in sim.queue], log=list(sim.log))
+                             queue=[f"{n}: {name}" for n, name, _ in sim.queue], log=list(sim.log), covers=sim.cover_labels())
             v.set_texts(sim.overlay())
             last = now
             v.sync()

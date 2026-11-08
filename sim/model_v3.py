@@ -37,8 +37,16 @@ def build(out=None):
     M.add = add
     vis = lambda items, off=(0, 0, 0): MD.vis(M, items, off)
 
+    def cover_geoms(items, prefix):
+        """named geoms so the viewer / web page can show, hide or fade them (alpha is set at run time)"""
+        return "\n".join(f'<geom name="{prefix}_{i}" type="mesh" mesh="{M.add(s)}" rgba="{MD.rgba(c, 0.3)}" contype="0" conaffinity="0" '
+                         f'group="1" density="0"/>' for i, (n, s, c) in enumerate(items))
+
     world = [vis(A3.static_items()),
              '<geom type="plane" size="3 3 0.1" rgba="0.92 0.92 0.94 1" contype="0" conaffinity="0"/>']
+    for r in range(P3.N_ROWS):                   # the docks' motor covers (fixed in the world)
+        Mr = A3.row_M(r) @ A3.MT(P3.PXC, 0, 0)
+        world.append(cover_geoms([(n, sl.transform(Mr), c) for n, sl, c in A3.dock_cover_local()], f"cover_dock{r}"))
     rotors = ""
     cross = vis(A3.crossing_local())
     for j in range(P3.N_BAYS_ALL):          # crossing pieces at every bay's vertical rail
@@ -83,7 +91,7 @@ def build(out=None):
     robot = f'''
 <body name="robot">
   <joint name="x" type="slide" axis="1 0 0"/><joint name="y" type="slide" axis="0 1 0"/><joint name="z" type="slide" axis="0 0 1"/>
-  {INERT}{vis(A3.robot_local())}
+  {INERT}{vis(A3.robot_local())}{cover_geoms(A3.robot_covers_local(), "cover_robot")}
   <body name="hub_upper" pos="{v3(0, 0, P3.D_HUB / 2)}"><joint name="hub_upper" type="hinge" axis="0 1 0"/>{INERT}{hub("upper")}</body>
   <body name="hub_lower" pos="{v3(0, 0, -P3.D_HUB / 2)}"><joint name="hub_lower" type="hinge" axis="0 1 0"/>{INERT}{hub("lower")}</body>
   {hinge("arm_drive", A3.ARM_DRIVE_AT, "1 0 0", A3.arm_drive_local())}

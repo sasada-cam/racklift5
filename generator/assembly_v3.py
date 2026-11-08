@@ -101,7 +101,11 @@ def jack_static_local():
     xm = SCREW_X + SCREW_L + 8                                            # motor front face (its shaft end is at x = 140 + 8)
     add("jack: NEMA17 stepper + 3:1 planetary gearhead", box(xm, xm + MOTOR_L, JACK_YC - 21, JACK_YC + 21, JACK_ZS - 21, JACK_ZS + 21)
         + cyl(11, xm - 6, xm, 'x', (JACK_YC, JACK_ZS), 20), A.C_GB)
-    add("jack: motor bracket (printed)", box(xm - 6, xm, JACK_YC - 24, JACK_YC + 24, 0, JACK_ZS + 24), A.C_PRINT)
+    br = box(xm - 6, xm, JACK_YC - 33, JACK_YC + 33, 0, 56.0)
+    for yy in (JACK_YC - 27.5, JACK_YC + 27.5):                      # holes for the motor cover (nut pockets on the back face)
+        for zz in (6.0, 50.0):
+            br = br - cyl(M3_CLR / 2, xm - 7, xm + 1, 'x', (yy, zz), 14) - hexagon(M3_NUT_AF, xm - 7, xm - 6 + M3_NUT_T, (yy, zz), 'x')
+    add("jack: motor bracket (printed)", br, A.C_PRINT)
     return it
 
 
@@ -183,6 +187,52 @@ def deck_local():
 
 def dock_static_local():
     return jack_static_local() + deck_local()
+
+
+# ------------------------------------------------------------------ covers (printed shells, screwed on)
+FRONT_COVER_SCREW_X = (156.6, 204.4)      # robot frame x of the two chipboard screws into the tray's front edge
+
+
+@lru_cache(None)
+def robot_covers_local():
+    """covers on the robot, robot frame: (1) front drive (servo 1 + step-up belt + cross-shaft end), (2) turn-drive cap"""
+    w = COVER_WALL
+    out = []
+    # (1) front drive cover: open at the back (towards the tray) and the bottom; ears on the tray's front face, screwed into the
+    #     plywood edge with 3 x 16 chipboard screws
+    ix0, ix1, iy0, iz1 = 164.0, 197.0, -347.0, 9.6
+    shell = box(ix0 - w, ix1 + w, iy0 - w, -294.0, -46.4, iz1 + w) - box(ix0, ix1, iy0, -293.0, -47.0, iz1)    # lower edge 2.2 mm under the pulley: keeps >3 mm over a lowered basket
+    shell = shell - cyl(5.0, ix0 - w - 1, ix1 + w + 1, 'x', (-303.0, 0.0), 24)               # the cross shaft passes through both sides
+    for xl, xr in ((ix0 - w - 10.0, ix0 - w + 1.5), (ix1 + w - 1.5, ix1 + w + 10.0)):         # ears
+        shell = shell + box(xl, xr, -297.0, -294.0, -34.0, -22.0)
+    for xh in FRONT_COVER_SCREW_X:
+        shell = shell - cyl(M3_CLR / 2, -298.0, -293.0, 'y', (xh, -28.0), 16)
+    out.append(("cover: front drive (servo 1 + belt)", shell, COVER_COLOR))
+    # (2) turn-drive cap: over the pinion motor, the lift servo and the carriage; sits on the two mast bosses (M3 screw from the top)
+    px, py = TURN_PIN_XY
+    top = TURN_GEAR_Z[0] + TURN_LIFT + 42
+    ix0, ix1, iy0, iy1, iz0, iz1 = 30.0, 72.0, -113.0, -82.0, 204.0, top + 12
+    cap = box(ix0 - w, ix1 + w, iy0 - w, iy1 + w, iz0, iz1 + w) - box(ix0, ix1, iy0, iy1, iz0 - 1, iz1)
+    cap = cap - box(ix0 - w - 1, ix0 + 1, -112.5, -97.0, top - 1, top + 5)                     # the mast's top arm passes through the left wall
+    for xb in MAST_BOSS_X:
+        cap = cap - cyl(M3_CLR / 2, iz1 - 1, iz1 + w + 1, 'z', (xb, MAST_BOSS_Y), 14)
+    out.append(("cover: turn-drive cap", cap, COVER_COLOR))
+    return out
+
+
+@lru_cache(None)
+def dock_cover_local():
+    """cover of the dock's motor + gearhead, dock frame: stands on the floor, flange against the (enlarged) motor bracket, 4 M3 screws"""
+    w = COVER_WALL
+    xm = SCREW_X + SCREW_L + 8
+    ix0, ix1, iy0, iy1, iz1 = xm, xm + MOTOR_L + 2.0, JACK_YC - 23.0, JACK_YC + 23.0, 46.0
+    shell = box(ix0, ix1 + w, iy0 - w, iy1 + w, 0, iz1 + w) - box(ix0 - 1, ix1, iy0, iy1, -1, iz1)
+    flange = box(xm, xm + 3.0, JACK_YC - 33, JACK_YC + 33, 0, 56.0) - box(xm - 1, xm + 4.0, iy0, iy1, -1, iz1)
+    cov = shell + flange
+    for yy in (JACK_YC - 27.5, JACK_YC + 27.5):
+        for zz in (6.0, 50.0):
+            cov = cov - cyl(M3_CLR / 2, xm - 1, xm + 4.0, 'x', (yy, zz), 14)
+    return [("cover: jack motor", cov, COVER_COLOR)]
 
 
 # ------------------------------------------------------------------ static world
@@ -597,7 +647,10 @@ def robot_local():
     T, x = T_V3, BXR
     add("tray bracket", box(14, x - ARM_X[1] - 2, COL_Y[0], COL_Y[1], T - TRAY_T, T), A.C_PLATE)
     add("bar load cell 5 kg + HX711", box(40, 76, COL_Y[0] + 2, COL_Y[1] - 2, T - TRAY_T - 13, T - TRAY_T), A.C_PCB)
-    add("plywood tray 12 mm", box(x - ARM_X[1], x + ARM_X[1], TRAY_Y[0], TRAY_Y[1], T - TRAY_T, T), A.C_WOOD)
+    ply = box(x - ARM_X[1], x + ARM_X[1], TRAY_Y[0], TRAY_Y[1], T - TRAY_T, T)
+    for xh in FRONT_COVER_SCREW_X:                                  # 2.5 mm pilot holes for the cover's chipboard screws
+        ply = ply - cyl(1.25, TRAY_Y[0] - 1, TRAY_Y[0] + 15, 'y', (xh, T - TRAY_T / 2), 12)
+    add("plywood tray 12 mm", ply, A.C_WOOD)
     for sx in (-80, 80):
         add("printed basket stop", P1.basket_stop().transform(MT(x + sx, BASKET_TRAY_Y0, T)), A.C_PRINT)
     add("limit switch (basket on tray)", box(-10, 10, BASKET_TRAY_Y0, BASKET_TRAY_Y0 + 6.4, 13, 23).translate(x - 80, 0, T), A.C_SW)
@@ -633,9 +686,14 @@ def robot_local():
     px, py = TURN_PIN_XY
     zg0, zg1 = TURN_GEAR_Z
     top = zg0 + TURN_LIFT + 42
-    add("printed turn-drive mast", box(-10, 10, COL_Y[0] + 2, COL_Y[1] - 2, hz + 20, top + 4)
-        + box(-10, px + 8, py - 9, COL_Y[1] - 2, top, top + 4)
-        + box(px - 14, px - 8, py - 9, py + 9, zg0 + 10, top), A.C_PRINT)
+    mast = box(-10, 10, COL_Y[0] + 2, COL_Y[1] - 2, hz + 20, top + 4) \
+        + box(-10, px + 8, py - 9, COL_Y[1] - 2, top, top + 4) \
+        + box(px - 14, px - 8, py - 9, py + 9, zg0 + 10, top)
+    for xb in MAST_BOSS_X:                                           # bosses for the cap: M3 screw from the top into a nut in a side slot
+        mast = mast + cyl(5.0, top + 3, top + 12, 'z', (xb, MAST_BOSS_Y), 24)
+        mast = mast - cyl(M3_CLR / 2, top - 1, top + 13, 'z', (xb, MAST_BOSS_Y), 14)
+        mast = mast - box(xb - M3_NUT_AF / 2, xb + M3_NUT_AF / 2, MAST_BOSS_Y, MAST_BOSS_Y + 8.0, top + 6.0, top + 6.0 + M3_NUT_T + 0.2)
+    add("printed turn-drive mast", mast, A.C_PRINT)
     add("SG90 micro servo (turn pinion lift)", box(px - 26, px - 14, py - 6, py + 17, top - 30, top - 8), A.C_SERVO)
     # lock solenoids (push type): docking bolt on the column's rear face, release plunger behind the battery box
     add("lock solenoid (docking bolt, push type)", box(BOLT_X - 9, BOLT_X + 9, -96, -68, BOLT_DZ - 8, BOLT_DZ + 8), A.C_GB)
@@ -771,6 +829,9 @@ def build(S, baskets=None):
     d = g["d"]
     place = lambda lst, M, grp: [(n, s.transform(M), c, grp) for n, s, c in lst]
     items += place(robot_local(), R, "robot")
+    items += place(robot_covers_local(), R, "cover")                      # printed covers: toggled in the sim, screwed on in reality
+    for r in range(N_ROWS):
+        items += [(f"{n} (dock {r+1})", s.transform(row_M(r) @ MT(PXC, 0, 0)), c, "static") for n, s, c in dock_cover_local()]
     items += place(arm_drive_local(), R @ MT(*ARM_DRIVE_AT) @ rot('x', g["drive"]), "robot")
     items += place(idler_local(), R @ MT(*IDLER_AT) @ rot('x', g["drive"]), "robot")
     items += place(servo1_local(), R @ MT(*SERVO1_POS) @ rot('x', g["servo1"]), "robot")

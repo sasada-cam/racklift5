@@ -82,8 +82,10 @@ Without pixi (CAD export only, no CalculiX solver): `pip install .` (or `pip ins
 | **Weight balance:** centre of gravity (yellow) and the rail forces on the two hubs (blue twist, red forward) | **Dock:** standing on the cart, the robot pushes a basket off its tray onto the raised platform of the docking station beside the cart |
 | ![jack lowering](docs/renders/v3_10_dock_jack_lowering.png) | ![dock lowered](docs/renders/v3_11_dock_lowered.png) |
 | **Jack lowering:** the scissor lift brings the basket down from tray height while the robot drives on | **Lowered:** the basket sits on the raised floor (rectangle) where the home-delivery robot will pick it up |
-| ![jack mechanism](docs/renders/v3_12_dock_jack.png) | |
-| **Jack mechanism:** scissor arms, slider with lead nut, TR8x2 lead screw and the stepper (platform raised) | |
+| ![jack mechanism](docs/renders/v3_12_dock_jack.png) | ![covers](docs/renders/v3_13_covers_robot.png) |
+| **Jack mechanism:** scissor arms, slider with lead nut, TR8x2 lead screw and the stepper (platform raised) | **Covers (solid):** front drive cover over servo 1 and its belt, and the turn-drive cap |
+| ![covers see-through](docs/renders/v3_14_covers_see_through.png) | ![dock cover](docs/renders/v3_15_cover_dock.png) |
+| **Covers (see-through):** the mechanism stays visible; switch them in the viewer or on the task page | **Dock motor cover:** over the NEMA17 + gearhead beside the platform |
 
 Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e sim render-v3`.
 
@@ -161,7 +163,7 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
     the transfer-rack beam is held from posts beyond the robot's tray end.
 
 **All components (CAD):** `models/v3/components/` has every unique part of the rack, rails, robot, picker, cart, locks and dock
-as its own STEP + STL (123 parts, grouped by category, bounding-box corner at the origin), plus `BOM_v3.csv` / `README.md` with the
+as its own STEP + STL (126 parts, grouped by category, bounding-box corner at the origin), plus `BOM_v3.csv` / `README.md` with the
 quantity, size, volume and a suggested process for each (print, laser-cut, machine, or buy). Bought parts (motors, servos, bearings,
 extrusions, wheels, belts, the basket) are simplified envelopes. The assembled poses are in `models/v3/assembly/`, the 26 printable
 parts (flat on their largest face, checked against the printer bed) in `models/v3/print/`.
@@ -170,6 +172,12 @@ parts (flat on their largest face, checked against the printer bed) in `models/v
 racks and the 2 m transfer rack could not be printed whole), the column is an aluminium bar, thin loaded parts are thicker, printed pulleys
 have axle bores, the finger collars have a square hole for the tube, and the part export fails if a printed part is bigger than
 `PRINT_BED` in `params_v3.py` (220 x 220 x 250 mm). Screw and bolt holes are not drawn yet.
+
+**Covers:** three printed covers (the front drive cover over servo 1 and its belt, the turn-drive cap, and one jack-motor cover per dock) are held
+by M3 screws - never printed threads or snap-fits, which wear - into nuts in printed pockets or chipboard screws in plywood. In the viewer press
+`c`, or use the **Covers** buttons on the task page, to cycle them solid / see-through / off (robot and docks separately, or all at once).
+Fastener list and where to get it (heat-set inserts are import-only in Sri Lanka, so the design uses plain nuts): section 5 of the plan below.
+Not covered yet: servo 2 and its gear pair, the lock solenoids, the hub drives and the scissor.
 
 **Manufacturing plan:** [docs/design/002-manufacturing-plan.md](docs/design/002-manufacturing-plan.md) (generated from the parts list: print / cut / machine / buy for every part, part sizes against the printer, joints for modular parts, a strength-check shortlist, and the order of work).
 

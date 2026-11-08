@@ -33,6 +33,12 @@ PROCESS_TOL = [
 ]
 # (regex on part name, note) - first match wins; fit / strength notes
 NOTES = [
+    (r"cover: front drive", "Screws into the plywood tray's front edge: 2 x M3 x 16 chipboard screws, 2.5 mm pilot holes. Lower edge 3.6 mm above a lowered basket. "
+                            "Print closed face down; the two ears may need a little support."),
+    (r"cover: turn-drive cap", "Sits on the two mast bosses: M3 x 12 screw from the top into an M3 nut in the boss's side slot. Notch in the left wall for the mast arm."),
+    (r"cover: jack motor", "Stands on the floor; its flange meets the motor bracket: 4 x M3 x 12 screws + nuts (hex pockets on the bracket's back face). One per dock."),
+    (r"turn-drive mast", "Two bosses with side slots for M3 nuts (the cap's screws): print the slots open to the side and drop the nuts in before fitting the cap."),
+    (r"jack: motor bracket", "4 hex nut pockets (5.8 mm across flats, 2.6 mm deep) on the back face for the motor cover's screws; plate 66 x 56 mm."),
     (r"in-slot rack", "Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so "
                       "the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive."),
     (r"transfer rack segment", "40 whole teeth (188.5 mm); 10 full pieces + 1 shorter, butted on the 2 m beam (screw each piece to the beam). Or buy a module 1.5 rack."),
@@ -146,18 +152,37 @@ def main():
       "3. the transfer beam, its arms and posts (the cart and robot hang from them) and the rail-end arms (cantilever);\n"
       "4. the lock pin / socket / bushing and the docking bolt: wear and a one-off shock when the cart arrives;\n"
       "5. the scissor arms and pivots (about 350 N at the lowest angle), the lead nut block, and the gears (tooth bending).\n")
-    w("## 5. Print settings\n")
+    w("## 5. Covers and fasteners\n")
+    w("Printed covers protect the exposed drives and can be switched on / see-through / off in the viewer and the task page (separately for the robot "
+      "and the docks). Every cover is held by **M3 screws, never by printed threads or snap-fits** (they wear out): the screw goes through a 3.4 mm "
+      "clearance hole in the cover into an M3 nut in a printed slot or pocket, or (in plywood) a chipboard screw into a 2.5 mm pilot hole.\n")
+    w("| Cover | Covers | Fixed to | Hardware |\n|---|---|---|---|\n"
+      "| front drive | servo 1, step-up belt, cross-shaft end | tray plywood front edge | 2 x M3 x 16 chipboard screws |\n"
+      "| turn-drive cap | pinion motor, lift servo, carriage | two bosses on the mast | 2 x M3 x 12 + 2 nuts + 2 washers |\n"
+      "| jack motor (x3) | NEMA17 + gearhead | enlarged motor bracket | 4 x M3 x 12 + 4 nuts + 4 washers each |\n")
+    w("**Not covered yet:** servo 2 and its gear pair (the corner is too tight against the finger shaft), the two lock solenoids, the climb "
+      "motors and pinions in the hubs, and the scissor itself. They need their own cover design.\n")
+    w("**Totals:** 14 x M3 x 12 machine screws, 2 x M3 x 16 chipboard screws, 14 M3 hex nuts, 14 M3 washers - buy about 20 % spares.\n")
+    w("**Sourcing in Sri Lanka** (checked on the web on 2026-11-08; stock and prices change, and this is not a quote): M3 / M4 are standard metric sizes, "
+      "which I expect any hardware or electronics shop to stock, but a search could not confirm local shops, so check before ordering. "
+      "**Heat-set brass inserts** are available only as imports (Desertcart / Ubuy Sri Lanka): a 420-piece M3-M5 kit was about LKR 14,900 and a 400-piece kit "
+      "about LKR 31,900; a 100-piece M3 pack (about LKR 940) was out of stock; the heat-press tool was about LKR 18,900. That is why the design uses plain "
+      "nuts in printed pockets, and inserts are only an optional upgrade for parts you take apart often.\n"
+      "Sources: [M3 insert 100-pack](https://www.desertcart.lk/products/812137818-100-pack-m3-threaded-inserts-heat-set-inserts-m3x4x5-female.md), "
+      "[M3-M5 insert kit](https://www.desertcart.lk/products/600782778-420pcs-m3-m4-m5-threaded-inserts-assortment-kit-for-3d.md), "
+      "[heat-press insert tool](https://www.ubuy.com.lk/en/product/7VBIO3LMU-3dzwman-vertical-heat-pressing-machine-heat-set-insert-tool-brass-inserts-3d-printing-heat-set-insert-tip-for-thread-knurled-nut).\n")
+    w("## 6. Print settings\n")
     w("| Class | Settings |\n|---|---|\n"
       "| General parts | PETG, 0.2 mm layers, 4 walls, 40 % gyroid (as in the v2 release notes) |\n"
       "| Gears, pinions, racks | 0.12 mm layers, 100 % infill, 4 walls; dry filament; or order PA12 nylon |\n"
       "| Thin loaded parts (fingers, lugs, brackets) | 100 % infill, layers along the main bending direction, or nylon / aluminium |\n"
       "| Mating holes | model 0.2 mm larger; ream bearing / pin holes to size |\n")
-    w("## 6. Summary by process\n")
+    w("## 7. Summary by process\n")
     w("| Process / source | part types | pieces |\n|---|---|---|")
     for p, n in by_proc.most_common():
         w(f"| {p} | {n} | {pieces[p] or '-'} |")
     w("")
-    w("## 7. Part by part\n")
+    w("## 8. Part by part\n")
     for cat, rs in cats.items():
         w(f"### {cat}\n")
         w("| ID | part | qty | size mm | process / source | material | notes |\n|---|---|---|---|---|---|---|")
@@ -168,7 +193,7 @@ def main():
                 flag = "**too big to print whole.** "
             w(f"| {r[0]} | {r[2]} | {r[3]} | {r[4]} | {r[6]} | {material_for(r[6])} | {flag}{note_for(r[2])} |")
         w("")
-    w("## 8. Order of work\n")
+    w("## 9. Order of work\n")
     w("1. Build a **one-bay test rig** first (one rack bay, one vertical rail, the hubs, the tray and picker): it proves the printed parts, the fits and the picker before you buy three rows.\n"
       "2. Print one of each small part; measure with calipers; test-fit the mating parts; only then print batches.\n"
       "3. Order the long aluminium extrusion, the plates and the racks (or the nylon prints) in one go; they have the longest lead time.\n"

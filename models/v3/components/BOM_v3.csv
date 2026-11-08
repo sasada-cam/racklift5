@@ -1,5 +1,8 @@
 ID,category,part,qty,size mm (x y z),volume cm3,suggested process / source,CAD file
 BAS01,Baskets,basket (stand-in for the real basket),55,260 x 180 x 110,420.3,Buy (basket),Baskets/BAS01_basket_stand_in_for_the_real_basket.step
+COV01,Covers,cover: front drive (servo 1 + belt),1,58 x 55 x 58,24.6,"3D print (PETG), 2.4 mm walls, closed face down",Covers/COV01_cover_front_drive_servo_1_belt.step
+COV02,Covers,cover: jack motor,3,71 x 66 x 56,33.2,"3D print (PETG), 2.4 mm walls, closed face down",Covers/COV02_cover_jack_motor.step
+COV03,Covers,cover: turn-drive cap,1,47 x 36 x 46,20.2,"3D print (PETG), 2.4 mm walls, closed face down",Covers/COV03_cover_turn_drive_cap.step
 DOC01,Dock (jack + raised floor),jack: NEMA17 stepper + 3:1 planetary gearhead,3,73 x 42 x 42,120.5,Buy (actuator),Dock_jack_raised_floor/DOC01_jack_NEMA17_stepper_3_1_planetary_gearhead.step
 DOC02,Dock (jack + raised floor),jack: TR8x2 lead screw,3,170 x 10 x 10,9.1,Buy (TR8x2 lead screw),Dock_jack_raised_floor/DOC02_jack_TR8x2_lead_screw.step
 DOC03,Dock (jack + raised floor),jack: base plate (aluminium),3,270 x 214 x 6,346.7,"Aluminium plate / bar (laser cut, drill)",Dock_jack_raised_floor/DOC03_jack_base_plate_aluminium.step
@@ -9,7 +12,7 @@ DOC06,Dock (jack + raised floor),jack: centre pin shaft,3,6 x 168 x 6,4.8,"Steel
 DOC07,Dock (jack + raised floor),jack: lead nut block (printed),3,16 x 16 x 21,5.4,3D print (PETG),Dock_jack_raised_floor/DOC07_jack_lead_nut_block_printed.step
 DOC08,Dock (jack + raised floor),jack: limit switch (platform down),3,8 x 10 x 14,1.1,Buy (sensor / switch),Dock_jack_raised_floor/DOC08_jack_limit_switch_platform_down.step
 DOC09,Dock (jack + raised floor),jack: limit switch (platform up),3,8 x 10 x 14,1.1,Buy (sensor / switch),Dock_jack_raised_floor/DOC09_jack_limit_switch_platform_up.step
-DOC10,Dock (jack + raised floor),jack: motor bracket (printed),3,6 x 48 x 47,13.5,3D print (PETG),Dock_jack_raised_floor/DOC10_jack_motor_bracket_printed.step
+DOC10,Dock (jack + raised floor),jack: motor bracket (printed),3,6 x 66 x 56,21.7,3D print (PETG),Dock_jack_raised_floor/DOC10_jack_motor_bracket_printed.step
 DOC11,Dock (jack + raised floor),jack: platform plate (8 mm aluminium),3,290 x 236 x 17,558.0,"Aluminium plate / bar (laser cut, drill)",Dock_jack_raised_floor/DOC11_jack_platform_plate_8_mm_aluminium.step
 DOC12,Dock (jack + raised floor),jack: roller,6,12 x 3 x 12,0.3,Buy (wheel / roller),Dock_jack_raised_floor/DOC12_jack_roller.step
 DOC13,Dock (jack + raised floor),jack: roller axle,3,4 x 165 x 4,2.1,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC13_jack_roller_axle.step
@@ -100,7 +103,7 @@ PIC20,Tray + picker + drives,finger shaft: inner square tube,2,11 x 192 x 11,23.
 PIC21,Tray + picker + drives,finger shaft: middle square tube,2,8 x 198 x 8,12.7,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC21_finger_shaft_middle_square_tube.step
 PIC22,Tray + picker + drives,idler axle,2,6 x 4 x 4,0.1,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC22_idler_axle.step
 PIC23,Tray + picker + drives,limit switch (basket on tray),1,20 x 6 x 10,1.3,Buy (sensor / switch),Tray_picker_drives/PIC23_limit_switch_basket_on_tray.step
-PIC24,Tray + picker + drives,plywood tray 12 mm,1,292 x 224 x 12,784.9,Plywood (cut to size),Tray_picker_drives/PIC24_plywood_tray_12_mm.step
+PIC24,Tray + picker + drives,plywood tray 12 mm,1,292 x 224 x 12,784.7,Plywood (cut to size),Tray_picker_drives/PIC24_plywood_tray_12_mm.step
 PIC25,Tray + picker + drives,printed arm post,2,13 x 15 x 35,6.8,3D print (PETG),Tray_picker_drives/PIC25_printed_arm_post.step
 PIC26,Tray + picker + drives,"printed arm post (rear, idler axle)",2,13 x 12 x 35,5.5,3D print (PETG),Tray_picker_drives/PIC26_printed_arm_post_rear_idler_axle.step
 PIC27,Tray + picker + drives,printed basket stop,2,40 x 24 x 26,10.4,3D print (PETG),Tray_picker_drives/PIC27_printed_basket_stop.step
@@ -109,7 +112,7 @@ PIC29,Tray + picker + drives,printed flip finger (rear),2,19 x 4 x 42,1.4,3D pri
 PIC30,Tray + picker + drives,printed front post (rod + cross-shaft bearings),2,13 x 21 x 87,10.3,3D print (PETG),Tray_picker_drives/PIC30_printed_front_post_rod_cross_shaft_bearings.step
 PIC31,Tray + picker + drives,printed lift carriage,1,4 x 16 x 27,1.7,3D print (PETG),Tray_picker_drives/PIC31_printed_lift_carriage.step
 PIC32,Tray + picker + drives,printed stage-1 belt clamp (middle bar),2,5 x 10 x 30,0.7,3D print (PETG),Tray_picker_drives/PIC32_printed_stage_1_belt_clamp_middle_bar.step
-PIC33,Tray + picker + drives,printed turn-drive mast,1,78 x 24 x 90,43.9,3D print (PETG),Tray_picker_drives/PIC33_printed_turn_drive_mast.step
+PIC33,Tray + picker + drives,printed turn-drive mast,1,79 x 24 x 98,44.8,3D print (PETG),Tray_picker_drives/PIC33_printed_turn_drive_mast.step
 PIC34,Tray + picker + drives,servo 1 bracket,1,20 x 20 x 24,9.6,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC34_servo_1_bracket.step
 PIC35,Tray + picker + drives,servo 1: DS3218 270 deg (arm stroke),1,20 x 40 x 34,27.2,Buy (actuator),Tray_picker_drives/PIC35_servo_1_DS3218_270_deg_arm_stroke.step
 PIC36,Tray + picker + drives,servo 2 bracket,1,8 x 8 x 12,0.8,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC36_servo_2_bracket.step
@@ -123,4 +126,8 @@ PIC43,Tray + picker + drives,"telescopic arm, outer bar (fixed)",2,13 x 180 x 8,
 PIC44,Tray + picker + drives,tray bracket,1,68 x 24 x 12,19.6,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC44_tray_bracket.step
 PIC45,Tray + picker + drives,turn drive pinion 16T (robot),1,27 x 27 x 8,3.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Tray_picker_drives/PIC45_turn_drive_pinion_16T_robot.step
 -,Tray + picker + drives,"GT2 belt, stage 2 (6 mm), cut to the loop length",4,-,-,"Buy (GT2 belt, cut to length)",-
+-,Covers,"Cover screws: M3 x 16 chipboard (wood) screw, pan head - front drive cover into the plywood",2,-,-,Buy (hardware),-
+-,Covers,"Cover screws: M3 x 12 machine screw, pan head - turn-drive cap (2) and the 3 jack motor covers (12)",14,-,-,Buy (hardware),-
+-,Covers,"Cover nuts: M3 hex nut, standard or nylon-insert - caught in the printed slots / pockets",14,-,-,Buy (hardware),-
+-,Covers,Cover washers: M3 flat washer,14,-,-,Buy (hardware),-
 -,Hardware,"Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins",as needed,-,-,Buy (assorted; count from the drawings),-

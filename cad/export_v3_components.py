@@ -25,6 +25,7 @@ OUT = os.path.abspath(os.path.join(HERE, "..", "models", "v3", "components"))
 
 # ordered rules: first match wins
 CATEGORY = [
+    (r"^cover:", "Covers", "COV"),
     (r"^basket", "Baskets", "BAS"),
     (r"^jack:|raised floor", "Dock (jack + raised floor)", "DOC"),
     (r"lock solenoid|cart lock|cart docking bar", "Locks (robot + cart)", "LCK"),
@@ -36,6 +37,7 @@ CATEGORY = [
      "Tray + picker + drives", "PIC"),
 ]
 PROCESS = [
+    (r"^cover:", "3D print (PETG), 2.4 mm walls, closed face down"),
     (r"lock solenoid bracket|finger shaft bearing|pivot lug|belt anchor", "3D print (PETG)"),
     (r"column bar", "Aluminium bar 28 x 24 (cut to length, drill)"),
     (r"in-slot rack|transfer rack segment|climber pinion|turn drive pinion|transfer pinion", "Print fine (0.12 mm, 100 % infill) or order nylon (SLS)"),
@@ -89,7 +91,7 @@ def sources():
     def add(items):
         for it in items:
             out.append((it[0], it[1]))
-    for f in (A.row_static_local, A.xfer_static, A.dock_static_local, A.crossing_local, A.cart_local, A.cart_lock_local,
+    for f in (A.robot_covers_local, A.dock_cover_local, A.row_static_local, A.xfer_static, A.dock_static_local, A.crossing_local, A.cart_local, A.cart_lock_local,
               A.hub_local, A.hub_pinion_local, A.robot_local, A.arm_drive_local, A.idler_local, A.servo1_local, A.fservo_local,
               A.arm_mid_local, A.arm_in_local, A.turn_carriage_local, A.turn_pinion_local, A.dock_bolt_local,
               A.release_plunger_local, A.jack_platform_local, A.jack_arm1_local, A.jack_arm2_local, A.jack_slider_local,
@@ -132,6 +134,10 @@ def main():
     rows.append(("basket (stand-in for the real basket)", bs, len(A3.BASKET_IDS)))
     # parts that are cut-to-fit and have no useful solid
     extras = [("GT2 belt, stage 2 (6 mm), cut to the loop length", "Tray + picker + drives", 4, "Buy (GT2 belt, cut to length)"),
+              ("Cover screws: M3 x 16 chipboard (wood) screw, pan head - front drive cover into the plywood", "Covers", 2, "Buy (hardware)"),
+              ("Cover screws: M3 x 12 machine screw, pan head - turn-drive cap (2) and the 3 jack motor covers (12)", "Covers", 14, "Buy (hardware)"),
+              ("Cover nuts: M3 hex nut, standard or nylon-insert - caught in the printed slots / pockets", "Covers", 14, "Buy (hardware)"),
+              ("Cover washers: M3 flat washer", "Covers", 14, "Buy (hardware)"),
               ("Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins", "Hardware", 0, "Buy (assorted; count from the drawings)")]
 
     # number + export, grouped by category

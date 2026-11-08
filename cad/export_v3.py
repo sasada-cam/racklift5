@@ -57,6 +57,10 @@ NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V21_jack_slider_shoe": (lambda: _pick(A3.jack_slider_local(), "jack: slider shoe (printed)"), I, 2 * A3.N_ROWS),
     "V22_jack_lead_nut_block": (lambda: _pick(A3.jack_slider_local(), "jack: lead nut block (printed)"), I, A3.N_ROWS),
     "V23_jack_coupling_flag": (lambda: _pick(A3.jack_screw_local(), "jack: shaft coupling + index flag"), R.RY(90), A3.N_ROWS),
+    # covers (printed shells, M3 screws): closed face down when printing, so the walls need no supports
+    "V30_cover_front_drive": (lambda: _pick(A3.robot_covers_local(), "cover: front drive (servo 1 + belt)"), None, 1),
+    "V31_cover_turn_drive_cap": (lambda: _pick(A3.robot_covers_local(), "cover: turn-drive cap"), None, 1),
+    "V32_cover_jack_motor": (lambda: _pick(A3.dock_cover_local(), "cover: jack motor"), None, A3.N_ROWS),
     # printable rack segments: whole teeth, so the pitch carries across the joints (shorter end pieces: see the BOM)
     "V28_in_slot_rack_segment_40_teeth": (lambda: A3.P2.rack_strip(0, A3.RACK_SEG_LEN), I,
                                           A3.N_ROWS * sum(1 for n_, s_, c_ in A3.row_static_local()
@@ -94,7 +98,7 @@ def export_parts():
         s = fn()
         sh = s.shape; sh.label = name
         bd.export_step(sh, os.path.join(dd, name + ".step"))
-        M = auto_flat(s)                                       # print orientation: flat on the largest face
+        M = R.RX(180) if name.startswith(("V30", "V31", "V32")) else auto_flat(s)   # covers: closed face down; others: flat on the largest face
         pb = E.to_bed(s, M)
         size = check_bed(name, pb)                             # fails if the part does not fit the printer bed
         p = pb.shape; p.label = name

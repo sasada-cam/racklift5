@@ -106,6 +106,13 @@ PRINT_BED = (220.0, 220.0, 250.0)              # assumed printer build volume, m
 RACK_SEG_TEETH = 40                            # printed racks are cut into pieces of whole teeth (40 x 4.712 = 188.5 mm) so the pitch
 #                                                carries across the joints; the V-slot keeps the pieces in line
 FINGER_COLLAR_R = 9.6                          # flip-finger collar: wall >= 1.5 mm round the 11.2 mm square hole for the tube
+# ---------------- covers: printed shells held by M3 screws (no plastic threads, no snap-fits that wear)
+# A screw goes through a 3.4 mm clearance hole in the cover; the other side is either an M3 hex nut in a printed slot / pocket
+# (print it with a 5.8 mm across-flats pocket) or, in plywood, a chipboard screw into a 2.5 mm pilot hole.
+COVER_WALL = 2.4
+M3_CLR, M3_NUT_AF, M3_NUT_T = 3.4, 5.8, 2.6    # clearance hole, nut across flats (+0.2 print clearance), nut thickness
+MAST_BOSS_X, MAST_BOSS_Y = (36.0, 64.0), -105.0   # two bosses on the turn-drive mast that the cap screws onto
+COVER_COLOR = (205, 205, 215)
 # ---------------- floor of racks (top view): rows of racks, rails along each row's front, side rails between rows
 # All rows face the same way (front at the row's y = 0, rack behind it), ROW_P apart.  The robot snakes through them:
 # row 1 -> right side rail -> row 2 -> left side rail -> row 3 (a single line, so every passive turret always waits on

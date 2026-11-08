@@ -18,15 +18,23 @@ border:1px solid #bbb;border-radius:8px;background:#fff;cursor:pointer} button:h
 button:active{background:#cfe0ff} #st{margin-top:14px;padding:10px;border-radius:8px;background:#fff;border:1px solid #ddd;white-space:pre-line}
 #log{margin-top:8px;padding:10px;border-radius:8px;background:#fbfbf3;border:1px solid #ddd;white-space:pre-line;font-size:13px;color:#444}
 form{display:flex;gap:6px;margin-top:10px} input{flex:1;padding:10px;font-size:15px} form button{width:auto;margin:0}
-</style></head><body><h1>RackLift5 v3 - tasks</h1>__BUTTONS__
+.cv{display:flex;gap:6px;margin:0 0 12px}.cv button{margin:0;text-align:center;font-size:14px;padding:10px 6px}
+</style></head><body><h1>RackLift5 v3 - tasks</h1>
+<div style="font-size:13px;color:#555;margin-bottom:4px">Covers (click to cycle solid / see-through / off)</div>
+<div class="cv"><button id="cv_robot" onclick="cov('robot')">robot covers</button><button id="cv_dock" onclick="cov('dock')">dock covers</button>
+<button id="cv_all" onclick="cov('all')">all</button></div>
+__BUTTONS__
 <form onsubmit="go(this.n.value);this.n.value='';return false"><input name="n" placeholder="task number" inputmode="numeric"><button>Enter</button></form>
 <div id="st">...</div>
 <div id="log"></div>
 <script>
+function cov(g){fetch('/cover?g='+g).then(r=>r.json()).then(s);}
 function go(n){fetch('/run?n='+encodeURIComponent(n)).then(r=>r.json()).then(s);}
 function s(j){document.getElementById('st').textContent=j.task+'\\n'+j.step+
   ((j.queue&&j.queue.length)?'\\n\\nnext: '+j.queue.join('\\n      '):'');
-  document.getElementById('log').textContent=(j.log||[]).join('\\n');}
+  document.getElementById('log').textContent=(j.log||[]).join('\\n');
+  if(j.covers){document.getElementById('cv_robot').textContent='robot covers: '+j.covers.robot;
+    document.getElementById('cv_dock').textContent='dock covers: '+j.covers.dock;}}
 setInterval(()=>fetch('/status').then(r=>r.json()).then(s).catch(()=>{document.getElementById('st').textContent='viewer closed';}),500);
 </script></body></html>"""
 
@@ -55,7 +63,9 @@ class Remote:
                 u = urlparse(self.path)
                 if u.path == "/run":
                     remote.push(parse_qs(u.query).get("n", [""])[0])
-                if u.path in ("/run", "/status"):
+                if u.path == "/cover":
+                    remote.q.put(("cover", parse_qs(u.query).get("g", ["all"])[0]))
+                if u.path in ("/run", "/cover", "/status"):
                     return self._send(json.dumps(remote.status).encode(), "application/json")
                 self._send(page, "text/html; charset=utf-8")
 
