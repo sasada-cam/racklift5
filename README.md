@@ -166,6 +166,8 @@ quantity, size, volume and a suggested process for each (print, laser-cut, machi
 extrusions, wheels, belts, the basket) are simplified envelopes. The assembled poses are in `models/v3/assembly/`, the 25 printable
 parts in print orientation in `models/v3/print/`.
 
+**Manufacturing plan:** [docs/design/002-manufacturing-plan.md](docs/design/002-manufacturing-plan.md) (generated from the parts list: print / cut / machine / buy for every part, part sizes against the printer, joints for modular parts, a strength-check shortlist, and the order of work).
+
 Background: [docs/design/001-load-carrying-single-vs-two-rail.md](docs/design/001-load-carrying-single-vs-two-rail.md) (section 8h).
 Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 ```
