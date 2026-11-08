@@ -34,7 +34,6 @@ NEW_PARTS = {   # name: (builder, print orientation, qty)
     "V01_hub_cover": (lambda: _pick(A3.hub_local(), "printed hub cover"), R.RX(90), 2),
     "V03_flip_finger": (lambda: _pick(A3.finger_local(1, "front"), "printed flip finger (front)"), I, 4),
     "V04_arm_post": (lambda: _pick(A3.robot_local(), "printed arm post"), I, 2),
-    "V05_crossing_bracket": (lambda: _pick(A3.row_static_local(), "printed crossing bracket"), R.RX(90), 2 * A3.N_BAYS_ALL),
     "V06_front_post": (lambda: _pick(A3.robot_local(), "printed front post (rod + cross-shaft bearings)"), R.RX(90), 2),
     "V07_rear_arm_post": (lambda: _pick(A3.robot_local(), "printed arm post (rear, idler axle)"), I, 2),
     "V08_stage1_belt_clamp": (lambda: _pick(A3.arm_mid_local(), "printed stage-1 belt clamp (middle bar)"), R.RX(90), 2),

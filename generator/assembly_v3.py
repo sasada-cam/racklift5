@@ -26,15 +26,32 @@ SIDES = (-1, 1)                        # left / right arm
 RACK_SEG_LEN = RACK_SEG_TEETH * P                     # P = rack pitch (4.712 mm)
 
 
-def rack_pieces(L):
-    """[(offset, length)] pieces of a rack of length L: full pieces of RACK_SEG_TEETH teeth (cut through a tooth space, so the
-    pitch continues across the joint), the remainder last"""
-    out, off = [], 0.0
-    while off < L - 0.01:
-        sl = min(RACK_SEG_LEN, L - off)
-        out.append((off, sl))
-        off += sl
-    return out
+def comb_line(x1, x2, origin):
+    """[(offset from x1, strip)] rack pieces for the rail stretch x1..x2 (coordinate along the rail).  All racks of one rail line
+    share ONE tooth comb: tooth centres at origin + (m + 1/2) P (origin = a crossing centre = a tooth-space centre), so the
+    pitch continues across every crossing piece.  Pieces are cut through tooth spaces, RACK_SEG_TEETH teeth each."""
+    d = (origin + P / 2 - x1) % P
+    if P - d < 1e-6:
+        d = 0.0
+    a0 = (P / 2 - d) % P
+    if a0 > P - 1e-6:
+        a0 = 0.0
+    a1 = a0 + (x2 - x1)
+    cuts = [a0]
+    j = 1
+    while j * RACK_SEG_LEN < a1 - 1.0:
+        if j * RACK_SEG_LEN > a0 + 1.0:
+            cuts.append(j * RACK_SEG_LEN)
+        j += 1
+    cuts.append(a1)
+    return [(c0 - a0, P2.rack_strip(c0, c1)) for c0, c1 in zip(cuts[:-1], cuts[1:])]
+
+
+def rack_ends(x1, x2, origin):
+    """(distance of the first tooth centre from x1, of the last tooth centre from x2) - for the checks"""
+    d = (origin + P / 2 - x1) % P
+    e = (x2 - origin - P / 2) % P
+    return d, e
 
 
 # ------------------------------------------------------------------ floor layout: rows + transfer cart
@@ -239,6 +256,45 @@ def dock_cover_local():
 _S = None
 
 
+def _holes_y(pts, y0, y1, r):
+    return [cyl(r, y0, y1, 'y', p, 16) for p in pts]
+
+
+def crossing_bracket(jx, zc, has_left):
+    """ONE aluminium bracket (3 mm plate, laser cut / bent, or milled) per crossing, fixed with M5 screws through the rack posts' flanges:
+    bearing plate behind the turntable bearing (4 holes on a 40 mm circle: the bearing's fixed ring), a stem to the post flange on each
+    side, and the supports that carry the ends of the two rail segments next to the crossing piece (their T-nuts in the rail's back slot)."""
+    g = SEG_V3 + GAP_V3
+    fr = jx + RAIL_OFF - XI - ANG / 2           # centre of the right post's flange (the post right of the crossing)
+    fl = jx + RAIL_OFF - BAY_P + XI + ANG / 2   # centre of the left post's flange (the previous bay's post)
+    xs, xe = jx + g, jx - g
+    parts = [box(fr - 12 - 12, fr + 12 + 12, -32, -22, zc - 15, zc + 15) if not has_left else box(fl - 12, fr + 12, -32, -22, zc - 15, zc + 15)]
+    parts += [box(fr - 12, fr + 12, -22, -3, zc - 15, zc + 15), box(fr - 19, fr + 19, -3, 0, zc - 20, zc + 20)]
+    # right segment support: front plate behind the rail, web down to the base plate
+    parts += [box(xs + 0.5, xs + 34, -40, -37, zc - 15, zc + 15), box(jx + RAIL_OFF - XI - 3, jx + RAIL_OFF - XI, -37, -3, zc - 15, zc + 15)]
+    cut = [cyl(2.25, -33, -21, 'y', (jx + 20 * math.cos(a), zc + 20 * math.sin(a)), 14) for a in (0.785, 2.356, 3.927, 5.498)]
+    cut += _holes_y([(fr, zc - 12.5), (fr, zc + 12.5)], -4, 1, 2.75)
+    cut += _holes_y([(xs + 10, zc), (xs + 24, zc)], -41, -36, 2.75)
+    if has_left:
+        parts += [box(fl - 12, fl + 12, -22, -3, zc - 15, zc + 15), box(fl - 19, fl + 19, -3, 0, zc - 20, zc + 20)]
+        # left segment support (S-shaped web: it has to get round the bearing plate)
+        parts += [box(xe - 34, xe - 0.5, -40, -37, zc - 15, zc + 15), box(xe - 3.5, xe - 0.5, -37, -19, zc - 15, zc + 15),
+                  box(xe - 3.5, fl - 15, -22, -19, zc - 15, zc + 15), box(fl - 18, fl - 15, -22, -3, zc - 15, zc + 15)]
+        cut += _holes_y([(fl, zc - 12.5), (fl, zc + 12.5)], -4, 1, 2.75)
+        cut += _holes_y([(xe - 10, zc), (xe - 24, zc)], -41, -36, 2.75)
+    return union_all(parts) - union_all(cut)
+
+
+def mid_support(fx, zc):
+    """I-shaped aluminium support for the long last stretch of a rail: front plate behind the rail, web, base plate on the post flange
+    (flange centre fx + ANG/2); M5 through the flange, T-nuts in the rail's back slot"""
+    c = fx + ANG / 2
+    part = union_all([box(c - 17, c + 17, -40, -37, zc - 15, zc + 15), box(c - 2, c + 2, -37, -3, zc - 15, zc + 15),
+                      box(c - 19, c + 19, -3, 0, zc - 20, zc + 20)])
+    cut = _holes_y([(c - 9, zc), (c + 9, zc)], -41, -36, 2.75) + _holes_y([(c - 14, zc - 12.5), (c + 14, zc + 12.5)], -4, 1, 2.75)
+    return part - union_all(cut)
+
+
 def row_static_local():
     """one row in its own frame: the bays, a vertical rail + crossing brackets per bay, the row's two horizontal rails
     (they end at the cart's rail pieces)"""
@@ -250,23 +306,26 @@ def row_static_local():
         jx = bx - RAIL_OFF
         z0 = JZ_UP + g
         add("V-slot rail (vertical)", A.vslot_z(z0, RAIL_TOP_V3).translate(jx), A.C_RAIL)
-        for off, sl in rack_pieces(RAIL_TOP_V3 - z0):
-            add("printed in-slot rack", P2.rack_strip(0, sl).translate(jx, 0, z0 + off), A.C_PRINT)
+        for off, st in comb_line(z0, RAIL_TOP_V3, JZ_LO):
+            add("printed in-slot rack", st.translate(jx, 0, z0 + off), A.C_PRINT)
         add("V-slot rail (vertical, between crossings)", A.vslot_z(JZ_LO + g, JZ_UP - g).translate(jx), A.C_RAIL)
-        for off, sl in rack_pieces(JZ_UP - JZ_LO - 2 * g):
-            add("printed in-slot rack", P2.rack_strip(0, sl).translate(jx, 0, JZ_LO + g + off), A.C_PRINT)
-        for zb in (RAIL_TOP - 45, 650.0):
+        for off, st in comb_line(JZ_LO + g, JZ_UP - g, JZ_LO):
+            add("printed in-slot rack", st.translate(jx, 0, JZ_LO + g + off), A.C_PRINT)
+        for zb in (RAIL_TOP - 45, 650.0, (JZ_LO + JZ_UP) / 2 - 20):
             add("printed rail bridge", P2.rail_bridge().translate(jx, 0, zb), A.C_PRINT)
-        for zc in CROSS_Z:      # small printed bracket from the bearing to the next rack post
-            add("printed crossing bracket", box(jx - 18, jx + 60, -31, -22, zc - 15, zc + 15), A.C_PRINT)
+        for zc in CROSS_Z:      # aluminium bracket: bearing plate + stems to both neighbouring rack posts + rail supports
+            add("aluminium crossing bracket", crossing_bracket(jx, zc, bx > ROW_BAY_X[0]), A.C_ANGLE)
+        if bx == ROW_BAY_X[-1]:
+            for zc in CROSS_Z:  # the last stretch to the cart (~490 mm) also rests on the post's flange half way
+                add("aluminium rail support (last stretch)", mid_support(bx + XI, zc), A.C_ANGLE)
     cuts = [ROW_RAIL_X[0]] + [v for bx in ROW_BAY_X for v in (bx - RAIL_OFF - g, bx - RAIL_OFF + g)] + [ROW_RAIL_X[1]]
     for x1, x2 in zip(cuts[0::2], cuts[1::2]):
         if x2 - x1 < 20.0:
             continue                       # no stubs: the rail simply starts at the first crossing piece
         for zc in CROSS_Z:
             add("V-slot rail (horizontal)", A.vslot_z(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_RAIL)
-            for off, sl in rack_pieces(x2 - x1):
-                add("printed in-slot rack", P2.rack_strip(0, sl).rotate('y', 90).translate(x1 + off, 0, zc), A.C_PRINT)
+            for off, st in comb_line(x1, x2, ROW_BAY_X[0] - RAIL_OFF):
+                add("printed in-slot rack", st.rotate('y', 90).translate(x1 + off, 0, zc), A.C_PRINT)
     # the rails run on ~120 mm past the last rack to meet the cart: short arms from the rack's end post carry their ends,
     # and a third arm carries the socket for the cart's lock pin (nothing stands on the floor here)
     ye0, ye1 = RAIL_Y + 10, RAIL_Y + 40
@@ -345,7 +404,7 @@ def cart_local():
         it = []
         for zc in CROSS_Z:
             it += [("rail piece on cart", A.vslot_z(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_RAIL),
-                   ("printed in-slot rack (cart)", P2.rack_strip(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_PRINT)]
+                   ("printed in-slot rack (cart)", comb_line(x0, x1, ROW_BAY_X[0] - RAIL_OFF)[0][1].rotate('y', 90).translate(x0, 0, zc), A.C_PRINT)]
         top = BEAM_Z[1] + 24
         frame = [box(x0, x0 + 20, ya, ya + 20, 22, top), box(x1 - 20, x1, ya, ya + 20, 22, top),      # posts behind the pieces
                  box(x0, xt1, ya, ya + 20, top - 12, top),                                            # top cross member
@@ -390,7 +449,7 @@ def crossing_local():
         h = SEG_V3
         _R = [("50 mm turntable bearing", cyl(BEARING_R, -40, -32, 'y', (0, 0), 32), A.C_JUNC),
               ("rail piece on turntable", A.vslot_z(-h, h), A.C_RAIL),
-              ("printed in-slot rack (turntable)", P2.rack_strip(0, 2 * h).translate(0, 0, -h), A.C_PRINT)]
+              ("printed in-slot rack (turntable)", P2.rack_strip(RACK_A0, 2 * h + RACK_A0).translate(0, 0, -h), A.C_PRINT)]
     return _R
 
 

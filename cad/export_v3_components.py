@@ -31,7 +31,7 @@ CATEGORY = [
     (r"lock solenoid|cart lock|cart docking bar", "Locks (robot + cart)", "LCK"),
     (r"^cart|trolley|floor guide|transfer|beam", "Transfer cart + beam", "CRT"),
     (r"slotted angle rack", "Rack", "RAC"),
-    (r"crossing|turntable|rail piece|V-slot rail|in-slot rack|rail bridge|rail end", "Rails + crossings", "RAI"),
+    (r"crossing|rail support|turntable|rail piece|V-slot rail|in-slot rack|rail bridge|rail end", "Rails + crossings", "RAI"),
     (r"hub|V wheel|spacer|climber|swivel axle|column bar|swivel motor|battery", "Robot body + hubs", "ROB"),
     (r"telescopic|finger|stage|belt|servo|pulley|idler|cross shaft|arm|tray|load cell|GT2|limit switch|basket stop|turn|front post|lift carriage",
      "Tray + picker + drives", "PIC"),
@@ -60,7 +60,7 @@ PROCESS = [
     (r"telescopic arm", "Aluminium flat bar 13 x 8 (cut to length)"),
     (r"scissor arm", "Aluminium flat bar 14 x 8 (cut, drill)"),
     (r"V-slot|rail piece|beam|rail end arm|cart frame|guide rail|post", "Aluminium extrusion (cut to length)"),
-    (r"plate|bracket", "Aluminium plate / bar (laser cut, drill)"),
+    (r"plate|bracket|rail support", "Aluminium plate / bar (laser cut, drill)"),
     (r"battery", "Buy (battery + electronics box)"),
     (r"basket", "Buy (basket)"),
     (r"gear|pinion", "Print fine or order nylon (SLS)"),
@@ -138,6 +138,9 @@ def main():
               ("Cover screws: M3 x 12 machine screw, pan head - turn-drive cap (2) and the 3 jack motor covers (12)", "Covers", 14, "Buy (hardware)"),
               ("Cover nuts: M3 hex nut, standard or nylon-insert - caught in the printed slots / pockets", "Covers", 14, "Buy (hardware)"),
               ("Cover washers: M3 flat washer", "Covers", 14, "Buy (hardware)"),
+              ("Rack fixing: in-slot racks slide into the rail's front slot from the free end in order (press fit), one drop of cyanoacrylate per piece; end caps stop them at the free ends", "Rails + crossings", 0, "Buy (hardware)"),
+              ("Rail / bracket fixing: M5 x 10 button screw + M5 slot T-nut (V-slot) - rail to bracket support plates and bridges", "Rails + crossings", 0, "Buy (hardware)"),
+              ("Crossing bracket fixing: M5 x 12 screw + washer through the rack post flange (2 per post) + 4 x M4 x 12 bolts for the turntable bearing's fixed ring", "Rails + crossings", 0, "Buy (hardware)"),
               ("Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins", "Hardware", 0, "Buy (assorted; count from the drawings)")]
 
     # number + export, grouped by category

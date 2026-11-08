@@ -22,11 +22,17 @@ from params import *  # noqa: F401,F403
 
 # ---------------- rails
 JZ_LO = 70.0                   # lower horizontal rail (v2 had it at 140)
-D_HUB = 260.0                  # hub spacing = spacing of the two horizontal rails
+D_HUB = 55 * P  # (259.18 = 55 rack pitches)                  # hub spacing = spacing of the two horizontal rails
 JZ_UP = JZ_LO + D_HUB          # upper horizontal rail z 330 (below shelf 2 at 353)
 CROSS_Z = (JZ_LO, JZ_UP)
-SEG_V3 = 58.0                  # crossing turntable piece +/-58 (the hub's wheels span +/-45)
-GAP_V3 = 2.0
+# Rack tooth phase (made exact): the crossing piece is symmetric with a tooth SPACE at its centre, 11.5 pitches + RACK_E to each end; the
+# fixed racks start GAP_V3 further out, so the tooth comb continues across the gap (vertical and horizontal, because the comb is
+# symmetric).  Needs the distance between two crossing pieces to be a whole number of pitches (bay pitch = 93, hub spacing = 55,
+# cart = 128 pitches from the last crossing).
+GAP_V3 = 1.0                   # gap between a crossing piece and the fixed rail beside it
+RACK_E = (P - GAP_V3) / 2.0    # a rack end face lies this far beyond its last tooth centre (1.856 mm; tooth root half width 1.76)
+RACK_A0 = P / 2.0 - RACK_E     # rack_strip phase that puts the first tooth centre RACK_E from the start face (0.5 mm)
+SEG_V3 = 11.5 * P + RACK_E     # crossing turntable piece half length (56.05; the hub's wheels span +/-45)
 RAIL_TOP_V3 = 1080.0           # vertical rails 80 mm above the rack (upper hub at the top shelf)
 BEARING_R = 25.0               # 50 mm lazy-susan bearing behind each crossing piece
 
@@ -129,7 +135,7 @@ N_BAYS_ALL = N_ROWS * ROW_BAYS
 # to the next row's rail ends, and the robot drives on.  No turning, all rows face the same way.  The cart has no motor:
 # the robot's own pinion (the turn drive) drops into a fixed straight gear rack along the track and pushes robot + cart.
 # The cart is always at the robot's row (it is the only way between rows), so it never waits on the wrong side.
-X_CART = DX_LAST + 371.0                       # robot column on the cart (its battery then clears the last rack, x 191)
+X_CART = DX_LAST - RAIL_OFF + 128 * P  # (= DX_LAST + 373.2: a whole number of pitches from the last crossing)                       # robot column on the cart (its battery then clears the last rack, x 191)
 # ---------------- docking station right of the cart, one per row (home-delivery hand-over): a motorized scissor "lab jack"
 # The robot only drags baskets (no lifting).  When it stands on the transfer cart its tray hangs over the empty floor right of
 # the cart, so the dock sits THERE (the rails stay short): the robot pushes the tray basket across the same ~68 mm gap onto a
@@ -163,7 +169,7 @@ EMPTY_SLOTS = [(1, 3), (3, 1), (ROW_BAYS + 0, 3), (ROW_BAYS + 3, 4), (2 * ROW_BA
 BASKET_IDS = [(b, l) for b in range(N_BAYS_ALL) for l in range(len(LEVELS)) if (b, l) not in EMPTY_SLOTS] + [(N_BAYS_ALL, 0)]
 #                                              (the last id is a parcel the home-delivery robot brings back)
 CART_PIECE = (X_CART - SEG_V3, X_CART + SEG_V3)
-ROW_RAIL_X = (-300.0, CART_PIECE[0] - 2.0)     # fixed horizontal rails of a row (row frame x)
+ROW_RAIL_X = (-300.0, CART_PIECE[0] - GAP_V3)     # fixed horizontal rails of a row (row frame x)
 TRACK_Y = (-420.0, (N_ROWS - 1) * ROW_P + 320.0)   # cart beam / transfer rack extent (world y)
 # The cart HANGS from the transfer beam on two trolleys (V-wheels above and below the beam, wheelbase ~230 mm), so it
 # cannot lean or tip; the floor rail below only guides it sideways (no load, so an uneven floor does not matter); the

@@ -40,7 +40,10 @@ NOTES = [
     (r"turn-drive mast", "Two bosses with side slots for M3 nuts (the cap's screws): print the slots open to the side and drop the nuts in before fitting the cap."),
     (r"jack: motor bracket", "4 hex nut pockets (5.8 mm across flats, 2.6 mm deep) on the back face for the motor cover's screws; plate 66 x 56 mm."),
     (r"in-slot rack", "Printed in segments of 40 whole teeth (188.5 mm; shorter end pieces at the rail ends): the cut runs through a tooth space, so "
-                      "the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive."),
+                      "the 4.712 mm pitch carries across the joint. The V-slot keeps the pieces in line: butt joint + a drop of adhesive. One comb for the whole rail line: "
+                      "every piece starts 1.856 mm before its first tooth centre and ends 1.856 mm after its last, with a 1.0 mm gap at each crossing piece, so the "
+                      "pitch is 4.712 mm across every crossing (bay pitch = 93 pitches, hub spacing = 55, cart = 128). Slide the pieces in from the rail's free end, in order, "
+                      "press fit + one drop of cyanoacrylate each; cap the free ends (the top of each vertical rail, the cart end) with a printed end stop."),
     (r"transfer rack segment", "40 whole teeth (188.5 mm); 10 full pieces + 1 shorter, butted on the 2 m beam (screw each piece to the beam). Or buy a module 1.5 rack."),
     (r"column bar", "Aluminium bar 28 x 24 x 300 (was a printed column that did not fit the bed): drill the bolt pattern; no joint needed."),
     (r"climber pinion|turn drive pinion|transfer pinion", "Bore for the 6 mm shaft with a flat (H8); 100 % infill; try a test pair for 0.1-0.2 mm backlash; metal gear if it wears."),
@@ -128,6 +131,10 @@ def main():
     w("**What the CAD and the sim now do for printing** (done in `generator/assembly_v3.py`, so the MuJoCo model has the same parts):\n"
       "- **Racks in segments:** every printed rack is cut into pieces of 40 whole teeth (188.5 mm) so the pitch carries across the joints; the earlier "
       "690 / 481 / 318 mm in-slot racks and the 2 m transfer rack could not be printed whole.\n"
+      "- **Tooth phase made exact:** the crossing piece is symmetric (a tooth space at its centre), the gaps are 1.0 mm and the distances are whole pitches, so the "
+      "comb is continuous through every crossing (it was 2 mm = 42 % of a pitch out for the horizontal rails).\n"
+      "- **Rails supported:** a laser-cut aluminium bracket per crossing (bearing plate, stems to the posts on both sides, a support for each rail end next to the crossing piece), "
+      "I-shaped supports where the last stretch passes a post, and a rail bridge half-way up the vertical rail between the two crossings.\n"
       "- **Column:** now an aluminium bar 28 x 24 x 300 instead of a 300 mm printed part.\n"
       "- **Thin loaded parts thickened:** solenoid brackets 4 -> 6 mm, jack top lugs 4 -> 6 mm and bottom lugs 6 -> 8 mm, jack motor bracket 4 -> 6 mm, lift carriage 2 -> 4 mm.\n"
       "- **Bores:** the stage-2 pulleys have a 4 mm axle bore (and bigger index holes); the flip-finger collar is 19.2 mm with a square hole for the tube; "
