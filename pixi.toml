@@ -55,6 +55,15 @@ sim-v2 = { cmd = "mjpython sim/run.py", description = "v2 robot with physics in 
 sim-v2-headless = { cmd = "python sim/run.py --headless", description = "v2: fetch + hand/rail loads without a window" }
 legs = { cmd = "python sim/legs.py", description = "static wheel/hinge loads of the two-leg layout" }
 
+# mjpython only exists on macOS; Windows/Linux use plain python
+[feature.sim.target.win-64.tasks]
+sim = { cmd = "python sim/run_v3.py", description = "v3 simulation in the MuJoCo viewer (Windows)" }
+sim-v2 = { cmd = "python sim/run.py", description = "v2 simulation in the MuJoCo viewer (Windows)" }
+
+[feature.sim.target.linux-64.tasks]
+sim = { cmd = "python sim/run_v3.py", description = "v3 simulation in the MuJoCo viewer (Linux)" }
+sim-v2 = { cmd = "python sim/run.py", description = "v2 simulation in the MuJoCo viewer (Linux)" }
+
 [environments]
 default = { solve-group = "main" }
 viz = { features = ["viz"], solve-group = "main" }

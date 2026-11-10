@@ -282,5 +282,5 @@ Motors: climb = JGY-370 1:200 (~22 rpm) with Hall encoder; hand = JGY-370 1:600 
 
 ## Roadmap
 - [x] Exact B-rep export of all parts and assembly poses
-- [ ] FreeCAD FEM (CalculiX) studies for the load-bearing parts – `simulation/`
+- [x] FreeCAD FEM (CalculiX) studies for the load-bearing parts – `simulation/`
 - [ ] Fusion 360 cross-check
