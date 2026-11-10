@@ -1,0 +1,57 @@
+{
+ "section": {
+  "A": 251.19999999999996,
+  "Ix": 9226.205333333333,
+  "Iy": 9226.205333333332
+ },
+ "material": {
+  "E": 69000.0,
+  "yield_MPa": 110.0
+ },
+ "H324": {
+  "nominal (2 kg payload)": {
+   "max_disp_mm": 0.010405384855591863,
+   "vm_max_all_MPa": 7.86509535618361,
+   "vm_max_away_MPa": 2.519433244930869,
+   "sf_yield_away": 43.66061304514472,
+   "sf_yield_all": 13.985844419993839
+  },
+  "dynamic x3 (jolt / e-stop)": {
+   "max_disp_mm": 0.031216116994470938,
+   "vm_max_all_MPa": 23.595254996311482,
+   "vm_max_away_MPa": 7.558289884580833,
+   "sf_yield_away": 14.553556648363504,
+   "sf_yield_all": 4.6619542792479125
+  },
+  "lateral abuse 200 N at midspan": {
+   "max_disp_mm": 0.07843751096961456,
+   "vm_max_all_MPa": 29.37241774109707,
+   "vm_max_away_MPa": 10.924608160896922,
+   "sf_yield_away": 10.06901102354676,
+   "sf_yield_all": 3.745010062487674
+  }
+ },
+ "V694": {
+  "nominal (2 kg payload)": {
+   "max_disp_mm": 0.009095876945761947,
+   "vm_max_all_MPa": 3.524644123204457,
+   "vm_max_away_MPa": 1.9588667757877436,
+   "sf_yield_away": 56.15491638310335,
+   "sf_yield_all": 31.20882453800546
+  },
+  "dynamic x3 (jolt / e-stop)": {
+   "max_disp_mm": 0.027287630836287897,
+   "vm_max_all_MPa": 10.573927782364839,
+   "vm_max_away_MPa": 5.876599159303131,
+   "sf_yield_away": 18.718309181571644,
+   "sf_yield_all": 10.40294602573867
+  },
+  "lateral abuse 200 N at midspan": {
+   "max_disp_mm": 0.06933069055323345,
+   "vm_max_all_MPa": 22.77699079253662,
+   "vm_max_away_MPa": 14.623898048015592,
+   "sf_yield_away": 7.5219342776344496,
+   "sf_yield_all": 4.82943515242777
+  }
+ }
+}

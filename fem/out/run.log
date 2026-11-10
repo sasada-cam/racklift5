@@ -1,0 +1,11 @@
+profile: A=251.2 mm2  Ix=9226 mm4  Iy=9226 mm4  (modelled slotted section; stock 2020 extrusion is stiffer, so this is conservative)
+
+[H324] mesh: 25990 nodes, 13623 tet10
+  nominal (2 kg payload)         umax 0.0104 mm   VM away from loads   2.52 MPa (SF  43.7) | incl. contact patches   7.87 MPa (SF 14.0)
+  dynamic x3 (jolt / e-stop)     umax 0.0312 mm   VM away from loads   7.56 MPa (SF  14.6) | incl. contact patches  23.60 MPa (SF  4.7)
+  lateral abuse 200 N at midspan umax 0.0784 mm   VM away from loads  10.92 MPa (SF  10.1) | incl. contact patches  29.37 MPa (SF  3.7)
+
+[V694] mesh: 54949 nodes, 28912 tet10
+  nominal (2 kg payload)         umax 0.0091 mm   VM away from loads   1.96 MPa (SF  56.2) | incl. contact patches   3.52 MPa (SF 31.2)
+  dynamic x3 (jolt / e-stop)     umax 0.0273 mm   VM away from loads   5.88 MPa (SF  18.7) | incl. contact patches  10.57 MPa (SF 10.4)
+  lateral abuse 200 N at midspan umax 0.0693 mm   VM away from loads  14.62 MPa (SF   7.5) | incl. contact patches  22.78 MPa (SF  4.8)
