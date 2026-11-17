@@ -101,6 +101,9 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
   * Climbing: both hubs climb the **single vertical rail**.
   * Every rail crossing has a small turntable piece on a 50 mm bearing. A hub **swivels 90 deg** together with its piece,
     one hub at a time, while the other stays locked.
+  * The bearing is a slewing ring: fixed outer ring bolted to the aluminium crossing bracket, rotating inner ring
+    screwed to the rail piece. A stop pin on the piece runs in a quarter slot in the bracket, so the piece stops exactly
+    at 0 and -90 deg.
   * The body never rotates, so the tray is always level.
 * **Picker:** two 2-stage **telescopic arms** run in the 23 mm gaps beside the basket. **Two servos drive everything**, and
   every part of the mechanism is modelled and moves in the sim:
@@ -189,6 +192,7 @@ pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapsh
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
 pixi run export-components   # every unique component as its own STEP + STL + BOM -> models/v3/components/
 pixi run clearance-v3        # collision check, 157 poses + 3 swept checks (picks, swivels, climb, rows, cart, locks, docks)
+pixi run turntable-v3        # exact check of a crossing turntable: full 0..-90 deg swivel against its bracket + both hard stops
 pixi run -e sim legs --v3    # wheel loads, v3 vs v2
 pixi run -e sim sim-v2       # the v2 robot (with physics)
 ```

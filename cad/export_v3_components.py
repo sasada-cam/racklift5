@@ -141,6 +141,7 @@ def main():
               ("Rack fixing: in-slot racks slide into the rail's front slot from the free end in order (press fit), one drop of cyanoacrylate per piece; end caps stop them at the free ends", "Rails + crossings", 0, "Buy (hardware)"),
               ("Rail / bracket fixing: M5 x 10 button screw + M5 slot T-nut (V-slot) - rail to bracket support plates and bridges", "Rails + crossings", 0, "Buy (hardware)"),
               ("Crossing bracket fixing: M5 x 12 screw + washer through the rack post flange (2 per post) + 4 x M4 x 12 bolts for the turntable bearing's fixed ring", "Rails + crossings", 0, "Buy (hardware)"),
+              ("Turntable fixing per crossing: 2 x M5 x 8 low-head screw + T-nut (bearing inner ring -> rail piece); stop pin M5 x 25 + 10 x 5.2 x 20 mm steel sleeve + M5 washer + T-nut", "Rails + crossings", 0, "Buy (hardware)"),
               ("Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins", "Hardware", 0, "Buy (assorted; count from the drawings)")]
 
     # number + export, grouped by category

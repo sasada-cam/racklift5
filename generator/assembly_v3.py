@@ -260,6 +260,15 @@ def _holes_y(pts, y0, y1, r):
     return [cyl(r, y0, y1, 'y', p, 16) for p in pts]
 
 
+def tt_stop_slot(jx, zc):
+    """quarter slot in the bracket for the turntable stop pin.  The pin sits TT_PIN_R below the crossing on the piece's axis:
+    at 0 deg (vertical) it is at (jx, zc - R), at -90 deg (horizontal) at (jx + R, zc).  The round slot ends are the hard stops,
+    laser cut: 0.2 mm slot play / 36 mm radius = 0.3 deg -> < 0.3 mm at the piece's ends."""
+    r, w = TT_PIN_R, TT_SLEEVE_R + 0.2
+    ring = (cyl(r + w, -33, -21, 'y', (jx, zc), 64) - cyl(r - w, -34, -20, 'y', (jx, zc), 64)) * box(jx, jx + r + w + 1, -34, -20, zc - r - w - 1, zc)
+    return union_all([ring, cyl(w, -33, -21, 'y', (jx, zc - r), 24), cyl(w, -33, -21, 'y', (jx + r, zc), 24)])
+
+
 def crossing_bracket(jx, zc, has_left):
     """ONE aluminium bracket (3 mm plate, laser cut / bent, or milled) per crossing, fixed with M5 screws through the rack posts' flanges:
     bearing plate behind the turntable bearing (4 holes on a 40 mm circle: the bearing's fixed ring), a stem to the post flange on each
@@ -268,13 +277,17 @@ def crossing_bracket(jx, zc, has_left):
     fr = jx + RAIL_OFF - XI - ANG / 2           # centre of the right post's flange (the post right of the crossing)
     fl = jx + RAIL_OFF - BAY_P + XI + ANG / 2   # centre of the left post's flange (the previous bay's post)
     xs, xe = jx + g, jx - g
-    parts = [box(fr - 12 - 12, fr + 12 + 12, -32, -22, zc - 15, zc + 15) if not has_left else box(fl - 12, fr + 12, -32, -22, zc - 15, zc + 15)]
+    # bearing plate (the first bay has no left stem: the plate still spans the bearing, cantilevered from the right post)
+    parts = [box(jx - 30, fr + 24, -32, -22, zc - 15, zc + 15) if not has_left else box(fl - 12, fr + 12, -32, -22, zc - 15, zc + 15)]
+    # stop ear: carries the quarter slot of the turntable stop pin (slot ends = the 0 and -90 deg hard stops)
+    parts += [box(jx - 8, jx + TT_PIN_R + 8, -32, -22, zc - TT_PIN_R - 8, zc)]
     parts += [box(fr - 12, fr + 12, -22, -3, zc - 15, zc + 15), box(fr - 19, fr + 19, -3, 0, zc - 20, zc + 20)]
     # right segment support: front plate behind the rail, web down to the base plate
     parts += [box(xs + 0.5, xs + 34, -40, -37, zc - 15, zc + 15), box(jx + RAIL_OFF - XI - 3, jx + RAIL_OFF - XI, -37, -3, zc - 15, zc + 15)]
     cut = [cyl(2.25, -33, -21, 'y', (jx + 20 * math.cos(a), zc + 20 * math.sin(a)), 14) for a in (0.785, 2.356, 3.927, 5.498)]
     cut += _holes_y([(fr, zc - 12.5), (fr, zc + 12.5)], -4, 1, 2.75)
     cut += _holes_y([(xs + 10, zc), (xs + 24, zc)], -41, -36, 2.75)
+    cut += [tt_stop_slot(jx, zc)]
     if has_left:
         parts += [box(fl - 12, fl + 12, -22, -3, zc - 15, zc + 15), box(fl - 19, fl + 19, -3, 0, zc - 20, zc + 20)]
         # left segment support (S-shaped web: it has to get round the bearing plate)
@@ -447,7 +460,20 @@ def crossing_local():
     global _R
     if _R is None:
         h = SEG_V3
-        _R = [("50 mm turntable bearing", cyl(BEARING_R, -40, -32, 'y', (0, 0), 32), A.C_JUNC),
+        # bearing: rotating ring (front, on the rail piece) / fixed ring (back, on the bracket).  The rotating ring is fixed with
+        # 2 x M5 low-head screws into T-nuts in the piece's back slot (fitted before the bearing goes on the bracket, through
+        # the fixed ring's access holes); the fixed ring with 4 x M4 on the 40 mm circle into the bracket
+        # slewing ring: fixed OUTER ring r 17..25 (y -39.5..-32, M4 holes on the 40 mm circle -> bracket), rotating INNER ring
+        # r < 16.5 (y -40..-32.5, clear of the bracket); the screws' heads sit in counterbores in the inner ring
+        holes = union_all([cyl(2.75, -41, -35, 'y', (0, z), 16) + cyl(TT_ACCESS_R, -35.5, -32, 'y', (0, z), 20) for z in (-TT_SCREW_Z, TT_SCREW_Z)])
+        brg = (cyl(BEARING_R, -39.5, -32, 'y', (0, 0), 48) - cyl(17, -41, -31, 'y', (0, 0), 48)) + (cyl(16.5, -40, -32.5, 'y', (0, 0), 48) - holes)
+        scr = union_all([cyl(2.5, -40, -35.5, 'y', (0, z), 16) + cyl(4.25, -35.5, -32.5, 'y', (0, z), 20) for z in (-TT_SCREW_Z, TT_SCREW_Z)])
+        pz = -TT_PIN_R
+        pin = union_all([cyl(TT_SLEEVE_R, -40, -20, 'y', (0, pz), 24), cyl(6, -20, -19, 'y', (0, pz), 24),
+                         cyl(4.25, -19, -16, 'y', (0, pz), 24)])
+        _R = [("50 mm turntable bearing", brg, A.C_JUNC),
+              ("turntable rotor screws (2 x M5 x 8 low head + T-nut)", scr, A.C_STEEL),
+              ("turntable stop pin (M5 x 25 + 10 mm steel sleeve + washer, T-nut)", pin, A.C_STEEL),
               ("rail piece on turntable", A.vslot_z(-h, h), A.C_RAIL),
               ("printed in-slot rack (turntable)", P2.rack_strip(RACK_A0, 2 * h + RACK_A0).translate(0, 0, -h), A.C_PRINT)]
     return _R

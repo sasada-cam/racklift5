@@ -35,6 +35,10 @@ RACK_A0 = P / 2.0 - RACK_E     # rack_strip phase that puts the first tooth cent
 SEG_V3 = 11.5 * P + RACK_E     # crossing turntable piece half length (56.05; the hub's wheels span +/-45)
 RAIL_TOP_V3 = 1080.0           # vertical rails 80 mm above the rack (upper hub at the top shelf)
 BEARING_R = 25.0               # 50 mm lazy-susan bearing behind each crossing piece
+TT_SCREW_Z = 10.0              # 2 x M5 screws fix the bearing's rotating inner ring to the piece (T-nuts in its back slot)
+TT_ACCESS_R = 4.75             # counterbores for those screw heads in the inner ring
+TT_PIN_R = 36.0                # stop pin on the piece's axis, this far from the crossing (beyond the bearing, clear of the stems)
+TT_SLEEVE_R = 5.0              # 10 mm steel sleeve on the stop pin (bears on the slot ends)
 
 # ---------------- robot (C = centre between the hubs)
 HUB_WHEEL_A = 32.5
