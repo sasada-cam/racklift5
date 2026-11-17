@@ -256,15 +256,19 @@ def build_body_servo_mount() -> bd.Part:
 
 
 def build_in_slot_rack(length: float = 200.0) -> bd.Part:
-    """In-slot toothed rack seated inside the 2020 T-slot opening (MOD=1.5, PA=20 deg)."""
+    """In-slot toothed rack shaped to lock cleanly inside the exact 2020 blueprint T-slot (MOD=1.5, PA=20 deg)."""
     mod = 1.5
     pitch = math.pi * mod
     pa = math.radians(20.0)
     ded = 1.25 * mod
     add = 0.8 * mod
-    z_root = -G.RAIL_CENTER_DROP + G.RAIL_W / 2.0 - 5.5  # -7.975 mm (0.3 mm above T-slot floor -8.275)
+    z_rail_top = -G.RAIL_CENTER_DROP + G.RAIL_W / 2.0     # -2.475 mm
+    z_floor = z_rail_top - G.SLOT_DEPTH                  # -9.475 mm (exact 7.00 mm T-slot floor)
+    z_bev = z_rail_top - G.POCKET_SIDE_Z                 # -6.525 mm (4.05 mm below top)
+    z_lip = z_rail_top - G.FLANGE_T                      # -3.975 mm (1.50 mm below top)
+    z_root = z_rail_top - 5.5                            # -7.975 mm
     z_pitch = z_root + ded                               # -6.100 mm
-    z_tip = z_pitch + add                                # -4.900 mm (inside T-slot!)
+    z_tip = z_pitch + add                                # -4.900 mm
     s = pitch / 2.0 - 0.30
     hw = lambda z: s / 2.0 + (z_pitch - z) * math.tan(pa)
 
@@ -282,12 +286,31 @@ def build_in_slot_rack(length: float = 200.0) -> bd.Part:
     pts.append((x0 + n_teeth * pitch + 1.0, z_root - 0.3))
 
     with bd.BuildPart() as rk:
+        # Tooth band: 5.2 mm wide -> fits cleanly inside the 6.00 mm slot neck (0.40 mm clearance each side)
         with bd.BuildSketch(bd.Plane.XZ):
             bd.Polygon(*pts, align=None)
-        bd.extrude(amount=5.4, both=True)     # 5.4 mm wide -> fits inside 6.2 mm T-slot!
-        # Center bottom T-slot flange (9.6 mm wide x 2.0 mm high in pocket)
-        with bd.Locations((0, 0, z_root - 0.3)):
-            bd.Box(n_teeth * pitch + 2.0, 9.6, 1.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MAX))
+        bd.extrude(amount=2.6, both=True)
+        # Trapezoidal T-slot base locked inside the 11.90 mm T-pocket & 1.59 mm X-web bevels (Z = -9.275 .. -4.275).
+        # Only the two WINGS (|Y| 2.9..5.2, under the slot lips -> the rack cannot pull out through the 6 mm neck) rise to the
+        # lips; between them a 5.8 mm channel stays open down to the tooth roots, so the teeth stand free and the 5 mm pinion
+        # runs in the channel (0.4 mm each side).  (Base up to the lips across the full width buried the teeth: tips -4.9.)
+        z_xbev = z_rail_top - (G.RAIL_W / 2.0 - (G.SLOT_INNER / 2.0 + 1.59 / (2.0 ** 0.5)))  # -5.401 mm
+        ch = 2.9                                          # half width of the tooth channel
+        with bd.BuildSketch(bd.Plane.YZ):
+            bd.Polygon(
+                (-1.7, z_floor + 0.2),
+                (1.7, z_floor + 0.2),
+                (5.2, z_xbev - 0.3),
+                (5.2, z_lip - 0.3),
+                (ch, z_lip - 0.3),
+                (ch, z_root),
+                (-ch, z_root),
+                (-ch, z_lip - 0.3),
+                (-5.2, z_lip - 0.3),
+                (-5.2, z_xbev - 0.3),
+                align=None,
+            )
+        bd.extrude(amount=(n_teeth * pitch) / 2.0 + 1.0, both=True)
     part = rk.part
     part.label = "T_Slot_In_Rack"
     part.color = bd.Color(0.95, 0.70, 0.25)

@@ -33,12 +33,17 @@ SHIM_H = 1.0
 STANDOFF_H = SPACER_H + SHIM_H  # 7.0 mm from plate bottom to wheel face
 RAIL_CENTER_DROP = STANDOFF_H + WHEEL_W / 2.0  # 12.475 mm below plate bottom
 
-# --- 2020 T-Slot Extrusion (mm) ---
+# --- 2020 T-Slot Extrusion (mm, exact blueprint dimensions) ---
 RAIL_W = 20.0
-RAIL_R = 1.5
-SLOT_OPEN = 6.2
-SLOT_INNER = 11.0
-CORE_D = 5.1
+RAIL_R = 1.50
+MOUTH_W = 7.00             # outer step mouth width
+MOUTH_D = 0.50             # outer step depth
+SLOT_OPEN = 6.00           # inner neck width (6.00 ± 0.30)
+FLANGE_T = 1.50            # total lip thickness (0.50 mouth + 1.00 neck)
+SLOT_INNER = 11.90         # inner T-pocket width
+POCKET_SIDE_Z = 4.05       # outer face to start of 45-deg bevel
+SLOT_DEPTH = 7.00          # total depth from outer face (4.05 + 2.95)
+CORE_D = 5.48              # center bore diameter
 
 
 def build_mt0134_plate(center_shaft_bore_d: float = 5.10) -> bd.Part:
@@ -155,29 +160,55 @@ def build_wheel_stack(is_eccentric: bool = False) -> bd.Compound:
 
 
 def build_t_slot_2020(length: float = 200.0) -> bd.Part:
-    """Build exact 2020 T-Slot Aluminium Extrusion (CNC4551) centered at (Y=0, Z=0), running along X."""
-    h = RAIL_W / 2.0               # 10.0 mm
-    lip = 1.8                      # outer T-slot lip thickness
-    pocket_d = 5.8                 # slot depth from outer face (leaving 8.4 mm core)
+    """Build exact 2020 T-Slot Aluminium Extrusion with 4 symmetric T-slots and 1.59 mm diagonal X-webs:
+    20.00 x 20.00 mm, R1.50 corners, 7.00x0.50 mouth, 6.00 neck, 1.50 lip,
+    11.90 pocket, 1.59 mm diagonal X-webs, 7.00 total slot depth, Ø5.48 center bore."""
+    h = RAIL_W / 2.0               # 10.00 mm
+    web_t = 1.59                   # diagonal X-web thickness
+    diag_off = web_t / (2.0 ** 0.5)  # 1.1243 mm offset from y = ±x
+
+    y_mouth = h - MOUTH_D          # 9.50
+    y_lip = h - FLANGE_T           # 8.50
+    x_mouth = MOUTH_W / 2.0        # 3.50
+    x_neck = SLOT_OPEN / 2.0       # 3.00
+    x_pkt = SLOT_INNER / 2.0       # 5.95
+    y_bev = x_pkt + diag_off       # 7.074 mm (leaves exact 1.59 mm diagonal X-webs!)
+    y_bot = h - SLOT_DEPTH         # 3.00
+    x_bot = y_bot - diag_off       # 1.876 mm
+
+    slot_poly = [
+        (-x_mouth, h + 0.5),
+        (x_mouth, h + 0.5),
+        (x_mouth, y_mouth),
+        (x_neck, y_mouth),
+        (x_neck, y_lip),
+        (x_pkt, y_lip),
+        (x_pkt, y_bev),
+        (x_bot, y_bot),
+        (-x_bot, y_bot),
+        (-x_pkt, y_bev),
+        (-x_pkt, y_lip),
+        (-x_neck, y_lip),
+        (-x_neck, y_mouth),
+        (-x_mouth, y_mouth),
+    ]
 
     with bd.BuildPart() as rail:
         with bd.BuildSketch(bd.Plane.YZ):
             bd.RectangleRounded(RAIL_W, RAIL_W, RAIL_R)
-            # Subtract 4 T-slots (one on each face ±Y, ±Z)
-            for rot in (0, 90, 180, 270):
-                with bd.Locations(bd.Location((0, 0), rot)):
-                    # Outer 6.2 mm neck (from y = h - lip to h + 0.5)
-                    with bd.Locations((0, h - lip / 2.0 + 0.25)):
-                        bd.Rectangle(SLOT_OPEN, lip + 0.6, mode=bd.Mode.SUBTRACT)
-                    # Inner 11.0 mm T-pocket (from y = h - pocket_d to h - lip)
-                    with bd.Locations((0, h - (pocket_d + lip) / 2.0)):
-                        bd.Rectangle(SLOT_INNER, pocket_d - lip, mode=bd.Mode.SUBTRACT)
-            # Center Ø5.1 mm bore
+            # Rotate 2D coordinates explicitly for all 4 slots (0, 90, 180, 270 deg)
+            for rot_pts in (
+                slot_poly,
+                [(-y, x) for x, y in slot_poly],
+                [(-x, -y) for x, y in slot_poly],
+                [(y, -x) for x, y in slot_poly],
+            ):
+                bd.Polygon(*rot_pts, align=None, mode=bd.Mode.SUBTRACT)
             bd.Circle(radius=CORE_D / 2.0, mode=bd.Mode.SUBTRACT)
-        bd.extrude(amount=length, both=True)
+        bd.extrude(amount=length / 2.0, both=True)
 
     part = rail.part
-    part.label = "T_Slot_2020_CNC4551"
+    part.label = "T_Slot_2020_Blueprint"
     part.color = bd.Color(0.80, 0.82, 0.85)
     return part
 
