@@ -31,6 +31,7 @@ CATEGORY = [
     (r"lock solenoid|cart lock|cart docking bar", "Locks (robot + cart)", "LCK"),
     (r"^cart|trolley|floor guide|transfer|beam", "Transfer cart + beam", "CRT"),
     (r"slotted angle rack", "Rack", "RAC"),
+    (r"^pod: ", "Robot body + hubs", "ROB"),
     (r"crossing|rail support|turntable|rail piece|V-slot rail|in-slot rack|rail bridge|rail end", "Rails + crossings", "RAI"),
     (r"hub|V wheel|spacer|climber|swivel axle|column bar|swivel motor|battery", "Robot body + hubs", "ROB"),
     (r"telescopic|finger|stage|belt|servo|pulley|idler|cross shaft|arm|tray|load cell|GT2|limit switch|basket stop|turn|front post|lift carriage",
@@ -38,6 +39,7 @@ CATEGORY = [
 ]
 PROCESS = [
     (r"^cover:", "3D print (PETG), 2.4 mm walls, closed face down"),
+    (r"^pod: .*(MT0134|V wheel|4632-370 climb|TD-8125MG|608ZZ|M8|aluminium servo horn)", "Buy (pod hardware: see cad/build_t_slot_option1.py)"),
     (r"lock solenoid bracket|finger shaft bearing|pivot lug|belt anchor", "3D print (PETG)"),
     (r"column bar", "Aluminium bar 28 x 24 (cut to length, drill)"),
     (r"in-slot rack|transfer rack segment|climber pinion|turn drive pinion|transfer pinion", "Print fine (0.12 mm, 100 % infill) or order nylon (SLS)"),
@@ -92,7 +94,7 @@ def sources():
         for it in items:
             out.append((it[0], it[1]))
     for f in (A.robot_covers_local, A.dock_cover_local, A.row_static_local, A.xfer_static, A.dock_static_local, A.crossing_local, A.cart_local, A.cart_lock_local,
-              A.hub_local, A.hub_pinion_local, A.robot_local, A.arm_drive_local, A.idler_local, A.servo1_local, A.fservo_local,
+              A.hub_local, A.hub_pinion_local, A.hub_gear_local, A.robot_local, A.arm_drive_local, A.idler_local, A.servo1_local, A.fservo_local,
               A.arm_mid_local, A.arm_in_local, A.turn_carriage_local, A.turn_pinion_local, A.dock_bolt_local,
               A.release_plunger_local, A.jack_platform_local, A.jack_arm1_local, A.jack_arm2_local, A.jack_slider_local,
               A.jack_screw_local):

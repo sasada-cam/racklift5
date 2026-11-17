@@ -21,9 +21,11 @@ Same global frame as v2 (x right, y into the rack, z up, mm).  See docs/design/0
 from params import *  # noqa: F401,F403
 
 # ---------------- rails
-JZ_LO = 70.0                   # lower horizontal rail (v2 had it at 140)
-D_HUB = 55 * P  # (259.18 = 55 rack pitches)                  # hub spacing = spacing of the two horizontal rails
-JZ_UP = JZ_LO + D_HUB          # upper horizontal rail z 330 (below shelf 2 at 353)
+JZ_LO = 90.0                   # lower horizontal rail (v2: 140, v3: 70).  90 because the 17.5-pitch crossing piece sweeps r 84.9:
+                               # turned vertical at the lower crossing it must stay 5 mm above the floor
+D_HUB = 51 * P  # (240.33 = 51 rack pitches)   hub spacing = spacing of the two horizontal rails.  Was 55 P: with the lower rail
+                # raised to 90 the upper one (90 + 55 P = 349) would cross shelf 2's baskets (353); 51 P puts it at 330.3 again
+JZ_UP = JZ_LO + D_HUB          # upper horizontal rail z 330.3 (bracket top 350.3, under shelf 2 at 353)
 CROSS_Z = (JZ_LO, JZ_UP)
 # Rack tooth phase (made exact): the crossing piece is symmetric with a tooth SPACE at its centre, 11.5 pitches + RACK_E to each end; the
 # fixed racks start GAP_V3 further out, so the tooth comb continues across the gap (vertical and horizontal, because the comb is
@@ -32,7 +34,10 @@ CROSS_Z = (JZ_LO, JZ_UP)
 GAP_V3 = 1.0                   # gap between a crossing piece and the fixed rail beside it
 RACK_E = (P - GAP_V3) / 2.0    # a rack end face lies this far beyond its last tooth centre (1.856 mm; tooth root half width 1.76)
 RACK_A0 = P / 2.0 - RACK_E     # rack_strip phase that puts the first tooth centre RACK_E from the start face (0.5 mm)
-SEG_V3 = 11.5 * P + RACK_E     # crossing turntable piece half length (56.05; the hub's wheels span +/-45)
+SEG_V3 = 17.5 * P + RACK_E     # crossing turntable piece half length (84.32).  Was 11.5 P (56.05); the Option 1 swivel pod
+                               # needs 17.5: its side pod + 4632-370 hang below the rail top out to r 81.4 and the climb pinion
+                               # (52.5 out) reaches r 64.5 -> both must stay on the turning piece while it swivels
+                               # (cad/build_option1_crossing.py: 11.5 P = 39 collisions, 17.5 P = 0)
 RAIL_TOP_V3 = 1080.0           # vertical rails 80 mm above the rack (upper hub at the top shelf)
 BEARING_R = 25.0               # 50 mm lazy-susan bearing behind each crossing piece
 TT_SCREW_Z = 10.0              # 2 x M5 screws fix the bearing's rotating inner ring to the piece (T-nuts in its back slot)
@@ -46,9 +51,12 @@ HUB_PLATE_L = 90.0
 CP_OUT = -20.0
 HUB_R0, HUB_R1 = 44.0, 47.0
 HUB_Y = (-82.0, -70.0)
-COL_Y = (-120.0, -96.0)        # column in front of the hubs (hubs swivel behind it, y > -94, radius ~56)
-CZ_HOME = JZ_LO + D_HUB / 2    # 200: travel height; shelf 1 is picked here
-T_V3 = LEVELS[0] - CZ_HOME     # tray top relative to C (-22)
+COL_SHIFT = -49.5              # the Option 1 swivel pods (generator/pod_v3.py) reach y -145.5 (body mount front face): the column
+                               # and everything fixed to it moved this much further from the rail (was y -120 .. -96)
+COL_Y = (-169.5, -145.5)       # column in front of the pods; both pods' body mounts bolt to its rear face
+CZ_HOME = JZ_LO + D_HUB / 2    # 210.2: travel height; shelf 1 is picked here
+T_V3 = LEVELS[0] - CZ_HOME     # tray top relative to C (-32.2)
+T_V3_OLD = -21.591             # (the tray height the hand-placed covers were drawn for; they follow T_V3 - T_V3_OLD)
 
 # ---------------- tray + telescopic arms (2 servos drive everything)
 BXR = RAIL_OFF                 # bay centre relative to the column
@@ -108,7 +116,7 @@ RAIL_Y = -50.0                         # horizontal rail centre line (y)
 TURN_PIN_T = 16                        # 16T, module 1.5 -> pitch radius 12
 TURN_PIN_R = 1.5 * TURN_PIN_T / 2
 TURN_GEAR_Z = (182.0, 190.0)           # pinion plane above C (above the upper hub's cover, C+177)
-TURN_PIN_XY = (60.0, -102.5)           # pinion axis in the robot frame (on a mast above the column)
+TURN_PIN_XY = (60.0, -102.5 + COL_SHIFT)           # pinion axis in the robot frame (on a mast above the column)
 
 
 # ---------------- made for printing
@@ -121,7 +129,7 @@ FINGER_COLLAR_R = 9.6                          # flip-finger collar: wall >= 1.5
 # (print it with a 5.8 mm across-flats pocket) or, in plywood, a chipboard screw into a 2.5 mm pilot hole.
 COVER_WALL = 2.4
 M3_CLR, M3_NUT_AF, M3_NUT_T = 3.4, 5.8, 2.6    # clearance hole, nut across flats (+0.2 print clearance), nut thickness
-MAST_BOSS_X, MAST_BOSS_Y = (36.0, 64.0), -105.0   # two bosses on the turn-drive mast that the cap screws onto
+MAST_BOSS_X, MAST_BOSS_Y = (36.0, 64.0), -105.0 + COL_SHIFT   # two bosses on the turn-drive mast that the cap screws onto
 COVER_COLOR = (205, 205, 215)
 # ---------------- floor of racks (top view): rows of racks, rails along each row's front, side rails between rows
 # All rows face the same way (front at the row's y = 0, rack behind it), ROW_P apart.  The robot snakes through them:
@@ -172,7 +180,10 @@ MOTOR_L = 67.0                                 # NEMA17 (42 mm) + 25 mm 3:1 plan
 EMPTY_SLOTS = [(1, 3), (3, 1), (ROW_BAYS + 0, 3), (ROW_BAYS + 3, 4), (2 * ROW_BAYS + 0, 0), (2 * ROW_BAYS + 2, 2)]
 BASKET_IDS = [(b, l) for b in range(N_BAYS_ALL) for l in range(len(LEVELS)) if (b, l) not in EMPTY_SLOTS] + [(N_BAYS_ALL, 0)]
 #                                              (the last id is a parcel the home-delivery robot brings back)
-CART_PIECE = (X_CART - SEG_V3, X_CART + SEG_V3)
+CART_SEG = 13.5 * P + RACK_E   # cart rail piece half length (65.5): does not turn, only has to carry the pod's pinion while the cart
+                               # moves - the pinion's part inside the rack slot reaches 61.6 from the pod centre.  Symmetric like a
+                               # crossing piece (tooth space at its centre) so the comb carries on from the row's rails
+CART_PIECE = (X_CART - CART_SEG, X_CART + CART_SEG)
 ROW_RAIL_X = (-300.0, CART_PIECE[0] - GAP_V3)     # fixed horizontal rails of a row (row frame x)
 TRACK_Y = (-420.0, (N_ROWS - 1) * ROW_P + 320.0)   # cart beam / transfer rack extent (world y)
 # The cart HANGS from the transfer beam on two trolleys (V-wheels above and below the beam, wheelbase ~230 mm), so it
@@ -181,7 +192,7 @@ TRACK_Y = (-420.0, (N_ROWS - 1) * ROW_P + 320.0)   # cart beam / transfer rack e
 # into a socket on the row's rail-end arms and holds the cart's rail pieces exactly in line with the row's rails.
 CART_TROLLEY_Y = (-10.0, 220.0)                # trolley centres (cart frame y; the robot stays in front of y -40)
 BEAM_Z = (366.0, 406.0)                        # 20x40 V-slot beam: carries the cart and the transfer rack (z 382..390)
-LOCK_Z = 128.0                                 # cart-to-row lock pin height (below the battery box's 155 mm underside, which
+LOCK_Z = 128.0                               # cart-to-row lock pin height (below the battery box's 155 mm underside, which
 #                                                sweeps past every row's socket while the cart carries the robot across)
 # Two push-type solenoids on the ROBOT (powered, in reach of the electronics box) do all the locking; the cart stays passive:
 #  * DOCKING BOLT: on the column's rear face; extends through the open gap between the rails into a socket in the cart's
@@ -189,15 +200,18 @@ LOCK_Z = 128.0                                 # cart-to-row lock pin height (be
 #  * RELEASE PLUNGER: behind the battery box; pushes the tab of the cart's spring pin out of the row's socket
 # Interlock order: robot locks to the cart -> cart released from the row -> cart moves -> cart locks to the new row -> robot unlocks.
 BOLT_X = 25.0                                  # bolt offset from the column: clears the vertical rail (x +-10) at the bays
-BOLT_DZ = 36.0                                 # docking bolt height above C (z 236 at travel height; the open gap is z 82..318)
-BAR_Z = (222.0, 250.0)                         # cart docking bar height
+BOLT_DZ = 36.0                                 # docking bolt height above C (z 246 at travel height; the open gap is z 100..320)
+BAR_Z = (CZ_HOME + 22.4, CZ_HOME + 50.4)       # cart docking bar height (follows the travel height: its socket is at CZ_HOME + BOLT_DZ)
 BAR_Y = (-66.0, -38.0)                         # in front of the rail line (the cart has no vertical rail), bolted to its posts
 BOLT_REST_Y, BOLT_STROKE = -70.0, 17.0         # bolt tip y when retracted (clear of the rails y >= -60 at every bay); stroke
 #                                                into the socket (13 mm engaged)
-REL_DZ = -44.0                                 # release plunger height above C (z 156 at travel height)
-TAB_X = (-44.0, -34.0)                         # the pin's release tab, relative to the cart centre (x); y (-92, -78)
-TAB_Z = (120.0, 160.0)                         # (the tray's underside, 166, sweeps over it as the robot drives onto the cart)
-PLUNGER_REST_X = -46.0                         # plunger tip x (relative to the column) when retracted: 2 mm from the tab
+REL_DZ = -55.0                                 # release plunger height above C (z 155.2 at travel height: inside the tab, TAB_Z)
+TAB_X = (-49.0, -39.0)                         # the pin's release tab, relative to the cart centre (x); y (-92, -78).  Pulled back
+                                               # (+LOCK_STROKE) it ends at -17: 3 mm clear of the lower pod's 20T gear (x +-14)
+TAB_Z = (143.0, 160.0)                         # tab plate: above the lower pod's 20T gear (z <= 141.1, y -88.5..-80.5), which
+                                               # passes under it as the robot drives onto the cart; the tray's underside (166) over it.
+TAB_RISER_Y = (-78.0, -72.0)                   # the pin -> tab link runs at y >= -78 (beside the gear) and rises to the plate
+PLUNGER_REST_X = -51.0                         # plunger tip x (relative to the column) when retracted: 2 mm from the tab
 LOCK_STROKE = 22.0                             # the pin is pulled back this far
 # Lead-in (like a refuelling drogue): the cart is a separate piece, so wear and stopping error shift where it arrives.  Both
 # sockets have a conical funnel mouth and both pins a bullet nose, so a few mm of error guide themselves in.
@@ -208,3 +222,7 @@ TURN_LIFT = 12.0                               # an SG90 lifts the robot's pinio
 #                                                drives over); it drops into mesh only on the cart
 XFER_RACK_X = X_CART + TURN_PIN_XY[0] + TURN_PIN_R   # pitch line of the fixed transfer rack (teeth face -x)
 XFER_POST_X = X_CART + 520.0                   # rack-beam posts stand beyond the docks (their motors reach x C+445, deck C+470)
+
+# ---------------- Option 1 swivel pods as hubs
+HUB_BASE = {1: 0.0, 2: 180.0}  # the lower pod is turned 180 deg in its plane: both body mounts point to C (inside the column's
+                               # length) and the lower pod's side pod (4632-370) points down, away from the tray

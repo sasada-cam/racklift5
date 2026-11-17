@@ -93,7 +93,9 @@ def build(out=None):
   <joint name="x" type="slide" axis="1 0 0"/><joint name="y" type="slide" axis="0 1 0"/><joint name="z" type="slide" axis="0 0 1"/>
   {INERT}{vis(A3.robot_local())}{cover_geoms(A3.robot_covers_local(), "cover_robot")}
   <body name="hub_upper" pos="{v3(0, 0, P3.D_HUB / 2)}"><joint name="hub_upper" type="hinge" axis="0 1 0"/>{INERT}{hub("upper")}</body>
-  <body name="hub_lower" pos="{v3(0, 0, -P3.D_HUB / 2)}"><joint name="hub_lower" type="hinge" axis="0 1 0"/>{INERT}{hub("lower")}</body>
+  <body name="hub_lower" pos="{v3(0, 0, -P3.D_HUB / 2)}" quat="0 0 1 0"><joint name="hub_lower" type="hinge" axis="0 1 0"/>{INERT}{hub("lower")}</body>
+  <body name="sgear_upper" pos="{v3(0, 0, P3.D_HUB / 2 + A3.POD.SERVO_Z)}"><joint name="sgear_upper" type="hinge" axis="0 1 0"/>{INERT}{vis(A3.hub_gear_local())}</body>
+  <body name="sgear_lower" pos="{v3(0, 0, -P3.D_HUB / 2 - A3.POD.SERVO_Z)}" quat="0 0 1 0"><joint name="sgear_lower" type="hinge" axis="0 1 0"/>{INERT}{vis(A3.hub_gear_local())}</body>
   {hinge("arm_drive", A3.ARM_DRIVE_AT, "1 0 0", A3.arm_drive_local())}
   {hinge("arm_idler", A3.IDLER_AT, "1 0 0", A3.idler_local())}
   {hinge("servo1", A3.SERVO1_POS, "1 0 0", A3.servo1_local())}

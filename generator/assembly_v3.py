@@ -15,6 +15,7 @@ from params_v3 import *               # noqa: F401,F403
 import assembly_v2 as A
 import parts as P1
 import parts_v2 as P2
+import pod_v3 as POD                   # the Option 1 swivel pod (cad/build_t_slot_option1.py) = the hub
 
 MT = A.MT
 C_HUB, C_BAT, C_ARM = (240, 120, 40), (60, 60, 70), (175, 180, 190)
@@ -217,20 +218,21 @@ def robot_covers_local():
     out = []
     # (1) front drive cover: open at the back (towards the tray) and the bottom; ears on the tray's front face, screwed into the
     #     plywood edge with 3 x 16 chipboard screws
-    ix0, ix1, iy0, iz1 = 164.0, 197.0, -347.0, 9.6
-    shell = box(ix0 - w, ix1 + w, iy0 - w, -294.0, -46.4, iz1 + w) - box(ix0, ix1, iy0, -293.0, -47.0, iz1)    # lower edge 2.2 mm under the pulley: keeps >3 mm over a lowered basket
-    shell = shell - cyl(5.0, ix0 - w - 1, ix1 + w + 1, 'x', (-303.0, 0.0), 24)               # the cross shaft passes through both sides
+    dz = T_V3 - T_V3_OLD                                  # drawn for the old tray height; follows the tray
+    ix0, ix1, iy0, iz1 = 164.0, 197.0, -347.0, 9.6 + dz
+    shell = box(ix0 - w, ix1 + w, iy0 - w, -294.0, -46.4 + dz, iz1 + w) - box(ix0, ix1, iy0, -293.0, -47.0 + dz, iz1)    # lower edge 2.2 mm under the pulley: keeps >3 mm over a lowered basket
+    shell = shell - cyl(5.0, ix0 - w - 1, ix1 + w + 1, 'x', (-303.0, dz), 24)               # the cross shaft passes through both sides
     for xl, xr in ((ix0 - w - 10.0, ix0 - w + 1.5), (ix1 + w - 1.5, ix1 + w + 10.0)):         # ears
-        shell = shell + box(xl, xr, -297.0, -294.0, -34.0, -22.0)
+        shell = shell + box(xl, xr, -297.0, -294.0, -34.0 + dz, -22.0 + dz)
     for xh in FRONT_COVER_SCREW_X:
-        shell = shell - cyl(M3_CLR / 2, -298.0, -293.0, 'y', (xh, -28.0), 16)
+        shell = shell - cyl(M3_CLR / 2, -298.0, -293.0, 'y', (xh, -28.0 + dz), 16)
     out.append(("cover: front drive (servo 1 + belt)", shell, COVER_COLOR))
     # (2) turn-drive cap: over the pinion motor, the lift servo and the carriage; sits on the two mast bosses (M3 screw from the top)
     px, py = TURN_PIN_XY
     top = TURN_GEAR_Z[0] + TURN_LIFT + 42
-    ix0, ix1, iy0, iy1, iz0, iz1 = 30.0, 72.0, -113.0, -82.0, 204.0, top + 12
+    ix0, ix1, iy0, iy1, iz0, iz1 = 30.0, 72.0, -113.0 + COL_SHIFT, -82.0 + COL_SHIFT, 204.0, top + 12
     cap = box(ix0 - w, ix1 + w, iy0 - w, iy1 + w, iz0, iz1 + w) - box(ix0, ix1, iy0, iy1, iz0 - 1, iz1)
-    cap = cap - box(ix0 - w - 1, ix0 + 1, -112.5, -97.0, top - 1, top + 5)                     # the mast's top arm passes through the left wall
+    cap = cap - box(ix0 - w - 1, ix0 + 1, -112.5 + COL_SHIFT, -97.0 + COL_SHIFT, top - 1, top + 5)                     # the mast's top arm passes through the left wall
     for xb in MAST_BOSS_X:
         cap = cap - cyl(M3_CLR / 2, iz1 - 1, iz1 + w + 1, 'z', (xb, MAST_BOSS_Y), 14)
     out.append(("cover: turn-drive cap", cap, COVER_COLOR))
@@ -281,18 +283,17 @@ def crossing_bracket(jx, zc, has_left):
     parts = [box(jx - 30, fr + 24, -32, -22, zc - 15, zc + 15) if not has_left else box(fl - 12, fr + 12, -32, -22, zc - 15, zc + 15)]
     # stop ear: carries the quarter slot of the turntable stop pin (slot ends = the 0 and -90 deg hard stops)
     parts += [box(jx - 8, jx + TT_PIN_R + 8, -32, -22, zc - TT_PIN_R - 8, zc)]
-    parts += [box(fr - 12, fr + 12, -22, -3, zc - 15, zc + 15), box(fr - 19, fr + 19, -3, 0, zc - 20, zc + 20)]
-    # right segment support: front plate behind the rail, web down to the base plate
-    parts += [box(xs + 0.5, xs + 34, -40, -37, zc - 15, zc + 15), box(jx + RAIL_OFF - XI - 3, jx + RAIL_OFF - XI, -37, -3, zc - 15, zc + 15)]
+    # right stem to the post flange; the base plate runs on past the flange to the rail-end support (the 17.5-pitch crossing piece
+    # ends 85 mm out, beyond the post), whose web goes straight back from the support plate behind the rail end
+    parts += [box(fr - 12, fr + 12, -22, -3, zc - 15, zc + 15), box(fr - 19, max(fr + 19, xs + 3.5), -3, 0, zc - 20, zc + 20)]
+    parts += [box(xs + 0.5, xs + 34, -40, -37, zc - 15, zc + 15), box(xs + 0.5, xs + 3.5, -37, -3, zc - 15, zc + 15)]
     cut = [cyl(2.25, -33, -21, 'y', (jx + 20 * math.cos(a), zc + 20 * math.sin(a)), 14) for a in (0.785, 2.356, 3.927, 5.498)]
     cut += _holes_y([(fr, zc - 12.5), (fr, zc + 12.5)], -4, 1, 2.75)
     cut += _holes_y([(xs + 10, zc), (xs + 24, zc)], -41, -36, 2.75)
     cut += [tt_stop_slot(jx, zc)]
     if has_left:
-        parts += [box(fl - 12, fl + 12, -22, -3, zc - 15, zc + 15), box(fl - 19, fl + 19, -3, 0, zc - 20, zc + 20)]
-        # left segment support (S-shaped web: it has to get round the bearing plate)
-        parts += [box(xe - 34, xe - 0.5, -40, -37, zc - 15, zc + 15), box(xe - 3.5, xe - 0.5, -37, -19, zc - 15, zc + 15),
-                  box(xe - 3.5, fl - 15, -22, -19, zc - 15, zc + 15), box(fl - 18, fl - 15, -22, -3, zc - 15, zc + 15)]
+        parts += [box(fl - 12, fl + 12, -22, -3, zc - 15, zc + 15), box(min(fl - 19, xe - 3.5), fl + 19, -3, 0, zc - 20, zc + 20)]
+        parts += [box(xe - 34, xe - 0.5, -40, -37, zc - 15, zc + 15), box(xe - 3.5, xe - 0.5, -37, -3, zc - 15, zc + 15)]
         cut += _holes_y([(fl, zc - 12.5), (fl, zc + 12.5)], -4, 1, 2.75)
         cut += _holes_y([(xe - 10, zc), (xe - 24, zc)], -41, -36, 2.75)
     return union_all(parts) - union_all(cut)
@@ -419,7 +420,8 @@ def cart_local():
             it += [("rail piece on cart", A.vslot_z(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_RAIL),
                    ("printed in-slot rack (cart)", comb_line(x0, x1, ROW_BAY_X[0] - RAIL_OFF)[0][1].rotate('y', 90).translate(x0, 0, zc), A.C_PRINT)]
         top = BEAM_Z[1] + 24
-        frame = [box(x0, x0 + 20, ya, ya + 20, 22, top), box(x1 - 20, x1, ya, ya + 20, 22, top),      # posts behind the pieces
+        xr = min(x1, xt0 - 1.0)                          # right post: stays clear of the trolley plate
+        frame = [box(x0, x0 + 20, ya, ya + 20, 22, top), box(xr - 20, xr, ya, ya + 20, 22, top),      # posts behind the pieces
                  box(x0, xt1, ya, ya + 20, top - 12, top),                                            # top cross member
                  box(x0, x1, ya, ya + 20, 22, 40),                                                    # bottom cross member
                  box(xt0 - 8, xt0, ya, yz, top - 12, top),                                            # top member along y
@@ -448,8 +450,10 @@ def cart_lock_local():
     x0 = CART_PIECE[0]
     yl = RAIL_Y + 25.0
     pin = cyl(PIN_R / 2, x0 - 18, x0 - 9, 'x', (yl, LOCK_Z), 16, r1=PIN_R) + cyl(PIN_R, x0 - 9, x0 + 14, 'x', (yl, LOCK_Z), 20)   # bullet nose
-    tab = box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, yl + 7, LOCK_Z - 5, LOCK_Z + 5) \
-        + box(X_CART + TAB_X[0], X_CART + TAB_X[1], -92, -78, TAB_Z[0], TAB_Z[1])
+    tx0, tx1 = X_CART + TAB_X[0], X_CART + TAB_X[1]
+    tab = box(tx0, tx1, TAB_RISER_Y[0], yl + 7, LOCK_Z - 5, LOCK_Z + 5) \
+        + box(tx0, tx1, TAB_RISER_Y[0], TAB_RISER_Y[1], LOCK_Z - 5, TAB_Z[1]) \
+        + box(tx0, tx1, -92, TAB_RISER_Y[0] + 0.5, TAB_Z[0], TAB_Z[1])
     return [("cart lock pin + release tab (spring)", pin + tab, A.C_STEEL)]
 
 
@@ -490,34 +494,44 @@ _H = None
 
 
 def hub_local():
+    """the parts of an Option 1 swivel pod that turn with the hub (MT0134 plate, 4 V-wheels, carriage pod + 40T gear, 4632-370
+    climb motor, shaft, retainer), hub frame: rail along z at h = 0.  Built from cad/build_t_slot_option1.py (generator/pod_v3.py)."""
     global _H
-    if _H is not None:
-        return _H
-    it = []
-    add = lambda n, s, c: it.append((n, s, c))
-    h = HUB_PLATE_L / 2
-    add("hub plate (6 mm aluminium)", box(-PLATE_W / 2, PLATE_W / 2, PLATE_Y0, PLATE_Y1, -h, h), A.C_PLATE)
-    for a in (-HUB_WHEEL_A, HUB_WHEEL_A):
-        for sx in (-1, 1):
-            add("V wheel", cyl(WHEEL_R, WHEEL_YC - WHEEL_W / 2, WHEEL_YC + WHEEL_W / 2, 'y', (sx * WHEEL_DX, a), 28), A.C_WHEEL)
-            add("spacer", cyl(5, PLATE_Y1, WHEEL_YC - WHEEL_W / 2, 'y', (sx * WHEEL_DX, a), 12), A.C_STEEL)
-    pa = CP_OUT
-    add("climber shaft", cyl(3, 0, 13, 'x', (CP_Y, pa), 12), A.C_STEEL)
-    add("JGY-370 climb motor", box(11, 33.5, CP_Y - 26, CP_Y + 10, pa - 16, pa + 16), A.C_GB)
-    add("JGY-370 climb motor can", cyl(12.2, pa + 16, pa + 46, 'z', (22.25, CP_Y - 13), 24), A.C_CAN)
-    add("printed hub cover", cyl(HUB_R1, HUB_Y[0], HUB_Y[1], 'y', (0, 0), 48) - cyl(HUB_R0, HUB_Y[0] - 1, HUB_Y[1] + 1, 'y', (0, 0), 48), C_HUB)
-    add("swivel axle", cyl(8, COL_Y[1], PLATE_Y0, 'y', (0, 0), 20), A.C_STEEL)
-    _H = it
-    return it
+    if _H is None:
+        _H = POD.hub_items()
+    return _H
+
+
+_HP = None
 
 
 def hub_pinion_local():
-    """climb pinion of a hub, centred on its own axle (axis x); placed at (0, CP_Y, CP_OUT) in the hub frame and
-    turned by (distance travelled) / pitch radius"""
-    return [("printed climber pinion", P2.climber_pinion().translate(0, 0, -CP_W / 2).rotate('y', 90), A.C_PRINT2)]
+    """climb pinion of a hub, centred on its own axle (axis x); placed at PINION_AT in the hub frame and turned by
+    (distance travelled) / pitch radius"""
+    global _HP
+    if _HP is None:
+        _HP = POD.pinion_items()
+    return _HP
 
 
-PINION_AT = (0.0, CP_Y, CP_OUT)
+_HG = None
+
+
+def hub_gear_local():
+    """the pod's servo gear set (20T gear, 25T horn, servo spline) centred on its own axis (y); at (0, 0, POD.SERVO_Z) in the hub's
+    fixed frame, turned rot('y', -2 h) (1:2 to the 40T gear on the carriage pod)"""
+    global _HG
+    if _HG is None:
+        _HG = POD.gear_items()
+    return _HG
+
+
+def hub_fixed_M(i):
+    """robot frame <- fixed frame of hub i (1 upper, 2 lower): at the hub, turned by its base angle"""
+    return MT(0, 0, D_HUB / 2 if i == 1 else -D_HUB / 2) @ rot('y', HUB_BASE[i])
+
+
+PINION_AT = POD.pinion_at()
 
 
 # ------------------------------------------------------------------ picker (2 servos, every moving part modelled)
@@ -724,9 +738,9 @@ def robot_local():
     add = lambda n, s, c: it.append((n, s, c))
     hz = D_HUB / 2
     add("aluminium column bar 28 x 24 (replaces the printed column)", box(-14, 14, COL_Y[0], COL_Y[1], -hz - 20, hz + 20), A.C_PLATE)
-    for z in (hz, -hz):
-        add("JGY-370 swivel motor", box(-11.25, 11.25, COL_Y[0] - 22.5, COL_Y[0], z - 23, z + 23), A.C_GB)
-        add("JGY-370 swivel motor can", cyl(12.2, 11.25, 44.25, 'x', (COL_Y[0] - 11.25, z), 24), A.C_CAN)
+    for i in (1, 2):         # the pods' fixed parts: body mount (bolted to the column's rear face), 2 x 608ZZ, M8 pivot, TD-8125MG
+        for n, s, c in POD.fixed_items():
+            add(f"{n} ({'upper' if i == 1 else 'lower'} hub)", s.transform(hub_fixed_M(i)), c)
     add("battery + electronics box (fixed counterweight)", box(BAT_X[0], BAT_X[1], BAT_Y[0], BAT_Y[1], BAT_Z[0], BAT_Z[1]), C_BAT)
     add("battery bracket", box(BAT_X[1], -14, COL_Y[0], COL_Y[1], -15, 15), A.C_PLATE)
     T, x = T_V3, BXR
@@ -782,7 +796,8 @@ def robot_local():
     add("SG90 micro servo (turn pinion lift)", box(px - 26, px - 14, py - 6, py + 17, top - 30, top - 8), A.C_SERVO)
     # lock solenoids (push type): docking bolt on the column's rear face, release plunger behind the battery box
     add("lock solenoid (docking bolt, push type)", box(BOLT_X - 9, BOLT_X + 9, -96, -68, BOLT_DZ - 8, BOLT_DZ + 8), A.C_GB)
-    add("lock solenoid bracket (docking bolt)", box(13, BOLT_X + 12, -99, -93, BOLT_DZ - 12, BOLT_DZ + 12), A.C_PRINT)
+    add("lock solenoid bracket (docking bolt)", box(13, BOLT_X + 12, -99, -93, BOLT_DZ - 12, BOLT_DZ + 12)       # arm back to the column
+        + box(13, 19, COL_Y[1], -93, BOLT_DZ - 12, BOLT_DZ + 12), A.C_PRINT)
     add("lock solenoid (release plunger, push type)", box(-100, -72, -99, -78, REL_DZ - 8, REL_DZ + 8), A.C_GB)
     add("lock solenoid bracket (release plunger)", box(-104, -68, -100, -94, REL_DZ - 12, REL_DZ + 12), A.C_PRINT)
     _RB = it
@@ -947,10 +962,13 @@ def build(S, baskets=None):
         items += place(jack_arm2_local(), D @ MT(-JACK_X0, 0, zt - PLATE_T - PIN_DROP) @ rot('y', math.degrees(phi)), g)
         items += place(jack_slider_local(), D @ MT(-JACK_X0 + sx, 0, JACK_ZB), g)
         items += place(jack_screw_local(), D @ MT(SCREW_X, JACK_YC, JACK_ZS) @ rot('x', jack_screw_angle(zt)), g)
-    for i, dz in ((1, D_HUB / 2), (2, -D_HUB / 2)):
-        Mh = R @ MT(0, 0, dz) @ rot('y', S["h%d" % i])
+    for i in (1, 2):
+        F = R @ hub_fixed_M(i)
+        Mh = F @ rot('y', S["h%d" % i])
         items += [(f"{n} (hub {i})", s.transform(Mh), c, f"hub{i}") for n, s, c in hub_local()]
         items += [(f"{n} (hub {i})", s.transform(Mh @ MT(*PINION_AT)), c, f"hub{i}") for n, s, c in hub_pinion_local()]
+        Mg = F @ MT(0, 0, POD.SERVO_Z) @ rot('y', -2 * S["h%d" % i])
+        items += [(f"{n} (hub {i})", s.transform(Mg), c, f"sgear{i}") for n, s, c in hub_gear_local()]
     bs = basket_solid()
     for k, b in enumerate(baskets or []):
         if b == 'tray':

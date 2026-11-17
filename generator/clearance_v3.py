@@ -8,9 +8,12 @@ from params_v3 import *
 from interfere import interference, bb
 
 SKIP = [("V wheel", "V-slot"), ("V wheel", "rail piece"), ("spacer", "V-slot"), ("spacer", "rail piece"),
+        # Option 1 pods: wheels on the rail, the pinion in its rack and on its shaft; the pod's own fits (608ZZ, M8, 20T/40T mesh,
+        # servo spline in the horn) are checked exactly by cad/check_t_slot_option1_collisions.py -> pod <-> pod pairs skipped here
+        ("pod: V wheel", "V-slot"), ("pod: V wheel", "rail piece"), ("printed climber pinion", "pod: "),
         ("printed climber pinion", "printed in-slot rack"), ("printed climber pinion", "rail piece"),
         ("printed climber pinion", "V-slot"),
-        ("swivel axle", "aluminium column bar"), ("swivel axle", "JGY-370 swivel motor"),
+        ("pod: printed body mount", "aluminium column bar"),             # bolted to the column's rear face
         # the finger shaft telescopes (rod in tube in tube) and runs through its bearings and the fingers' collars
         ("finger shaft", "finger shaft"), ("finger shaft", "printed front post"), ("printed flip finger", "finger shaft"),
         # belts lie on their pulleys / in their clamps and anchors; stage-2 pulleys turn on axles through the middle bar
@@ -26,6 +29,8 @@ FIXED = ("static", "rotor")
 
 
 def skip(a, b):
+    if a.startswith("pod: ") and b.startswith("pod: "):
+        return True
     if a.startswith("jack:") and b.startswith("jack:"):         # the jack's own pins, shafts and screws are one assembly
         return True
     return any((a.startswith(x) and b.startswith(y)) or (b.startswith(x) and a.startswith(y)) for x, y in SKIP)
@@ -224,7 +229,28 @@ def swept_row_ends(verbose=True):
     return found
 
 
+def function_checks():
+    """parts that must MEET (an overlap check cannot see a miss): the release plunger must hit the pin's tab, the docking bolt
+    must enter its socket inside the docking bar, the pulled-back tab must clear the lower pod's servo gear"""
+    zp = CZ_HOME + REL_DZ
+    zb = CZ_HOME + BOLT_DZ
+    gear_x = 13.6 + 0.5                                      # 20T gear tip radius (+ margin), robot centre line
+    rows = [("release plunger z %.1f inside the tab z %.0f..%.0f" % (zp, *TAB_Z), TAB_Z[0] + 2 <= zp - 2 and zp + 2 <= TAB_Z[1] - 2),
+            ("docking bolt funnel z %.1f +- %.1f inside the bar z %.1f..%.1f" % (zb, BOLT_MOUTH_R, *BAR_Z),
+             BAR_Z[0] <= zb - BOLT_MOUTH_R and zb + BOLT_MOUTH_R <= BAR_Z[1]),
+            ("pulled-back tab x <= %.1f clear of the pod gear (x >= -%.1f)" % (TAB_X[1] + LOCK_STROKE, gear_x),
+             TAB_X[1] + LOCK_STROKE <= -gear_x),
+            ("plunger tip at rest x %.1f, 2 mm short of the tab x %.1f" % (PLUNGER_REST_X, TAB_X[0]), PLUNGER_REST_X <= TAB_X[0] - 1.5)]
+    ok = True
+    for txt, good in rows:
+        print(f"function: {txt}: {'ok' if good else 'FAIL'}")
+        ok &= good
+    return ok
+
+
 if __name__ == "__main__":
+    if not function_checks():
+        print("  FUNCTION CHECK FAIL")
     swept_row_ends()
     m = swept_over_docks()
     if m <= 2.0:

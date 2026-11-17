@@ -51,7 +51,7 @@ class Sim:
         self.m = mujoco.MjModel.from_xml_path(M3.build())
         self.d = mujoco.MjData(self.m)
         self.speed = speed
-        joints = ["x", "y", "z", "hub_upper", "hub_lower", "arm_mid", "arm_in", "pinion_upper", "pinion_lower"] + [f"cross{c[1:]}" for c in CROSS] \
+        joints = ["x", "y", "z", "hub_upper", "hub_lower", "sgear_upper", "sgear_lower", "arm_mid", "arm_in", "pinion_upper", "pinion_lower"] + [f"cross{c[1:]}" for c in CROSS] \
             + ["cart", "cart_lock", "dock_bolt", "lock_plunger", "turn_lift", "turn_pinion"] + M3.TURNING \
             + [f"dock{r}_{p}" for r in range(P3.N_ROWS) for p in ("platform", "arm1", "arm2", "slider", "screw")]
         self.belt_geoms = {(sx, k): self.m.geom(M3.belt_name(sx, k)).id for _, sx, k, _ in A3.stage2_runs(P3.TIP0)}
@@ -158,7 +158,8 @@ class Sim:
         # inner bars run at twice the speed; servo 2 turns the left finger rod through a gear pair (opposite way) and
         # the right one through a belt (same way)
         roll = -(c["x"] + c["z"]) / P3.PIN_R
-        vals["pinion_upper"], vals["pinion_lower"] = roll, roll
+        vals["pinion_upper"], vals["pinion_lower"] = roll, -roll          # (the lower pod is turned 180 deg: its pinion axis points the other way)
+        vals["sgear_upper"], vals["sgear_lower"] = r(-2 * c["h1"]), r(-2 * c["h2"])   # pod servo gears: 20T -> 40T, 1:2
         g = A3.mech_angles(c["arm"], c["f"])
         for j, key in (("arm_drive", "drive"), ("arm_idler", "drive"), ("servo1", "servo1"), ("servo2", "servo2"),
                        ("dpul_ext_l", "dpul"), ("dpul_ext_r", "dpul"), ("dpul_ret_l", "dpul"), ("dpul_ret_r", "dpul")):
