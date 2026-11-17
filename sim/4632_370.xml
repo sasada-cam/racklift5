@@ -1,0 +1,40 @@
+<mujoco model="4632_370_worm_gear_motor">
+  <compiler angle="radian" meshdir="build/meshes_4632_370"/>
+
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <asset>
+    <mesh name="motor_housing" file="housing.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="motor_shaft" file="shaft.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="motor_cover" file="cover.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="bottom_cradle" file="cradle.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="climber_pinion" file="pinion.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="shaft_retainer" file="retainer.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0.1 -0.1 0.2" dir="-0.4 0.4 -1" diffuse="0.9 0.9 0.9"/>
+    <geom name="floor" type="plane" size="0.5 0.5 0.01" rgba="0.92 0.92 0.94 1"/>
+
+    <!-- Fixed 4632-370 gearbox + 370 DC motor + translucent PETG cover + bottom cradle -->
+    <body name="4632_370_housing" pos="0 0 0.0030">
+      <geom name="housing_geom" type="mesh" mesh="motor_housing" rgba="0.72 0.74 0.77 1" contype="0" conaffinity="0"/>
+      <geom name="cover_geom" type="mesh" mesh="motor_cover" rgba="0.18 0.55 0.88 0.35" contype="0" conaffinity="0"/>
+      <geom name="cradle_geom" type="mesh" mesh="bottom_cradle" rgba="0.22 0.25 0.30 1" contype="0" conaffinity="0"/>
+
+      <!-- Rotating 6mm D-shaft + 14T climber pinion head + M3 axial retainer (100 RPM = 10.472 rad/s) -->
+      <body name="output_shaft" pos="0.0125 0 0.0225">
+        <inertial pos="0 0 0.010" mass="0.025" diaginertia="2e-6 2e-6 2e-6"/>
+        <joint name="shaft_joint" type="hinge" axis="0 0 1" damping="0"/>
+        <geom name="shaft_geom" type="mesh" mesh="motor_shaft" rgba="0.84 0.86 0.88 1" contype="0" conaffinity="0"/>
+        <geom name="pinion_geom" type="mesh" mesh="climber_pinion" pos="0 0 0.0050" rgba="0.92 0.48 0.14 1" contype="0" conaffinity="0"/>
+        <geom name="retainer_geom" type="mesh" mesh="shaft_retainer" pos="0 0 0.0160" rgba="0.25 0.27 0.30 1" contype="0" conaffinity="0"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- 12V 100 RPM no-load speed: 100 * 2*pi / 60 = 10.472 rad/s -->
+    <velocity name="motor_100rpm" joint="shaft_joint" kv="0.0004" ctrlrange="-10.472 10.472" ctrllimited="true"/>
+  </actuator>
+</mujoco>
