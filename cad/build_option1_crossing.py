@@ -148,7 +148,7 @@ def crossing_parts(seg):
     return turning, fixed
 
 
-POD_TURN = ("gantry_plate", "v_wheels", "motor_housing", "motor_shaft", "pinion", "retainer", "carriage_pod", "fasteners_turn")
+POD_TURN = ("gantry_plate", "v_wheels", "motor_housing", "motor_shaft", "pinion", "retainer", "carriage_pod", "motor_cap", "fasteners_turn")
 POD_SERVO = ("gear_20t", "alum_horn", "servo_spline", "fasteners_gear")
 # contacts that are meant to be there: wheels roll on the piece, the pinion meshes its rack (tooth phase not modelled here)
 SKIP = {("v_wheels", "xp_rail"), ("pinion", "xp_rack"), ("pinion", "xp_rail"), ("motor_shaft", "xp_rail")}

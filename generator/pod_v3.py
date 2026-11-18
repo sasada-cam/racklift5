@@ -36,6 +36,7 @@ PARTS = {
     "gantry_plate":  ("pod: MT0134 gantry plate (hub plate)", (40, 42, 48), "turn"),
     "v_wheels":      ("pod: V wheel stacks (4 x Delrin, spacers, M5)", (60, 64, 72), "turn"),
     "carriage_pod":  ("pod: printed carriage pod + 40T swivel gear", (46, 142, 230), "turn"),
+    "motor_cap":     ("pod: printed motor cap (removable lid + can sleeve)", (77, 158, 235), "turn"),
     "motor_housing": ("pod: 4632-370 climb motor", (180, 188, 200), "turn"),
     "motor_shaft":   ("pod: 4632-370 output shaft", (216, 222, 230), "turn"),
     "retainer":      ("pod: printed shaft retainer", (51, 57, 66), "turn"),

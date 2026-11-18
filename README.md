@@ -302,6 +302,7 @@ electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to ma
 | M3 x 6 button head, ISO 7380 | 4 | - | 4632-370 gearbox -> pod wall (low head: clears the pinion by 1.25 mm) |
 | M3 x 12 socket cap, DIN 912 | 4 | - | 20T gear -> aluminium horn (horn is tapped M3) |
 | M3 x 14 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | servo ears -> printed body mount (or M3 machine screw + heat-set insert) |
+| M3 x 12 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | motor cap -> carriage pod (lift the cap off to change the motor) |
 | M3 x 8 spline screw | 1 (comes with the servo) | - | horn -> servo spline |
 
 Head types in one line: **socket cap** (DIN 912) where there is room for a hex key, **button head** (ISO 7380) where

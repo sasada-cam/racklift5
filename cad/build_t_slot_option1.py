@@ -50,8 +50,19 @@ BOLT_TOP_Z = 33.0                  # top of stationary Body Mount spindle cap
 B_TOP_Z0 = 64.0                    # top 608ZZ:    Z = 64.0 .. 71.0
 ARM_Z = (62.0, 71.5)               # the carriage pod's top arm (beam) height; its hub Z 61.0 .. 71.5, r 15
 ARM_HUB_R = 15.0
-ARM_END = (40.0, 26.0)             # the beam runs from the axis to the -X side of the motor sleeve (its closed half)
+ARM_END = (31.5, 16.0)             # the beam runs from the axis to the top of the ARM POST (on the pod, beside the gearbox)
 ARM_W = 12.0
+ARM_POST = (29.0, 35.3, 10.2, 22.0)  # X0, X1, Y0, Y1 of the post: deck (Z 3) -> arm (Z 71.5), part of the printed pod, so the
+                                     # top bearing's load never goes through the motor cap's screws
+# Motor housing in two parts (the gearbox was boxed in on all sides - it could not be fitted):
+#   base (printed with the pod): deck, front wall the gearbox screws to (4 x M3), side/back/bottom walls, OPEN TOP
+#   MOTOR CAP (separate print): lid + the motor can's sleeve, lifts straight off after 4 x M3 x 12 thread-forming screws
+#   Fitting: lower the 4632-370 in from the top, screw the gearbox to the front wall (from the pinion side), cap on, 4 screws.
+CAP_SPLIT_Z = T.GB_Z_CENTER + M.GB_L / 2 + 0.8      # 41.6: top of the gearbox cavity = joint between base and cap
+CAP_X0 = 35.5                                       # the cap starts here (the arm post stays on the base)
+CAP_SCREWS = [(40.0, 7.0), (66.0, 7.0), (40.0, 41.0), (66.0, 41.0)]   # bosses on the base's front / back walls
+CAP_BOSS_R = 3.75
+CAP_TAB_Z1 = 44.4                                   # top of the cap's screw tabs
 BOSS_Z0 = 72.5                     # body mount boss under the top plate: Z 72.5 .. 78.5, r 11
 BOSS_R = 11.0
 TOP_NUT_Z = (75.0, 81.5)           # M8 hex nut (DIN 934) in the boss's side slot (slot opens toward +X under the plate)
@@ -168,7 +179,7 @@ def build_m8_bolt_assembly() -> bd.Compound:
     return bd.Compound(children=[bolt, sleeves, top_bolt, top_sp, top_nut], label="M8_Pivot_Hardware")
 
 
-def build_carriage_pod_option1() -> bd.Part:
+def _build_carriage_pod_full() -> bd.Part:
     """Reinforced MT0134 Carriage Pod with Dual 608ZZ Bearing Tower + Integrated 40T Gear + Sideways 4632-370 Pod."""
     clr = 0.8
     wall = 2.4
@@ -277,11 +288,64 @@ def build_carriage_pod_option1() -> bd.Part:
             bd.Box(12.0, 3.6, 22.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
         with bd.Locations(bd.Location((T.PINION_X, -10.5, T.PINION_Z), (-90, 0, 0))):
             bd.Hole(radius=3.2, depth=6.0)
+        # Rail clearance: below the rail top the motor box's front wall hung 0.2 mm beside the rail's side face (wall Y 10.2,
+        # rail Y 10.0) - thin it to 1.8 mm there (Y >= 11.0: 1.0 mm clear).  The gearbox screws sit above Z -1.5.
+        with bd.Locations((30.0, 9.0, -10.0)):
+            bd.Box(45.0, 2.0, -2.0 + 10.0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+
+        # Web: ties the pillow block down to the deck (beside the pinion, outside its Y -2.5..7.3) - it no longer hangs
+        # from the 4 mm bridge alone
+        with bd.Locations((36.0, -9.6, G.PLATE_T)):
+            bd.Box(T.PINION_X - 6.0 - 36.0 + 0.5, 3.6, T.PINION_Z + 17.0 - G.PLATE_T, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
+
+        # 6. Arm post (deck -> arm) + the motor cap's 4 screw bosses on the base's front / back walls
+        x0, x1, y0, y1 = ARM_POST
+        with bd.Locations((x0, y0, G.PLATE_T)):
+            bd.Box(x1 - x0, y1 - y0, ARM_Z[1] - G.PLATE_T, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
+        for x, y in CAP_SCREWS:
+            with bd.Locations((x, y, 30.0)):
+                bd.Cylinder(CAP_BOSS_R, CAP_SPLIT_Z - 30.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
     part = cp.part
+    return part
+
+
+_CAP_REGION = None
+
+
+def _cap_region(gap=0.0):
+    return bd.Box(60.0, 70.0, 80.0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(bd.Location((CAP_X0 + gap, -15.0, CAP_SPLIT_Z + gap)))
+
+
+def _cap_holes(r, z0, z1):
+    return [bd.Cylinder(r, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((x, y, z0))) for x, y in CAP_SCREWS]
+
+
+def build_carriage_pod_option1() -> bd.Part:
+    """the printed carriage pod (base): everything except the motor cap, with pilot holes for the cap screws"""
+    full = _build_carriage_pod_full()
+    part = full - _cap_region()
+    for h in _cap_holes(1.3, CAP_SPLIT_Z - 10.0, CAP_SPLIT_Z + 0.5):     # M3 thread-forming pilots, 10 deep
+        part = part - h
     part.label = "Option1_Carriage_Pod_40T"
     part.color = bd.Color(0.18, 0.55, 0.88)
     return part
+
+
+def build_motor_cap_option1() -> bd.Part:
+    """removable motor cap: lid over the gearbox + sleeve around the motor can + 4 screw tabs (0.2 mm off the base)"""
+    full = _build_carriage_pod_full()
+    cap = full & _cap_region(0.2)
+    for x, y in CAP_SCREWS:
+        cap = cap + bd.Cylinder(CAP_BOSS_R, CAP_TAB_Z1 - CAP_SPLIT_Z - 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(
+            bd.Location((x, y, CAP_SPLIT_Z + 0.2)))
+    for h in _cap_holes(1.7, CAP_SPLIT_Z, CAP_TAB_Z1 + 1.0):
+        cap = cap - h
+    if isinstance(cap, bd.Compound) or len(cap.solids()) > 1:
+        cap = max(cap.solids(), key=lambda q: q.volume) if len(cap.solids()) > 1 else cap
+    cap.label = "Option1_Motor_Cap"
+    cap.color = bd.Color(0.30, 0.62, 0.92)
+    return cap
 
 
 def build_20t_servo_pinion() -> bd.Part:
@@ -420,6 +484,7 @@ FASTENERS = [   # (part, qty per pod, where, buy as)
     ("M5 x 12 button head (ISO 7380), A2 or 10.9 black", 4, "carriage pod deck -> MT0134 plate", "+ 4 x M5 nyloc (DIN 985) under the plate"),
     ("M3 x 6 button head (ISO 7380)", 4, "4632-370 gearbox -> pod wall (head 1.65 high: 1.25 mm clear of the pinion)", "into the gearbox's tapped bosses; the 0.8 mm wall skin is clamped onto the boss"),
     ("M3 x 14 pan head thread-forming (for plastics, 'PT' / self-tapping)", 4, "TD-8125MG ears -> body mount", "or M3 x 14 machine screw + M3 heat-set insert"),
+    ("M3 x 12 pan head thread-forming (for plastics, 'PT' / self-tapping)", 4, "motor cap -> carriage pod (lift the cap off to change the motor)", "or M3 x 12 + M3 heat-set insert"),
     ("M3 x 12 socket cap (DIN 912)", 4, "20T gear -> 25T aluminium horn (horn holes are tapped M3)", ""),
     ("M3 x 8 servo spline screw", 1, "horn -> servo spline", "supplied with the servo"),
     ("M4 x 12 socket cap (DIN 912)", 4, "body mount -> column bar (tapped M4); fit before the servo", "+ 4 x M4 washer (DIN 125)"),
@@ -452,6 +517,8 @@ def build_fasteners():
         rot = bd.Location((x, MOTOR_WALL_Y, z), (-90, 0, 0))
         cyl = lambda r, h0, h1: bd.Cylinder(r, h1 - h0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, h0)))
         turn += [cyl(2.85, -1.65, 0.0).moved(rot), cyl(1.5, 0.0, 6.0).moved(rot)]
+    for x, y in CAP_SCREWS:                      # motor cap -> base: pan head on the cap's tab, into the base's boss
+        turn += [_cz(2.75, CAP_TAB_Z1, CAP_TAB_Z1 + 2.4, x, y), _cz(1.5, CAP_TAB_Z1 - 12.0, CAP_TAB_Z1, x, y)]
     for x, y in EAR_SCREWS:                      # pan head under the ears, up into the body mount
         fixed += [_cz(2.75, EAR_BOT_Z - 2.4, EAR_BOT_Z, x, y), _cz(1.5, EAR_BOT_Z, EAR_BOT_Z + 14.0, x, y)]
     for x, y in COLUMN_SCREWS:                   # socket cap from below, up into the tapped column bar
@@ -470,6 +537,7 @@ def build_assembled_parts():
     base = T.build_assembled_parts()
     # Replace carriage_pod, alum_horn, body_mount, servo_body, servo_spline with Option 1 versions
     carriage_pod = build_carriage_pod_option1()
+    motor_cap = build_motor_cap_option1()
     bearing_bot = build_608zz_bearing(B_BOT_Z0)
     bearing_top = build_608zz_bearing(B_TOP_Z0)
     m8_hardware = build_m8_bolt_assembly()
@@ -494,6 +562,7 @@ def build_assembled_parts():
         "pinion": base["pinion"],
         "retainer": base["retainer"],
         "carriage_pod": carriage_pod,
+        "motor_cap": motor_cap,
         "bearing_bot": bearing_bot,
         "bearing_top": bearing_top,
         "m8_hardware": m8_hardware,
@@ -515,6 +584,7 @@ def main():
     parts = build_assembled_parts()
     printable = {
         "opt1_carriage_pod_40t": parts["carriage_pod"],
+        "opt1_motor_cap": parts["motor_cap"],
         "opt1_body_mount": parts["body_mount"],
         "opt1_20t_servo_gear": parts["gear_20t"],
         "opt1_25t_horn": parts["alum_horn"],

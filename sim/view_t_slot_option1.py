@@ -238,6 +238,7 @@ const mats = {
   retainer:     new THREE.MeshStandardMaterial({ color: 0x333942, roughness: 0.45 }),
   gantry_plate: new THREE.MeshStandardMaterial({ color: 0x22262d, metalness: 0.5, roughness: 0.45 }),
   v_wheels:     new THREE.MeshStandardMaterial({ color: 0x3c414a, roughness: 0.5 }),
+  motor_cap:    new THREE.MeshStandardMaterial({ color: 0x4d9eeb, roughness: 0.45, transparent: true, opacity: 0.8 }),
   fasteners_turn:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_fixed: new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_gear:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
@@ -280,6 +281,7 @@ addStl('alum_horn',     servoPinionPivot);
 addStl('servo_spline',  servoPinionPivot);
 addStl('fasteners_gear', servoPinionPivot);
 addStl('carriage_pod',  carriagePivot);
+addStl('motor_cap',     carriagePivot);
 addStl('motor_housing', carriagePivot);
 addStl('gantry_plate',  carriagePivot);
 addStl('v_wheels',      carriagePivot);
