@@ -572,6 +572,85 @@ const clock = new THREE.Clock();
 """
 
 
+_SNAP_LABELS = {
+    "0_home": "Home", "1_swivel": "Hubs swivel at the crossing", "2_at_shelf": "At the shelf", "3_arms_out": "Arms out",
+    "4_captured": "Fingers down - basket captured", "5_pulled": "Basket pulled", "6_captured_on_tray": "Basket on the tray",
+    "7_pushed_back": "Basket pushed back", "t1_on_cart": "On the transfer cart", "t2_at_new_row": "At the new row",
+    "d1_at_dock": "At the dock", "d2_on_platform": "Basket on the dock platform", "d3_lowered": "Dock jack lowered",
+}
+
+
+def build_gallery_html(stage: dict) -> str:
+    """images rendered by MuJoCo (no in-browser 3D) + 'Open in MuJoCo' (POST /api/launch/<stage>)"""
+    folder = stage["gallery_dir"]
+    names = sorted(f[:-4] for f in os.listdir(folder) if f.endswith(".png")) if os.path.isdir(folder) else []
+    base = [n for n in names if not n.endswith("_close")]
+    cards = []
+    for n in base:
+        lbl = _SNAP_LABELS.get(n, n.replace("_", " "))
+        imgs = [f"/snaps/{n}.png"] + ([f"/snaps/{n}_close.png"] if f"{n}_close" in names else [])
+        cards.append("<figure>" + "".join(f'<img src="{u}" loading="lazy" onclick="zoom(this.src)"/>' for u in imgs)
+                     + f"<figcaption>{lbl}</figcaption></figure>")
+    L = stage.get("launch", {})
+    return _GALLERY_TEMPLATE.replace("__TITLE__", stage["title"]).replace("__SUB__", stage.get("xml_sub", "")) \
+        .replace("__CARDS__", "\n".join(cards) or "<p>No images yet - see the command below.</p>") \
+        .replace("__SID__", stage["id"]).replace("__COMMIT__", L.get("commit", "")).replace("__PORT__", str(L.get("port", "")))
+
+
+_GALLERY_TEMPLATE = r"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>__TITLE__</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0b1120;color:#e2e8f0;font:13px/1.45 system-ui,-apple-system,sans-serif;padding:18px 20px 40px}
+  h1{font-size:17px;color:#f8fafc}
+  .sub{color:#94a3b8;font-size:12px;margin:3px 0 12px;max-width:900px}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  button{background:#0284c7;border:1px solid #38bdf8;color:#fff;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.6;cursor:wait}
+  #status{color:#cbd5e1;font-size:12px}
+  #status a{color:#38bdf8}
+  code{background:#1e293b;border:1px solid #334155;border-radius:5px;padding:1px 5px;font-size:11.5px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px}
+  figure{background:#0f172a;border:1px solid #24324a;border-radius:9px;padding:8px}
+  figure img{width:calc(50% - 3px);margin-right:6px;border-radius:5px;cursor:zoom-in;vertical-align:top}
+  figure img:last-of-type{margin-right:0}
+  figure img:only-of-type{width:100%}
+  figcaption{color:#cbd5e1;font-size:12px;margin-top:5px}
+  #zoom{position:fixed;inset:0;background:rgba(2,6,23,.92);display:none;align-items:center;justify-content:center;z-index:9;cursor:zoom-out}
+  #zoom img{max-width:94vw;max-height:92vh;border-radius:8px}
+  .note{color:#94a3b8;font-size:11.5px;margin-top:18px}
+</style></head><body>
+<h1>__TITLE__</h1>
+<div class="sub">__SUB__ - images rendered by MuJoCo from the original code (commit __COMMIT__).</div>
+<div class="bar">
+  <button id="open">Open in MuJoCo (original v3)</button>
+  <span id="status">Opens the MuJoCo viewer window on this computer; the task buttons page is at
+    <a href="http://127.0.0.1:__PORT__/" target="_blank">127.0.0.1:__PORT__</a>.</span>
+</div>
+<div class="grid">
+__CARDS__
+</div>
+<div class="note">Manual start: <code>cd sim/build/legacy_v3_e40004d && mjpython sim/run_v3.py --port __PORT__</code>
+(the folder is a git worktree of commit __COMMIT__; the dashboard re-creates it if it is missing).</div>
+<div id="zoom" onclick="this.style.display='none'"><img id="zimg"/></div>
+<script>
+function zoom(src){ document.getElementById('zimg').src = src; document.getElementById('zoom').style.display = 'flex'; }
+document.getElementById('open').onclick = async () => {
+  const b = document.getElementById('open'), st = document.getElementById('status');
+  b.disabled = true; st.textContent = 'Starting MuJoCo…';
+  try {
+    const r = await fetch('/api/launch/__SID__', { method: 'POST' });
+    const j = await r.json();
+    st.innerHTML = j.msg + (j.url ? ` - task buttons: <a href="${j.url}" target="_blank">${j.url}</a>` : '');
+  } catch (e) { st.textContent = 'Could not reach the dashboard server: ' + e; }
+  b.disabled = false;
+};
+</script>
+</body></html>
+"""
+
+
 def build_v1_three_html() -> str:
     """Lazily generate the original v1 SCARA Picker + Single-Rail Lift Three.js viewer from archive/v1/source."""
     import base64
@@ -745,8 +824,12 @@ STAGES = [
         "notes": "521 STL parts built by sim/model_v3.py at commit e40004d (original v3: plain 50 mm crossing bearing, original hub), saved under meshes_v3_legacy without altering any repo files.",
         "uses": ["02_legacy_v2"],
         "used_by": ["10_option1_hub", "11_dual_legs", "12_option1_body", "13_option1_full"],
-        "mounts": {"/meshes/": os.path.join(BUILD_DIR, "meshes_v3_legacy"), "/traj/": os.path.join(BUILD_DIR, "traj")},
-        "traj": "v3_legacy.json",
+        "mounts": {"/meshes/": os.path.join(BUILD_DIR, "meshes_v3_legacy"), "/snaps/": os.path.join(BUILD_DIR, "legacy_v3_snaps")},
+        # shown as images rendered by MuJoCo (the original v3's own sim/run_v3.py --headless) + a button that opens the real
+        # MuJoCo viewer on the original code (git worktree of e40004d in sim/build/legacy_v3_e40004d)
+        "gallery_dir": os.path.join(BUILD_DIR, "legacy_v3_snaps"),
+        "launch": {"commit": "e40004d", "worktree": os.path.join(BUILD_DIR, "legacy_v3_e40004d"), "script": "sim/run_v3.py",
+                   "port": 8766},
     },
     {
         "id": "04_4632_370",
@@ -917,6 +1000,8 @@ def load_stage_html(stage: dict) -> str:
 
     if stage.get("v1_archive"):
         raw_html = build_v1_three_html()
+    elif stage.get("gallery_dir"):
+        raw_html = build_gallery_html(stage)
     elif "xml_path" in stage:
         raw_html = build_mujoco_three_html(stage["xml_path"], stage["title"], stage["xml_sub"], stage.get("traj", ""))
     elif stage["viewer_module"] is None:
@@ -932,7 +1017,7 @@ def load_stage_html(stage: dict) -> str:
     prefix = f"/stage/{sid}"
     # Rewrite root-relative STL routes (/meshes/, /meshes_pod/, /meshes_env/, /meshes_body/, /meshes_full/)
     rewritten = re.sub(
-        r"""(['"])/(meshes(?:_[a-z]+)?/|traj/)""",
+        r"""(['"])/(meshes(?:_[a-z]+)?/|traj/|snaps/)""",
         rf"\1{prefix}/\2",
         raw_html,
     )
@@ -1373,7 +1458,44 @@ def make_handler(manifest: list):
 
             self.send_error(404)
 
+        def do_POST(self):
+            path = urllib.parse.urlparse(self.path).path
+            if path.startswith("/api/launch/"):
+                stage = STAGE_BY_ID.get(path[len("/api/launch/"):])
+                if not stage or "launch" not in stage:
+                    return self._send_bytes(json.dumps({"ok": False, "msg": "This stage has no MuJoCo launcher."}).encode(),
+                                            "application/json", "no-cache")
+                res = launch_mujoco(stage)
+                return self._send_bytes(json.dumps(res).encode(), "application/json", "no-cache")
+            self.send_error(404)
+
     return DashboardHandler
+
+
+_LAUNCHED = {}
+
+
+def launch_mujoco(stage: dict) -> dict:
+    """open the real MuJoCo viewer (mjpython, macOS-safe) on a stage's own code; one instance per stage"""
+    import subprocess
+    L = stage["launch"]
+    sid = stage["id"]
+    url = f"http://127.0.0.1:{L['port']}/"
+    proc = _LAUNCHED.get(sid)
+    if proc is not None and proc.poll() is None:
+        return {"ok": True, "msg": "MuJoCo is already running (look for its window).", "url": url}
+    wt = L["worktree"]
+    if not os.path.isfile(os.path.join(wt, L["script"])):
+        r = subprocess.run(["git", "-C", ROOT, "worktree", "add", "--detach", wt, L["commit"]], capture_output=True, text=True)
+        if r.returncode != 0:
+            return {"ok": False, "msg": "Could not check out " + L["commit"] + ": " + r.stderr.strip()[:300]}
+    mjpy = os.path.join(ROOT, ".pixi", "envs", "sim", "bin", "mjpython")
+    if not os.path.isfile(mjpy):
+        return {"ok": False, "msg": "mjpython not found - run `pixi install -e sim` first."}
+    log = open(os.path.join(BUILD_DIR, f"launch_{sid}.log"), "w")
+    _LAUNCHED[sid] = subprocess.Popen([mjpy, L["script"], "--port", str(L["port"])], cwd=wt, stdout=log, stderr=subprocess.STDOUT,
+                                      start_new_session=True)
+    return {"ok": True, "msg": f"MuJoCo started on the original code ({L['commit']}); its window opens in a few seconds.", "url": url}
 
 
 def main():
