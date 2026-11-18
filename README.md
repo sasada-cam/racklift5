@@ -279,6 +279,23 @@ Known v3 limits:
 * **Fusion 360** – Upload / Open the `.step` files; every body comes in as a separate component.
 * **Slicer** – `models/print/*.stl` (already in print orientation).
 
+## Printed part IDs (swivel pod)
+
+Every printed pod part has its ID and print batch engraved 0.6 mm deep (3 layers at 0.2 mm) on a visible flat face, e.g.
+`P02-B01`. Set the batch in `cad/build_t_slot_option1.py: BATCH` before each print run.
+
+| ID | Part | Where the mark is | Colour in the viewer |
+|---|---|---|---|
+| P01 | Carriage pod (base: deck, bearing tower, 40T gear, front wall, arm + post) | arm post, side facing the swivel axis | medium blue |
+| P02 | Motor cap (back half: walls, lid, can sleeve) - pulls off +Y | back face | navy |
+| P03 | Pinion cover - pulls off -Y | front plate, above the retainer hole | sky blue |
+| P04 | Motor can clamp (front half-shell) - bolted to P02 | front of the shell, vertical | royal blue |
+| P05 | Body mount (fixed: servo cage, M8 cap, top-bearing boss) | servo cage side wall | green |
+| P06 | 20T swivel servo gear | underside, between the horn screws (ID only) | orange |
+| P07 | 14T climb pinion | outer face, outside the retainer (ID only) | orange |
+
+The 10 x 10 x 2.5 mm shaft retainer is too small to mark.
+
 ## Fasteners (v3 swivel pod + crossing pivot) - what to buy in Sri Lanka
 
 All metric (ISO / DIN), modelled in the CAD (`cad/build_t_slot_option1.py: FASTENERS`, `generator/params_v3.py: TT_STACK`).

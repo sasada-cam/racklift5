@@ -121,11 +121,42 @@ HTML = r"""<!doctype html>
       </div>
     </div>
     <div class="row">
-      <span><span class="dot" style="background:#2e8ee6"></span>40T Pod + Sideways Housing</span>
+      <span><span class="dot" style="background:#2e8ee6"></span>P01 Carriage Pod (base) + 40T + Arm</span>
       <div class="btn-group">
         <button id="v-pod-solid" onclick="setVis('pod','solid')">Solid</button>
         <button id="v-pod-xray" class="active" onclick="setVis('pod','xray')">Ghost</button>
         <button id="v-pod-off" onclick="setVis('pod','off')">Hide</button>
+      </div>
+    </div>
+    <div class="row">
+      <span><span class="dot" style="background:#1b4a99"></span>P02 Motor Cap (pulls off +Y)</span>
+      <div class="btn-group">
+        <button id="v-cap-solid" class="active" onclick="setVis('cap','solid')">Solid</button>
+        <button id="v-cap-xray" onclick="setVis('cap','xray')">Ghost</button>
+        <button id="v-cap-off" onclick="setVis('cap','off')">Hide</button>
+      </div>
+    </div>
+    <div class="row">
+      <span><span class="dot" style="background:#3f5fd6"></span>P04 Motor Can Clamp (front half)</span>
+      <div class="btn-group">
+        <button id="v-clamp-solid" class="active" onclick="setVis('clamp','solid')">Solid</button>
+        <button id="v-clamp-xray" onclick="setVis('clamp','xray')">Ghost</button>
+        <button id="v-clamp-off" onclick="setVis('clamp','off')">Hide</button>
+      </div>
+    </div>
+    <div class="row">
+      <span><span class="dot" style="background:#8fd0ff"></span>P03 Pinion Cover (pulls off -Y)</span>
+      <div class="btn-group">
+        <button id="v-pcover-solid" class="active" onclick="setVis('pcover','solid')">Solid</button>
+        <button id="v-pcover-xray" onclick="setVis('pcover','xray')">Ghost</button>
+        <button id="v-pcover-off" onclick="setVis('pcover','off')">Hide</button>
+      </div>
+    </div>
+    <div class="row">
+      <span><span class="dot" style="background:#9aa5b4"></span>Screws, Bolts + Nuts</span>
+      <div class="btn-group">
+        <button id="v-screws-solid" class="active" onclick="setVis('screws','solid')">Show</button>
+        <button id="v-screws-off" onclick="setVis('screws','off')">Hide</button>
       </div>
     </div>
     <div class="row">
@@ -151,7 +182,7 @@ HTML = r"""<!doctype html>
       </div>
     </div>
     <div class="row">
-      <span><span class="dot" style="background:#7c8a9c"></span>Turntable: Slewing Ring + Stop</span>
+      <span><span class="dot" style="background:#7c8a9c"></span>Crossing Pivot: 2× 608ZZ + M8 + Stop</span>
       <div class="btn-group">
         <button id="v-tt-solid" class="active" onclick="setVis('tt','solid')">Show</button>
         <button id="v-tt-xray" onclick="setVis('tt','xray')">Ghost</button>
@@ -238,7 +269,9 @@ const mats = {
   retainer:     new THREE.MeshStandardMaterial({ color: 0x333942, roughness: 0.45 }),
   gantry_plate: new THREE.MeshStandardMaterial({ color: 0x22262d, metalness: 0.5, roughness: 0.45 }),
   v_wheels:     new THREE.MeshStandardMaterial({ color: 0x3c414a, roughness: 0.5 }),
-  motor_cap:    new THREE.MeshStandardMaterial({ color: 0x4d9eeb, roughness: 0.45, transparent: true, opacity: 0.8 }),
+  motor_clamp:  new THREE.MeshStandardMaterial({ color: 0x3f5fd6, roughness: 0.45, transparent: true, opacity: 0.8 }),
+  pinion_cover: new THREE.MeshStandardMaterial({ color: 0x8fd0ff, roughness: 0.45, transparent: true, opacity: 0.8 }),
+  motor_cap:    new THREE.MeshStandardMaterial({ color: 0x1b4a99, roughness: 0.45, transparent: true, opacity: 0.8 }),
   fasteners_turn:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_fixed: new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_gear:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
@@ -282,6 +315,8 @@ addStl('servo_spline',  servoPinionPivot);
 addStl('fasteners_gear', servoPinionPivot);
 addStl('carriage_pod',  carriagePivot);
 addStl('motor_cap',     carriagePivot);
+addStl('pinion_cover',  carriagePivot);
+addStl('motor_clamp',   carriagePivot);
 addStl('motor_housing', carriagePivot);
 addStl('gantry_plate',  carriagePivot);
 addStl('v_wheels',      carriagePivot);
@@ -323,6 +358,10 @@ const groups = {
   brg:    ['bearing_bot', 'bearing_top', 'm8_hardware'],
   servo:  ['servo_body', 'servo_spline', 'alum_horn', 'gear_20t'],
   pod:    ['carriage_pod'],
+  cap:    ['motor_cap'],
+  clamp:  ['motor_clamp'],
+  pcover: ['pinion_cover'],
+  screws: ['fasteners_turn', 'fasteners_fixed', 'fasteners_gear'],
   motor:  ['motor_housing', 'motor_shaft', 'pinion', 'retainer'],
   gantry: ['gantry_plate', 'v_wheels'],
   rail:   ['xp_rail', 'xp_rack', 'fx_rails_x', 'fx_racks_x', 'fx_rails_y', 'fx_racks_y'],
@@ -348,8 +387,12 @@ window.setExplode = (pct) => {
   if (meshes.xp_rail)      meshes.xp_rail.position.z      = -24 * k;
   if (meshes.xp_rack)      meshes.xp_rack.position.z      = -16 * k;
   if (meshes.fx_bracket)   meshes.fx_bracket.position.z   = -60 * k;
-  if (meshes.fx_bearing_outer) meshes.fx_bearing_outer.position.z = -44 * k;
-  if (meshes.xp_bearing_inner) meshes.xp_bearing_inner.position.z = -38 * k;
+  if (meshes.fx_pivot_housing)  meshes.fx_pivot_housing.position.z  = -44 * k;
+  if (meshes.fx_housing_screws) meshes.fx_housing_screws.position.z = -50 * k;
+  if (meshes.xp_pivot_608zz)    meshes.xp_pivot_608zz.position.z    = -38 * k;
+  if (meshes.motor_cap)    meshes.motor_cap.position.y    = 40 * k;    // pulls off +Y
+  if (meshes.motor_clamp)  meshes.motor_clamp.position.y  = -30 * k;   // pulls off -Y
+  if (meshes.pinion_cover) meshes.pinion_cover.position.y = -40 * k;   // pulls off -Y
   if (meshes.v_wheels)     meshes.v_wheels.position.z     = -8 * k;
   if (meshes.carriage_pod) meshes.carriage_pod.position.z = 12 * k;
   if (meshes.bearing_top)  meshes.bearing_top.position.z  = 18 * k;
