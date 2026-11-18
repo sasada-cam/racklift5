@@ -27,6 +27,10 @@ sys.path.insert(0, GEN_DIR)
 import build123d as bd                      # noqa: E402
 import build_t_slot_option1 as O            # noqa: E402
 import params_v3 as PV                      # noqa: E402
+import build_option1_dual_legs as DL        # noqa: E402  (the finished legs + column: mirrored lower pod, HUB_BASE)
+
+# Printed body part IDs (CLAUDE.md: R = robot body / tray / picker; the old B01..B05 used the batch letter)
+BODY_IDS = {"collar": "R40", "boom": "R41", "battery_box": "R42", "battery_lid": "R43", "tray": "R44", "wishbone": "R45"}
 
 OUT_DIR = os.path.abspath(os.path.join(HERE, "..", "models", "components", "option1_body"))
 SIM_MESH_DIR = os.path.abspath(os.path.join(HERE, "..", "sim", "build", "meshes_option1_body"))
@@ -49,6 +53,7 @@ COL_Z0, COL_Z1 = 10.165, 350.165
 BODY_Z0, BODY_Z1 = 128.0, 226.0
 BODY_COL_BOLTS_Z = (140.0, 214.0)
 BODY_SIDE_BOLTS_Z = (146.0, 210.0)
+BODY_WING_BOLTS_X = (31.5, 40.0)             # 2x2 double-shear bolt grid per wing (with B01 wings to +/-44.5)
 
 # Compact Prototype Tray (B04: 180 x 175 mm printable flat deck) & Prototype Basket / Rack
 BXR = 180.0                                 # prototype bay center X (trimmed to match compact 3D-printed tray)
@@ -58,13 +63,15 @@ TRAY_X0, TRAY_X1 = BXR - TRAY_W / 2.0, BXR + TRAY_W / 2.0
 TRAY_Y0, TRAY_Y1 = -245.0, -70.0
 
 BASKET_W, BASKET_D, BASKET_H = 140.0, 130.0, 80.0
-BASKET_TRAY_Y0 = -215.0                     # sits at Y = -215 .. -85 on the 175 mm tray
+BASKET_TRAY_Y0 = -210.0                     # sits at Y = -210 .. -80 on the tray: centred between the fingers' inner faces
+                                            # (-211 / -79 at rest, 1 mm each side; it was -215, 4 mm into the rear finger)
 ARM_DX_IN, ARM_DX_OUT = 74.0, 87.0          # 13 mm wide telescopic bars at BXR ± (74..87), just outside 140 mm basket
 ARM_W = ARM_DX_OUT - ARM_DX_IN              # 13.0 mm
 ARM_L = 145.0                               # each bar 145 mm long
 ARM_TIP0 = TRAY_Y1 - 5.0                    # -75.0 stowed tip
 ARM_MID_Y0 = ARM_TIP0 - ARM_L               # -220.0
-EXTEND_MAX = 205.0                          # max reach stroke into compact 180 mm deep Shelf 1 bay
+EXTEND_MAX = 212.0                          # reach stroke: basket centred between the fingers on the tray (-210..-80) is
+                                            # put on the shelf at y 2..132, and picked with the tip finger 1 mm behind it
 FS_ZT = 62.0                                # finger shaft center above tray top (clears 80 mm? Wait: 62 + 32 > 80 -> 94!)
 FINGER_L, FINGER_T = 26.0, 4.0
 REAR_OFF = BASKET_D + FINGER_T + 2.0        # 136.0 mm capture span for 130 mm basket
@@ -134,20 +141,24 @@ def build_column_stub_and_plug():
 
 
 def build_body_column_collar():
-    """B01 Body Attachment U-Collar: wraps front + left + right faces of the 40 x 25 x 2.0 mm column
-    (strictly Y <= -145.6 so ZERO protrusion behind COL_Y1 = -145.5 where H1/H2 swivel pods pass).
+    """B01 Body Attachment Closed-Box Collar: wraps all 4 faces over upper mid-span (Z=175..226 rear strap
+    clearing H2<=168.8 and H1>=253.6), plus widened +/-44.5 mm 2x2 double-shear wings for B02 and B03.
     """
     gap = 0.15
     x_out = COL_W / 2 + 6.5                              # 26.5
+    x_wing = 44.5                                        # widened wing (+/-26.5 .. +/-44.5) for 2x2 bolt pattern
     y_out0, y_out1 = COL_Y0 - 6.5, COL_Y1 - 0.1          # -177.0 .. -145.6
 
     with bd.BuildPart() as bp:
         with bd.Locations((0.0, (y_out0 + y_out1) / 2.0, BODY_Z0)):
             bd.Box(2 * x_out, y_out1 - y_out0, BODY_Z1 - BODY_Z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-        # Side mounting flanges (rear half Y = -164.0 .. -145.6 so B02/B03 Y-forks bolt onto front face Y = -164.15)
+        # Closed-box upper rear strap (Z = 175..226, Y = -145.65..-139.0): keeps Z<175 open for H2 while closing torsion loop
+        with bd.Locations((0.0, (-145.65 + -139.0) / 2.0, 175.0)):
+            bd.Box(2 * x_out, -139.0 - (-145.65), BODY_Z1 - 175.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        # Widened 4-bolt double-shear side wings (Y = -164.0 .. -145.6)
         for sx in (-1, 1):
-            fx0 = sx * x_out if sx > 0 else -x_out - 12.0
-            fx1 = x_out + 12.0 if sx > 0 else -x_out
+            fx0 = sx * x_out if sx > 0 else -x_wing
+            fx1 = x_wing if sx > 0 else -x_out
             with bd.Locations(((fx0 + fx1) / 2, (-164.0 + y_out1) / 2.0, BODY_Z0 + 4.0)):
                 bd.Box(abs(fx1 - fx0), y_out1 - (-164.0), BODY_Z1 - BODY_Z0 - 8.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
         with bd.Locations((0.0, COL_YC, BODY_Z0 - 1.0)):
@@ -156,13 +167,21 @@ def build_body_column_collar():
             for sx in (-12.0, 12.0):
                 with bd.Locations(bd.Location((sx, y_out0 - 1.0, zp), (-90, 0, 0))):
                     bd.Cylinder(2.25, 16.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+        # access holes (11 mm: head + EPDM / steel washers + socket) for the mirrored lower pod's own column bolts that fall
+        # inside the collar's height (z = JZ_LO + 62 = 152): the collar used to cover them
+        for zp in [DL.JZ_LO + DL.HUB_SIGN["lower"] * z for z in (-62.0, -2.0)] + [DL.JZ_UP + DL.HUB_SIGN["upper"] * z for z in (-62.0, -2.0)]:
+            if BODY_Z0 - 6.0 <= zp <= BODY_Z1 + 6.0:
+                for sx in (-12.0, 12.0):
+                    with bd.Locations(bd.Location((sx, y_out0 - 1.0, zp), (-90, 0, 0))):
+                        bd.Cylinder(5.5, COL_Y0 + 0.2 - (y_out0 - 1.0), align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
         for sx in (-1, 1):
-            wx = sx * (x_out + 6.0)
-            for zp in BODY_SIDE_BOLTS_Z:
-                with bd.Locations(bd.Location((wx, -165.0, zp), (-90, 0, 0))):
-                    bd.Cylinder(2.25, 22.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+            for bx in BODY_WING_BOLTS_X:
+                wx = sx * bx
+                for zp in BODY_SIDE_BOLTS_Z:
+                    with bd.Locations(bd.Location((wx, -165.0, zp), (-90, 0, 0))):
+                        bd.Cylinder(2.25, 22.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
 
-    collar = O.engrave(bp.part, f"B01-{O.BATCH}", (0.0, y_out0, 187.0), (1, 0, 0), (0, -1, 0), 4.2)
+    collar = O.engrave(bp.part, f"{BODY_IDS['collar']}-{O.BATCH}", (0.0, y_out0, 187.0), (1, 0, 0), (0, -1, 0), 4.2)
 
     fast_list = []
     for zp in BODY_COL_BOLTS_Z:
@@ -178,10 +197,17 @@ def build_body_column_collar():
                     bd.extrude(amount=3.1)
             fast_list.append(epdm + wash + head + shank + hn.part)
     for sx in (-1, 1):
-        wx = sx * (x_out + 6.0)
-        for zp in BODY_SIDE_BOLTS_Z:
-            bolt = _cyl_axis(3.5, -180.0, -176.0, "y", wx, zp) + _cyl_axis(2.0, -176.0, -145.6, "y", wx, zp)
-            fast_list.append(bolt)
+        for bx in BODY_WING_BOLTS_X:
+            wx = sx * bx
+            for zp in BODY_SIDE_BOLTS_Z:
+                y_end = -139.0 if zp >= 175.0 else -145.6
+                bolt = _cyl_axis(3.5, -180.0, -176.0, "y", wx, zp) + _cyl_axis(2.0, -176.0, y_end + 4.0, "y", wx, zp)
+                with bd.BuildPart() as wn:
+                    with bd.Locations(bd.Location((wx, y_end, zp), (-90, 0, 0))):
+                        with bd.BuildSketch():
+                            bd.RegularPolygon(radius=7.0 / math.sqrt(3.0), side_count=6, rotation=30.0)
+                        bd.extrude(amount=3.1)
+                fast_list.append(bolt + wn.part)
     return collar, bd.Compound(children=fast_list, label="Body_Attachment_Fasteners")
 
 
@@ -192,31 +218,49 @@ def build_tray_boom_and_loadcell():
     lc_yc = -158.0
     lc_z0, lc_z1 = 145.5, 158.2                     # 7.5 mm gap above sturdy base (138.0), ~9.8 mm under B04 (168.0)
 
-    # 1. B02: Y-gusseted cantilever boom from B01 +X wing -> sturdy 106 x 114 mm sub-base + fixed-end OP0019 pedestal
-    flange = _box(x_flange + 0.15, 38.5, -176.0, -164.15, BODY_Z0 + 4.0, BODY_Z1 - 4.0)
-    # Tapered Y-boom extending from X = 38.65..124.0 at Z = 132..140, plus upper diagonal XZ gusset from Z=222 down to X=145
+    # 1. B02: Double-shear front+top+rear wrap on B01 +X wing -> truss + U-channel boom -> sturdy sub-base + OP0019 pedestal
+    flange = _box(x_flange + 0.15, 51.5, -176.0, -164.15, BODY_Z0 + 4.0, BODY_Z1 - 3.8)
+    top_cap_hood = _box(x_flange + 0.15, 51.5, -176.0, -139.0, BODY_Z1 - 3.85, BODY_Z1)
+    upper_rear_lip = _box(x_flange + 0.15, 51.5, -145.45, -139.0, 175.0, BODY_Z1 - 3.8)
+    outer_spine_hi = _box(44.65, 51.5, -176.0, -139.0, 175.0, BODY_Z1 - 3.8)
+    outer_spine_lo = _box(44.65, 51.5, -176.0, -164.15, 132.0, 175.1)
+    # Tapered Y-boom floor (Z = 132..138) + deep U-channel side truss flanges (Z = 132..147, 4-6x stiffer than flat plate!)
     boom_arm = _extrude_xy_poly(
-        [(38.65, -176.0), (124.0, -190.0), (124.0, -126.0), (38.65, -144.0)],
+        [(44.65, -176.0), (124.0, -190.0), (124.0, -126.0), (44.65, -144.0)],
         132.0, 138.0
     )
-    diag_gusset = _extrude_xz_poly(
-        [(26.65, 222.0), (38.5, 222.0), (88.0, 164.0), (132.0, 140.0), (132.0, 132.0), (26.65, 132.0)],
-        -174.0, -164.5
+    u_flange_front = _extrude_xy_poly(
+        [(44.65, -176.0), (124.0, -190.0), (134.0, -190.0), (134.0, -184.0), (124.0, -184.0), (44.65, -170.0)],
+        138.0, 147.0
     )
-    # Sturdy rectangular base platform centered under tray (X = 122..228, Y = -215..-101, Z = 132..138) + perimeter rim
+    u_flange_rear = _extrude_xy_poly(
+        [(44.65, -144.0), (124.0, -126.0), (134.0, -126.0), (134.0, -132.0), (124.0, -132.0), (44.65, -150.0)],
+        138.0, 147.0
+    )
+    # Cable-stayed truss gusset with triangular lightening cutout (Z = 222 -> elbow 92, 164 -> base 132)
+    diag_gusset = _extrude_xz_poly(
+        [(26.65, 222.2), (44.5, 222.2), (92.0, 164.0), (132.0, 140.0), (132.0, 132.0), (26.65, 132.0)],
+        -175.0, -164.5
+    ) - _extrude_xz_poly(
+        [(49.0, 200.0), (49.0, 145.0), (86.0, 145.0), (86.0, 160.0)],
+        -176.0, -163.5
+    )
+    # Sturdy rectangular base platform centered under tray (X = 122..228, Y = -215..-101, Z = 132..138)
     base_plate = _box(122.0, 228.0, -215.0, -101.0, 132.0, 138.0)
     # Integrated OP0019 lower wishbone pedestal clamping fixed left end (X = 138..167, Z = 138..145.4) + wide spread Y-buttress ribs
     pedestal_wish = _extrude_xy_poly(
         [(136.0, -208.0), (154.0, -208.0), (166.0, -168.0), (166.0, -148.0), (154.0, -108.0), (136.0, -108.0), (144.0, -148.0), (144.0, -168.0)],
         138.0, lc_z0 - 0.1
     )
-    b02_raw = flange + boom_arm + diag_gusset + base_plate + pedestal_wish
-    for zp in BODY_SIDE_BOLTS_Z:
-        b02_raw = b02_raw - _cyl_axis(2.25, -180.0, -160.0, "y", 32.5, zp)
+    b02_raw = (flange + top_cap_hood + upper_rear_lip + outer_spine_hi + outer_spine_lo
+               + boom_arm + u_flange_front + u_flange_rear + diag_gusset + base_plate + pedestal_wish)
+    for wx in BODY_WING_BOLTS_X:
+        for zp in BODY_SIDE_BOLTS_Z:
+            b02_raw = b02_raw - _cyl_axis(2.25, -180.0, -135.0, "y", wx, zp)
     # Two M5 thru-bores going UP from under sturdy base (X = 145, 160) into TAL220 fixed end + counterbore pockets
     for hx in (145.0, 160.0):
         b02_raw = b02_raw - _cyl_axis(2.65, 131.0, lc_z0 + 1.0, "z", hx, lc_yc)
-    b02_part = O.engrave(b02_raw, f"B02-{O.BATCH}", (80.0, -174.0, 135.0), (1, 0, 0), (0, -1, 0), 3.0)
+    b02_part = O.engrave(b02_raw, f"{BODY_IDS['boom']}-{O.BATCH}", (80.0, -174.0, 135.0), (1, 0, 0), (0, -1, 0), 3.0)
 
     # 2. Exact TAL220 5 kg Bar Load Cell (80 x 12.7 x 12.7 mm, X = 140..220, centered at BXR = 180)
     with bd.BuildPart() as lc:
@@ -234,7 +278,6 @@ def build_tray_boom_and_loadcell():
         with bd.Locations((173.0, lc_yc - 7.0, (lc_z0 + lc_z1) / 2 - 2.3)):
             bd.Box(14.0, 14.0, 4.6, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
     potting = _box(170.0, 190.0, lc_yc - 4.0, lc_yc + 4.0, lc_z1, lc_z1 + 0.6)
-    hx711 = _box(172.0, 206.0, -206.0, -184.0, 138.1, 142.1)  # seated flat on sturdy B02 base plate clear of pedestal
 
     # 3. B05 Upper OP0019-Style Live Wishbone Spider (bolts onto TAL220 live end 200/215, spreads to 4 corners under B04)
     # Pedestal drop ONLY over live right end (X = 195..221, Z = 158.3..162.0) leaving >3.5 mm over shear zone/fixed end
@@ -252,7 +295,7 @@ def build_tray_boom_and_loadcell():
     for tx, ty in live_pts:
         # 4x M4 thru-bores connecting B05 live wishbone UP into captive M4 hex nuts in B04 underside
         b05_raw = b05_raw - _cyl_axis(2.20, 161.0, TRAY_RIB_Z0, "z", tx, ty)
-    b05_part = O.engrave(b05_raw, f"B05-{O.BATCH}", (221.0, -158.0, 164.8), (0, 1, 0), (1, 0, 0), 2.6)
+    b05_part = O.engrave(b05_raw, f"{BODY_IDS['wishbone']}-{O.BATCH}", (221.0, -158.0, 164.8), (0, 1, 0), (1, 0, 0), 2.6)
 
     # 4. Fastening Hardware: 2x M5x20 UP into TAL220 fixed end + 2x M4x16 DOWN into live end + 4x M4x14 UP into B04 nuts
     lc_hw = []
@@ -269,61 +312,58 @@ def build_tray_boom_and_loadcell():
                 bd.extrude(amount=3.1)
         lc_hw.append(bolt_u + (n4.part - _cyl_axis(2.0, TRAY_RIB_Z0 + 2.0, TRAY_RIB_Z0 + 6.0, "z", tx, ty)))
 
-    return b02_part, b05_part, bd.Compound(children=[lc.part, potting, hx711], label="LoadCell_5kg_HX711"), bd.Compound(children=lc_hw, label="LoadCell_OP0019_Hardware")
+    return b02_part, b05_part, bd.Compound(children=[lc.part, potting], label="LoadCell_5kg"), bd.Compound(children=lc_hw, label="LoadCell_OP0019_Hardware")
 
 
 def build_battery_pod():
-    """B03 Compact Counterweight Enclosure (78 x 46 x 66 mm) cupped inside a Y-shaped pocket cradle onto B01 -X wing."""
-    bx0, bx1 = -126.0, -48.0                        # compact counterweight footprint (reduced ~40% vs v3 brick)
-    by0, by1 = -168.0, -122.0                       # 46 mm deep
-    bz0, bz1 = 154.0, 220.0                         # 66 mm tall, safely inside mid-span (H2 ends 110, H1 starts 254)
+    """B03 Compact Counterweight Enclosure (81 x 46 x 68.35 mm) + Double-Shear Wrap Hood + Flush Top Lid B03L (Z=226.0)."""
+    bx0, bx1 = -132.5, -51.5                       # compact 81 mm box just outside B01's -44.5 wing + 6.85 mm bridge spine
+    by0, by1 = -168.0, -122.0                       # 46 mm deep (zero rear overhang past -122!)
+    bz0, bz1 = 154.0, BODY_Z1 - 3.65                # 154.0 .. 222.35 so B03L lid (3.5 mm) finishes flush at Z = 226.0
     x_flange = -(COL_W / 2 + 6.5)                   # -26.5
 
     with bd.BuildPart() as b03:
-        # Hollow compact electronics + 3S Li-ion enclosure
         with bd.Locations((bx0, by0, bz0)):
             bd.Box(bx1 - bx0, by1 - by0, bz1 - bz0, align=(bd.Align.MIN,) * 3)
-        with bd.Locations((bx0 + 3.2, by0 + 3.2, bz0 + 3.5)):
-            bd.Box((bx1 - bx0) - 6.4, (by1 - by0) - 6.4, bz1 - bz0, align=(bd.Align.MIN,) * 3, mode=bd.Mode.SUBTRACT)
+        with bd.Locations((bx0 + 6.5, by0 + 3.2, bz0 + 3.5)):
+            bd.Box((bx1 - bx0) - 13.0, (by1 - by0) - 6.4, bz1 - bz0, align=(bd.Align.MIN,) * 3, mode=bd.Mode.SUBTRACT)
 
-    # Strong Y-shaped pocket cradle connecting B01 -X wing (X = -38.5..-26.65) to front, rear, and bottom of B03
-    wing_plate = _box(-38.5, x_flange - 0.15, -176.0, -164.15, BODY_Z0 + 4.0, BODY_Z1 - 4.0)
-    # Bottom Y-fork shelf wrapping underside of enclosure (Z = 144..154.05, stepping cleanly around B01 -X wing)
-    y_fork_bot = _extrude_xy_poly(
-        [(-38.65, -176.0), (-26.65, -176.0), (-26.65, -164.15), (-38.65, -164.15), (-38.65, -145.4), (-48.0, -118.0), (bx0 + 18.0, -118.0), (bx0 + 18.0, -168.0)],
-        144.0, bz0 + 0.05
+    # Region 2: True double-shear wrap-around pocket enclosing B01 -X wing from front, TOP (Z = 222.15..226), and upper rear (Z = 175..222.2)
+    # Zero protruding ribs behind B03's -122 rear wall (Region 1 completely clean!)
+    wing_plate = _box(-51.5, x_flange - 0.15, -176.0, -164.15, BODY_Z0 + 4.0, BODY_Z1 - 3.8)
+    top_cap_hood = _box(-51.5, x_flange - 0.15, -176.0, -139.0, BODY_Z1 - 3.85, BODY_Z1)
+    upper_rear_lip = _box(-51.5, x_flange - 0.15, -145.45, -139.0, 175.0, BODY_Z1 - 3.8)
+    bridge_spine = (
+        _box(-51.5, -44.65, -176.0, -139.0, BODY_Z0 + 4.0, BODY_Z1 - 3.8)
+        + _box(-51.5, -44.65, -139.5, by1, BODY_Z0 + 4.0, bz1)
     )
-    # Upper + Front Y-pocket cheek gripping full height of enclosure's right + front edges (strictly <= bz1 so B03L lid sits flat above)
-    y_fork_front = _extrude_xz_poly(
-        [(-38.5, bz1), (-26.65, bz1), (-26.65, 144.0), (-74.0, 144.0), (-74.0, bz0 + 30.0)],
-        -172.0, by0 + 1.0
+    # Smooth triangular knee gusset under B03: slopes from spine base (-51.5, 132.0) up to outer bottom corner (-132.5, 154.0)
+    tri_gusset = _extrude_xz_poly(
+        [(-45.5, bz0 + 0.5), (bx0, bz0 + 0.5), (bx0, bz0), (-51.5, BODY_Z0 + 4.0), (-45.5, BODY_Z0 + 4.0)],
+        by0, by1
     )
-    # Rear diagonal Y-arm bracing the rear (-122) outer wall cleanly down onto y_fork_bot
-    y_fork_rear = _extrude_xz_poly(
-        [(-48.0, 206.0), (-48.0, 144.0), (-76.0, 144.0), (-76.0, 194.0)],
-        by1 - 1.0, by1 + 4.0
-    )
-    b03_full = b03.part + wing_plate + y_fork_bot + y_fork_front + y_fork_rear
-    # Outer M3 screw-on rim ears (for separate flat-printable top lid B03L) + wire exit notch on +X rim
-    for ex, ey in ((bx0 - 3.5, -145.0), (bx1 + 3.5, -145.0)):
-        b03_full = b03_full + _box(ex - 4.5, ex + 4.5, ey - 6.0, ey + 6.0, bz1 - 8.0, bz1) - _cyl_axis(1.55, bz1 - 9.0, bz1 + 1.0, "z", ex, ey)
-    b03_full = b03_full - _box(bx0 + 3.2, bx1 - 3.2, by0 + 3.2, by1 - 3.2, bz0 + 3.5, bz1 + 2.0)
-    b03_full = b03_full - _box(bx1 - 4.0, bx1 + 1.0, -152.0, -138.0, bz1 - 6.0, bz1 + 1.0)  # rear wire slot to column/HX711
-    for zp in BODY_SIDE_BOLTS_Z:
-        b03_full = b03_full - _cyl_axis(2.25, -180.0, -160.0, "y", -32.5, zp)
-    b03_part = O.engrave(b03_full, f"B03-{O.BATCH}", (-87.0, by0, 187.0), (1, 0, 0), (0, -1, 0), 4.0)
+    b03_full = b03.part + wing_plate + top_cap_hood + upper_rear_lip + bridge_spine + tri_gusset
+    # Flush M3 lid mounting bores directly in the 6.5 mm end walls (zero side ears sticking out)
+    for ex, ey in ((bx0 + 3.25, -145.0), (bx1 - 3.25, -145.0)):
+        b03_full = b03_full - _cyl_axis(1.55, bz1 - 9.0, bz1 + 1.0, "z", ex, ey)
+    b03_full = b03_full - _box(bx0 + 6.5, bx1 - 6.5, by0 + 3.2, by1 - 3.2, bz0 + 3.5, bz1 + 2.0)
+    for bx in BODY_WING_BOLTS_X:
+        for zp in BODY_SIDE_BOLTS_Z:
+            b03_full = b03_full - _cyl_axis(2.25, -180.0, -135.0, "y", -bx, zp)
+    b03_part = O.engrave(b03_full, f"{BODY_IDS['battery_box']}-{O.BATCH}", (-92.0, by0, 187.0), (1, 0, 0), (0, -1, 0), 4.0)
 
-    # Separate 3D-printable flat top cover lid B03L (zero-support flat print, shields battery/PCB from top loads)
+    # Flush separate flat-printable top cover lid B03L (flush at Z = 226.0, also covers rear -51.5..-44.65 spine shoulder)
     lid = (
-        _box(bx0 - 8.0, bx1 + 8.0, by0, by1, bz1 + 0.15, bz1 + 3.65)
-        + _box(bx0 + 3.4, bx1 - 3.4, by0 + 3.4, by1 - 3.4, bz1 - 1.5, bz1 + 0.25)
+        _box(bx0, bx1 - 0.15, by0, by1, bz1 + 0.15, bz1 + 3.65)
+        + _box(bx1 - 0.5, -44.65, -138.85, by1, bz1 + 0.15, bz1 + 3.65)
+        + _box(bx0 + 6.7, bx1 - 6.7, by0 + 3.4, by1 - 3.4, bz1 - 1.5, bz1 + 0.25)
     )
-    for ex, ey in ((bx0 - 3.5, -145.0), (bx1 + 3.5, -145.0)):
+    for ex, ey in ((bx0 + 3.25, -145.0), (bx1 - 3.25, -145.0)):
         lid = lid - _cyl_axis(1.70, bz1 - 2.0, bz1 + 4.5, "z", ex, ey)
-    lid_part = O.engrave(lid, f"B03L-{O.BATCH}", (-87.0, -145.0, bz1 + 3.65), (1, 0, 0), (0, 1, 0), 4.0)
+    lid_part = O.engrave(lid, f"{BODY_IDS['battery_lid']}-{O.BATCH}", (-92.0, -145.0, bz1 + 3.65), (1, 0, 0), (0, 1, 0), 4.0)
 
-    bat_pack = _box(bx0 + 5.0, bx1 - 5.0, by0 + 5.0, by1 - 18.0, bz0 + 5.0, bz1 - 12.0)
-    ctrl_pcb = _box(bx0 + 7.0, bx1 - 7.0, by1 - 15.0, by1 - 11.0, bz0 + 10.0, bz1 - 6.0)
+    bat_pack = _box(bx0 + 8.5, bx1 - 8.5, by0 + 5.0, by1 - 18.0, bz0 + 5.0, bz1 - 12.0)
+    ctrl_pcb = _box(bx0 + 9.5, bx1 - 9.5, by1 - 15.0, by1 - 11.0, bz0 + 10.0, bz1 - 6.0)
     return b03_part, lid_part, bd.Compound(children=[bat_pack, ctrl_pcb], label="Battery_Pack_And_PCB")
 
 
@@ -369,7 +409,7 @@ def build_tray_and_picker():
         for sx in (-46.0, 46.0):
             with bd.Locations((BXR + sx - 7.0, BASKET_TRAY_Y0 - 6.0, z_t)):
                 bd.Box(14.0, 6.0, 12.0, align=(bd.Align.MIN,) * 3)
-    tray = O.engrave(b04.part, f"B04-{O.BATCH}", (BXR, TRAY_Y0, 170.0), (1, 0, 0), (0, -1, 0), 3.4)
+    tray = O.engrave(b04.part, f"{BODY_IDS['tray']}-{O.BATCH}", (BXR, TRAY_Y0, 170.0), (1, 0, 0), (0, -1, 0), 3.4)
 
     tray_hw = _box(BXR - 54.0, BXR - 36.0, BASKET_TRAY_Y0, BASKET_TRAY_Y0 + 6.4, z_t + 0.05, z_t + 10.05)
 
@@ -477,16 +517,43 @@ def check_body_clearances(parts: dict):
         if v > 1e-3:
             bad.append((ka, kb, v))
 
+    # the real legs: lower pod MIRRORED (DL.HUB_BASE), every pod part incl. its column bolts / nuts / washers, the fixed
+    # parts once, the turning parts over the whole swivel 0 .. -90 deg
     pod_parts = O.build_assembled_parts()
     body_solid_keys = ("body_collar", "body_fasteners", "tray_boom", "live_wishbone", "load_cell", "tray_deck", "battery_pod", "battery_lid", "picker_servos")
-    for tag, zc in (("H2_lower", JZ_LO), ("H1_upper", JZ_UP)):
-        loc = DL.hub_world_loc(zc, 0.0, 0.0)
-        for pk in ("body_mount", "servo_body", "carriage_pod", "gantry_plate", "motor_housing"):
-            ps = DL.to_hub(pod_parts[pk], loc)
-            for bk in body_solid_keys:
-                v = overlap(parts[bk], ps)
-                if v > 1e-3:
-                    bad.append((bk, f"{tag}_{pk}", v))
+    fixed_pk = ("body_mount", "bearing_bot", "bearing_top", "m8_hardware", "servo_body", "fasteners_fixed", "gear_20t", "alum_horn",
+                "servo_spline", "fasteners_gear")
+    turn_pk = ("gantry_plate", "v_wheels", "motor_housing", "motor_shaft", "pinion", "retainer", "bearing_pinion", "carriage_pod",
+               "motor_cap", "pinion_cover", "fasteners_turn", "screws_pcover", "screws_cap", "screw_pinion")
+    for tag, key, zc in (("H2_lower", "lower", JZ_LO), ("H1_upper", "upper", JZ_UP)):
+        base = DL.HUB_BASE[key]
+        for sw_deg in (0.0, -15.0, -30.0, -45.0, -60.0, -75.0, -90.0):
+            loc = DL.hub_world_loc(zc, base + sw_deg, 0.0)
+            pks = [(pk, DL.hub_world_loc(zc, base, 0.0)) for pk in fixed_pk if sw_deg == 0.0] + [(pk, loc) for pk in turn_pk]
+            for pk, lc in pks:
+                if pk not in pod_parts:
+                    continue
+                ps = DL.to_hub(pod_parts[pk], lc)
+                for bk in body_solid_keys:
+                    v = overlap(parts[bk], ps)
+                    if v > 1e-3:
+                        bad.append((bk, f"{tag}_sw{int(sw_deg)}_{pk}", v))
+
+    # picker reach: put-back leaves the basket at y 2..132 on the shelf; at full stroke the tip finger is behind it and the
+    # rear finger in front of it, 1 mm each side; at rest the basket sits between the fingers with 1 mm each side
+    tip_in = ARM_TIP0 - FINGER_T                         # tip finger's inner face at rest (-79)
+    rear_in = ARM_TIP0 - REAR_OFF                        # rear finger's inner face at rest (-211)
+    b0, b1 = BASKET_TRAY_Y0, BASKET_TRAY_Y0 + BASKET_D
+    shelf0 = b0 + EXTEND_MAX
+    reach = [("basket on the tray between the fingers (1 mm each side)", b1 <= tip_in - 0.9 and b0 >= rear_in + 0.9),
+             ("put-back: basket fully on the shelf (front y >= 1)", shelf0 >= 1.0),
+             ("pick: tip finger behind the basket on the shelf", tip_in + EXTEND_MAX >= shelf0 + BASKET_D + 0.9),
+             ("pick: rear finger in front of it", rear_in + EXTEND_MAX <= shelf0 - 0.9),
+             ("inner bar keeps >= 30 mm overlap in the middle bar", ARM_L - EXTEND_MAX / 2.0 >= 30.0)]
+    for txt, good in reach:
+        print(f"  reach: {txt}: {'ok' if good else 'FAIL'}")
+        if not good:
+            bad.append(("picker reach", txt, 0.0))
 
     rail_zone = _box(-200.0, 500.0, -60.0, -40.0, 0.0, 500.0)
     for bk in body_solid_keys + ("arms_outer",):
@@ -539,12 +606,12 @@ def main():
     for k, shape in export_map.items():
         bd.export_stl(shape, os.path.join(SIM_MESH_DIR, f"{k}.stl"), tolerance=0.05, angular_tolerance=0.2)
 
-    bd.export_stl(collar, os.path.join(OUT_DIR, "opt1_body_column_collar_B01.stl"), tolerance=0.01, angular_tolerance=0.1)
-    bd.export_stl(boom, os.path.join(OUT_DIR, "opt1_body_tray_boom_B02.stl"), tolerance=0.01, angular_tolerance=0.1)
-    bd.export_stl(bat_box, os.path.join(OUT_DIR, "opt1_body_battery_pod_B03.stl"), tolerance=0.01, angular_tolerance=0.1)
-    bd.export_stl(bat_lid, os.path.join(OUT_DIR, "opt1_body_battery_lid_B03L.stl"), tolerance=0.01, angular_tolerance=0.1)
-    bd.export_stl(picker["tray_deck"], os.path.join(OUT_DIR, "opt1_body_printed_tray_B04.stl"), tolerance=0.01, angular_tolerance=0.1)
-    bd.export_stl(live_wish, os.path.join(OUT_DIR, "opt1_body_live_wishbone_B05.stl"), tolerance=0.01, angular_tolerance=0.1)
+    bd.export_stl(collar, os.path.join(OUT_DIR, f"opt1_body_column_collar_{BODY_IDS['collar']}.stl"), tolerance=0.01, angular_tolerance=0.1)
+    bd.export_stl(boom, os.path.join(OUT_DIR, f"opt1_body_tray_boom_{BODY_IDS['boom']}.stl"), tolerance=0.01, angular_tolerance=0.1)
+    bd.export_stl(bat_box, os.path.join(OUT_DIR, f"opt1_body_battery_pod_{BODY_IDS['battery_box']}.stl"), tolerance=0.01, angular_tolerance=0.1)
+    bd.export_stl(bat_lid, os.path.join(OUT_DIR, f"opt1_body_battery_lid_{BODY_IDS['battery_lid']}.stl"), tolerance=0.01, angular_tolerance=0.1)
+    bd.export_stl(picker["tray_deck"], os.path.join(OUT_DIR, f"opt1_body_printed_tray_{BODY_IDS['tray']}.stl"), tolerance=0.01, angular_tolerance=0.1)
+    bd.export_stl(live_wish, os.path.join(OUT_DIR, f"opt1_body_live_wishbone_{BODY_IDS['wishbone']}.stl"), tolerance=0.01, angular_tolerance=0.1)
     bd.export_stl(plug, os.path.join(OUT_DIR, "opt1_body_anticrush_plug_P07B.stl"), tolerance=0.01, angular_tolerance=0.1)
     print(f"Exported {len(export_map)} body viewer meshes to {SIM_MESH_DIR}")
 

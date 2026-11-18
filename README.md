@@ -321,6 +321,20 @@ Modelled in [`cad/build_option1_dual_legs.py`](cad/build_option1_dual_legs.py) a
 P01 prints deck-down; use tree supports (under the arm hub, and under the can clamp's lower edge, which spans the open
 gearbox space - reach them from the open back). The stepped `Ø9.6 × 3.1 mm` shaft retainer collar is too small to mark.
 
+## Printed part IDs (Option 1 body: `cad/build_option1_body.py`)
+
+| ID | Part | Colour |
+|---|---|---|
+| R40 | Body column collar (11 mm access holes over the lower pod's column bolts at z 152) | `#1F7A4D` green |
+| R41 | Tray boom | `#4CAF50` green |
+| R42 | Battery / controller box | `#66BB6A` green |
+| R43 | Battery box lid | `#388E3C` green |
+| R44 | Printed tray (180 x 175) | `#7FD8A6` green |
+| R45 | Live wishbone (load cell -> tray) | `#2E6B47` green |
+
+Picker: 212 mm stroke. The basket rides centred between the fingers on the tray (y -210..-80, 1 mm each side), is put
+on the shelf at y 2..132 and picked with the tip finger 1 mm behind it; `build_option1_body.py` checks this ("reach").
+
 ## Printed part IDs (v3 rack, robot body, cart, docks, covers)
 
 Every printed part outside the swivel pod has an ID from `generator/part_ids_v3.py`, engraved 0.6 mm deep with the

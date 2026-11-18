@@ -1,11 +1,11 @@
 """Interactive Three.js 3D Studio for Option 1 Separate Body & Picker Assembly.
 
-Displays the non-swivelling robot payload assembly (no legs), centered on the B01 column
+Displays the non-swivelling robot payload assembly (no legs), centered on the R40 column
 attachment collar on the 40 x 25 x 2.0 mm hollow aluminium column stub:
-  - B01 Split/Wrap Column Collar + P07-BODY anti-crush plug + 4x M4x35 EPDM-cushioned bolts
-  - B02 Tray Boom + 5 kg TAL220 Bar Load Cell / HX711 + 12 mm Plywood Tray
+  - R40 Split/Wrap Column Collar + P07-BODY anti-crush plug + 4x M4x35 EPDM-cushioned bolts
+  - R41 Tray Boom + 5 kg TAL220 Bar Load Cell / HX711 + 12 mm Plywood Tray
   - Left & Right 2-Stage Telescopic Picker Arms + Servo 1/2 + 4x Flip Fingers
-  - B03 Counterweight Battery & Controller PCB Enclosure
+  - R42 Counterweight Battery & Controller PCB Enclosure
   - Reference Shelf 1 Bay + Daraz Basket
 
 Usage:
@@ -26,7 +26,7 @@ HTML = r"""<!doctype html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Option 1 — Body Attachment & Picker Studio</title>
+<title>Payload Chassis, Load Cell &amp; Telescopic Picker</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #10151f; color: #e6ebf2; }
@@ -69,8 +69,8 @@ HTML = r"""<!doctype html>
 <div id="canvas-wrap"></div>
 
 <div id="panel">
-  <h1>Option 1 · Separate Body & Attachment</h1>
-  <div class="sub">B01 Column Collar · B02 Y-Gusset Boom · B03 Y-Cradle · B04 180×175 Printed Tray</div>
+  <h1>Payload Chassis, Load Cell &amp; Picker</h1>
+  <div class="sub">Column Collar · 5 kg Load-Cell Truss · 2-Stage Telescopic Picker · Battery Enclosure</div>
 
   <div class="sec">
     <div class="sec-title">1. Picker & Payload Motion</div>
@@ -80,9 +80,9 @@ HTML = r"""<!doctype html>
       <button id="m-reach" style="flex:1" onclick="setMode('reach')">Reach Shelf</button>
     </div>
     <div class="row" style="margin-top:8px">
-      <span>Arm Stroke Y (0 .. 205 mm)</span><span id="arm-val">0.0 mm</span>
+      <span>Arm Stroke Y (0 .. 212 mm)</span><span id="arm-val">0.0 mm</span>
     </div>
-    <input id="arm-sl" type="range" min="0" max="205" step="1" value="0" oninput="setPose('arm', Number(this.value))"/>
+    <input id="arm-sl" type="range" min="0" max="212" step="1" value="0" oninput="setPose('arm', Number(this.value))"/>
     <div class="row">
       <span>Flip Fingers (0° Up .. 90° Grab)</span><span id="fng-val">0.0°</span>
     </div>
@@ -100,7 +100,7 @@ HTML = r"""<!doctype html>
   <div class="sec">
     <div class="sec-title">2. Layers</div>
     <div class="row">
-      <span><span class="dot" style="background:#38bdf8"></span>B01 Column Collar + Bolts</span>
+      <span><span class="dot" style="background:#1f7a4d"></span>R40 Column Collar + Bolts</span>
       <div class="btn-group">
         <button id="v-col_m-solid" class="active" onclick="setVis('col_m','solid')">Solid</button>
         <button id="v-col_m-xray" onclick="setVis('col_m','xray')">Ghost</button>
@@ -108,7 +108,7 @@ HTML = r"""<!doctype html>
       </div>
     </div>
     <div class="row">
-      <span><span class="dot" style="background:#3b82f6"></span>B04 Tray + B02 Base + B05 Wishbone</span>
+      <span><span class="dot" style="background:#4caf50"></span>R44 Tray + R41 Base + R45 Wishbone</span>
       <div class="btn-group">
         <button id="v-tray-solid" class="active" onclick="setVis('tray','solid')">Solid</button>
         <button id="v-tray-xray" onclick="setVis('tray','xray')">Ghost</button>
@@ -123,7 +123,7 @@ HTML = r"""<!doctype html>
       </div>
     </div>
     <div class="row">
-      <span><span class="dot" style="background:#22c55e"></span>B03 Battery + PCB Box</span>
+      <span><span class="dot" style="background:#66bb6a"></span>R42 Battery + PCB Box</span>
       <div class="btn-group">
         <button id="v-bat-solid" class="active" onclick="setVis('bat','solid')">Solid</button>
         <button id="v-bat-xray" onclick="setVis('bat','xray')">Ghost</button>
@@ -149,21 +149,34 @@ HTML = r"""<!doctype html>
   </div>
 
   <div class="sec">
-    <div class="sec-title">3. Attachment & Prototype Spec</div>
+    <div class="sec-title">3. Exploded Assembly View</div>
+    <div class="row">
+      <span>Exploded View</span><span id="exp-val">0%</span>
+    </div>
+    <input id="exp-sl" type="range" min="0" max="100" step="1" value="0" oninput="setExplode(Number(this.value))"/>
+    <div class="btn-group" style="width:100%; margin-top:4px">
+      <button id="e-0" class="active" style="flex:1" onclick="setExplode(0)">Assembled (0%)</button>
+      <button id="e-50" style="flex:1" onclick="setExplode(50)">Half (50%)</button>
+      <button id="e-100" style="flex:1" onclick="setExplode(100)">Exploded (100%)</button>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">4. Attachment & Prototype Spec</div>
     <table class="cut-table">
-      <tr><td>B01 Clamp Zone (leg-free gap)</td><td>Z 138..226 mm</td></tr>
-      <tr><td>B04 3D-Printed Ribbed Tray</td><td>180 × 175 mm PETG</td></tr>
+      <tr><td>R40 Clamp Zone (leg-free gap)</td><td>Z 138..226 mm</td></tr>
+      <tr><td>R44 3D-Printed Ribbed Tray</td><td>180 × 175 mm PETG</td></tr>
       <tr><td>Prototype Basket / Rack Bay</td><td>140×130 / 184 mm</td></tr>
-      <tr><td>B03 Compact Counterweight</td><td>78 × 46 × 66 mm</td></tr>
-      <tr><td>Load Cell Mount (B02 Y-Pocket)</td><td>80 × 12.7 mm (5 kg)</td></tr>
-      <tr><td>Telescopic Reach (2:1 stage 2)</td><td>up to 205 mm</td></tr>
+      <tr><td>R42 Compact Counterweight</td><td>78 × 46 × 66 mm</td></tr>
+      <tr><td>Load Cell Mount (R41 Y-Pocket)</td><td>80 × 12.7 mm (5 kg)</td></tr>
+      <tr><td>Telescopic Reach (2:1 stage 2)</td><td>up to 212 mm</td></tr>
     </table>
   </div>
 
   <div class="sec">
     <div class="btn-group" style="width:100%">
       <button style="flex:1" onclick="resetCam()">Reset View</button>
-      <button style="flex:1" onclick="focusAttach()">Zoom Attachment (B01)</button>
+      <button style="flex:1" onclick="focusAttach()">Zoom Attachment (R40)</button>
     </div>
   </div>
 </div>
@@ -214,22 +227,22 @@ const m = (hex, extra={}) => new THREE.MeshStandardMaterial({ color: hex, roughn
 const mats = {
   column_stub:    m(0xcbd5e1, { metalness: 0.70, roughness: 0.30, transparent: true, opacity: 0.38, depthWrite: false }),
   anti_crush_plug:m(0xf29429),
-  body_collar:    m(0x38bdf8),
+  body_collar:    m(0x1f7a4d),
   body_fasteners: m(0x94a3b8, { metalness: 0.85, roughness: 0.25 }),
-  tray_boom:      m(0x3b82f6),
-  live_wishbone:  m(0xef4444),
+  tray_boom:      m(0x4caf50),
+  live_wishbone:  m(0x2e6b47),
   load_cell:      m(0xe2e8f0, { metalness: 0.75, roughness: 0.30 }),
-  tray_deck:      m(0x2e8ee6, { roughness: 0.45 }),
+  tray_deck:      m(0x7fd8a6, { roughness: 0.45 }),
   tray_stops:     m(0x64748b),
   arms_outer:     m(0x94a3b8, { metalness: 0.65 }),
-  arms_mid:       m(0x2563eb),
-  arms_in:        m(0xf59e0b),
-  fingers_left:   m(0xef4444),
-  fingers_right:  m(0xef4444),
+  arms_mid:       m(0x7c8a9c),
+  arms_in:        m(0xa8b2c0),
+  fingers_left:   m(0x00897b),
+  fingers_right:  m(0x00897b),
   picker_belts:   m(0x1e293b, { roughness: 0.8 }),
   picker_servos:  m(0xc41e24, { metalness: 0.45 }),
-  battery_pod:    m(0x22c55e),
-  battery_lid:    m(0x16a34a),
+  battery_pod:    m(0x66bb6a),
+  battery_lid:    m(0x388e3c),
   battery_pack:   m(0x334155),
   ref_basket:     m(0x38bdf8, { transparent: true, opacity: 0.25, depthWrite: false }),
   ref_rack_bay:   m(0x64748b, { transparent: true, opacity: 0.28, depthWrite: false }),
@@ -252,10 +265,17 @@ const stubGroup = new THREE.Group();
 const envGroup = new THREE.Group();
 worldRoot.add(stubGroup, envGroup);
 
-addMesh('column_stub', stubGroup, mats.column_stub);
-addMesh('anti_crush_plug', stubGroup, mats.anti_crush_plug);
-addMesh('ref_rack_bay', envGroup, mats.ref_rack_bay);
-const refBasketMesh = addMesh('ref_basket', bodyLiftGroup, mats.ref_basket);
+const meshes = {};
+function regMesh(name, parent, mat) {
+  const holder = addMesh(name, parent, mat);
+  meshes[name] = holder;
+  return holder;
+}
+
+regMesh('column_stub', stubGroup, mats.column_stub);
+regMesh('anti_crush_plug', stubGroup, mats.anti_crush_plug);
+regMesh('ref_rack_bay', envGroup, mats.ref_rack_bay);
+const refBasketMesh = regMesh('ref_basket', bodyLiftGroup, mats.ref_basket);
 
 const collarGroup = new THREE.Group();
 const trayGroup = new THREE.Group();
@@ -263,40 +283,71 @@ const armsGroup = new THREE.Group();
 const batGroup = new THREE.Group();
 bodyLiftGroup.add(collarGroup, trayGroup, armsGroup, batGroup);
 
-addMesh('body_collar', collarGroup, mats.body_collar);
-addMesh('body_fasteners', collarGroup, mats.body_fasteners);
-addMesh('tray_boom', trayGroup, mats.tray_boom);
-addMesh('live_wishbone', trayGroup, mats.live_wishbone);
-addMesh('load_cell', trayGroup, mats.load_cell);
-addMesh('tray_deck', trayGroup, mats.tray_deck);
-addMesh('tray_stops', trayGroup, mats.tray_stops);
+regMesh('body_collar', collarGroup, mats.body_collar);
+regMesh('body_fasteners', collarGroup, mats.body_fasteners);
+regMesh('tray_boom', trayGroup, mats.tray_boom);
+regMesh('live_wishbone', trayGroup, mats.live_wishbone);
+regMesh('load_cell', trayGroup, mats.load_cell);
+regMesh('tray_deck', trayGroup, mats.tray_deck);
+regMesh('tray_stops', trayGroup, mats.tray_stops);
 
-addMesh('arms_outer', armsGroup, mats.arms_outer);
-addMesh('picker_belts', armsGroup, mats.picker_belts);
-addMesh('picker_servos', armsGroup, mats.picker_servos);
-const armsMidMesh = addMesh('arms_mid', armsGroup, mats.arms_mid);
-const armsInMesh = addMesh('arms_in', armsGroup, mats.arms_in);
+regMesh('arms_outer', armsGroup, mats.arms_outer);
+regMesh('picker_belts', armsGroup, mats.picker_belts);
+regMesh('picker_servos', armsGroup, mats.picker_servos);
+const armsMidMesh = regMesh('arms_mid', armsGroup, mats.arms_mid);
+const armsInMesh = regMesh('arms_in', armsGroup, mats.arms_in);
 
 const fingersLeftPivot = new THREE.Group();
 fingersLeftPivot.position.set(XC_LEFT, 0, ZC_FS);
 const fingersRightPivot = new THREE.Group();
 fingersRightPivot.position.set(XC_RIGHT, 0, ZC_FS);
 armsGroup.add(fingersLeftPivot, fingersRightPivot);
-addMesh('fingers_left', fingersLeftPivot, mats.fingers_left);
-addMesh('fingers_right', fingersRightPivot, mats.fingers_right);
+regMesh('fingers_left', fingersLeftPivot, mats.fingers_left);
+regMesh('fingers_right', fingersRightPivot, mats.fingers_right);
 
-addMesh('battery_pod', batGroup, mats.battery_pod);
-addMesh('battery_lid', batGroup, mats.battery_lid);
-addMesh('battery_pack', batGroup, mats.battery_pack);
+regMesh('battery_pod', batGroup, mats.battery_pod);
+regMesh('battery_lid', batGroup, mats.battery_lid);
+regMesh('battery_pack', batGroup, mats.battery_pack);
 
 let mode = 'auto';
-let armMm = 0.0, fngDeg = 0.0, liftZ = 0.0, animSpeed = 1.0;
+let armMm = 0.0, fngDeg = 0.0, liftZ = 0.0, animSpeed = 1.0, explodeK = 0.0;
+
+window.setExplode = (pct) => {
+  const val = Math.max(0, Math.min(100, Number(pct)));
+  explodeK = val / 100.0;
+  const k = explodeK;
+  document.getElementById('exp-sl').value = val;
+  document.getElementById('exp-val').textContent = Math.round(val) + '%';
+  ['0', '50', '100'].forEach(p => {
+    const el = document.getElementById('e-' + p);
+    if (el) el.classList.toggle('active', Math.round(val) === Number(p));
+  });
+
+  // Column center (X=0) + top plug (+Z)
+  meshes.anti_crush_plug.position.set(0, 0, 55 * k);
+  // R40 collar slides forward (-Y) off column + bolts pull forward ahead of collar
+  meshes.body_collar.position.set(0, -45 * k, 0);
+  meshes.body_fasteners.position.set(0, -90 * k, 0);
+  // +X payload stack: R41 -> TAL220/HX711 -> R45 -> R44 -> hardware/basket
+  meshes.tray_boom.position.set(60 * k, 0, -22 * k);
+  meshes.load_cell.position.set(60 * k, 0, 18 * k);
+  meshes.live_wishbone.position.set(60 * k, 0, 52 * k);
+  meshes.tray_deck.position.set(60 * k, 0, 88 * k);
+  meshes.tray_stops.position.set(60 * k, 0, 112 * k);
+  refBasketMesh.position.set(60 * k, 0, 130 * k);
+  // Telescopic picker stack lifts cleanly above R44 while retaining live arm stroke
+  armsGroup.position.set(60 * k, 0, 120 * k);
+  // -X counterweight stack: R42 -> battery/PCB -> flush lid R43
+  meshes.battery_pod.position.set(-60 * k, 0, 0);
+  meshes.battery_pack.position.set(-60 * k, 0, 52 * k);
+  meshes.battery_lid.position.set(-60 * k, 0, 100 * k);
+};
 
 window.setMode = (mName) => {
   mode = mName;
   ['auto', 'stow', 'reach'].forEach(id => document.getElementById('m-' + id).classList.toggle('active', id === mName));
   if (mName === 'stow') { armMm = 0; fngDeg = 0; }
-  if (mName === 'reach') { armMm = 205; fngDeg = 90; }
+  if (mName === 'reach') { armMm = 212; fngDeg = 90; }
 };
 window.setPose = (k, v) => {
   mode = 'manual';
@@ -374,18 +425,18 @@ function animate() {
   if (mode === 'auto') {
     // 8s pick-and-place demonstration: extend out -> drop fingers -> pull back -> lift fingers
     const ph = t % 8.0;
-    if (ph < 2.5) { armMm = 205 * (ph / 2.5); fngDeg = 0; }
-    else if (ph < 3.5) { armMm = 205; fngDeg = 90 * (ph - 2.5); }
-    else if (ph < 6.0) { armMm = 205 * (1 - (ph - 3.5) / 2.5); fngDeg = 90; }
+    if (ph < 2.5) { armMm = 212 * (ph / 2.5); fngDeg = 0; }
+    else if (ph < 3.5) { armMm = 212; fngDeg = 90 * (ph - 2.5); }
+    else if (ph < 6.0) { armMm = 212 * (1 - (ph - 3.5) / 2.5); fngDeg = 90; }
     else if (ph < 7.0) { armMm = 0; fngDeg = 90 * (1 - (ph - 6.0)); }
     else { armMm = 0; fngDeg = 0; }
   }
 
   bodyLiftGroup.position.set(0, 0, liftZ);
-  armsMidMesh.position.y = 0.5 * armMm;
-  armsInMesh.position.y = armMm;
-  fingersLeftPivot.position.set(XC_LEFT, armMm, ZC_FS);
-  fingersRightPivot.position.set(XC_RIGHT, armMm, ZC_FS);
+  armsMidMesh.position.set(0, 0.5 * armMm, 18 * explodeK);
+  armsInMesh.position.set(0, armMm, 36 * explodeK);
+  fingersLeftPivot.position.set(XC_LEFT - 18 * explodeK, armMm, ZC_FS + 44 * explodeK);
+  fingersRightPivot.position.set(XC_RIGHT + 18 * explodeK, armMm, ZC_FS + 44 * explodeK);
   const fRad = fngDeg * Math.PI / 180;
   fingersLeftPivot.rotation.y = fRad;
   fingersRightPivot.rotation.y = -fRad;
