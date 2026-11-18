@@ -38,7 +38,6 @@ PARTS = {
     "carriage_pod":  ("pod: printed carriage pod + 40T swivel gear", (46, 142, 230), "turn"),
     "motor_cap":     ("pod: printed motor cap (removable lid + can sleeve)", (27, 74, 153), "turn"),
     "pinion_cover":  ("pod: printed pinion cover (removable)", (143, 208, 255), "turn"),
-    "motor_clamp":   ("pod: printed motor can clamp (front half-shell)", (63, 95, 214), "turn"),
     "motor_housing": ("pod: 4632-370 climb motor", (180, 188, 200), "turn"),
     "motor_shaft":   ("pod: 4632-370 output shaft", (216, 222, 230), "turn"),
     "retainer":      ("pod: printed shaft retainer", (51, 57, 66), "turn"),

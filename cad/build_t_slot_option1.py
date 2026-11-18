@@ -78,10 +78,10 @@ PC_FRONT = (-9.6, -6.6)                             # front plate Y
 PC_BACK_Y = 10.0                                    # cover stops 0.2 mm short of the front wall (Y 10.2)
 PC_Z = (0.3, 22.3)                                  # bottom (above the rail top -2.5) .. top
 PC_X = (37.2, 68.2)                                 # side walls' outer faces (pinion tip X 40.5 .. 64.5)
-# Motor can CLAMP: the sleeve's open (front) half closed by a second half-shell; both halves run up to Z 78 (can top 75.1,
+# Motor can CLAMP: the sleeve's open (front) half closed by a half-shell grown out of P01's front wall; both halves run up to Z 78 (can top 75.1,
 # open at the top for the wires) and are bolted through flanges on both edges (split plane Y = can centre): 2 bolts on the
-# +X edge (Z 58.5, 75.1) and 1 on the -X edge above the arm post (Z 75.1; the post fills the space below).  The front
-# half comes off along -Y after the 3 bolts, then the cap along +Y.
+# +X edge (Z 58.5, 75.1) and 1 on the -X edge above the arm post (Z 75.1; the post fills the space below).  Undo the 3
+# bolts + 4 cap screws, the cap comes off along +Y.
 CLAMP_TOP_Z = 78.0                                  # below the body mount's top plate (78.5) the pods sweep past
 CLAMP_BOLTS = [(71.4, 58.5), (71.4, 75.1), (33.6, 75.1)]   # (X, Z), axis along Y, M3 x 10 socket cap + M3 nut
 CLAMP_FL_T = 3.0                                    # each flange 3 mm thick (Y)
@@ -330,8 +330,8 @@ def _build_carriage_pod_full() -> bd.Part:
 
 # Part IDs engraved on every printed part (0.6 mm deep = 3 layers at 0.2 mm), with the print batch.  Change BATCH per print run.
 BATCH = "B01"
-PART_IDS = {"carriage_pod": "P01", "motor_cap": "P02", "pinion_cover": "P03", "motor_clamp": "P04", "body_mount": "P05",
-            "gear_20t": "P06", "pinion": "P07"}       # (the 10 x 10 x 2.5 mm shaft retainer is too small to mark)
+PART_IDS = {"carriage_pod": "P01", "motor_cap": "P02", "pinion_cover": "P03", "body_mount": "P04",
+            "gear_20t": "P05", "pinion": "P06"}   # (can clamp front half = part of P01; the 10 x 10 x 2.5 retainer is too small to mark)
 ENGRAVE_DEPTH = 0.6
 
 
@@ -364,6 +364,7 @@ def build_carriage_pod_option1() -> bd.Part:
         part = part - _ycyl(1.3, yj - 10.0, yj + 0.5, x, z)
     for x, z, yf in PC_SCREWS:                                           # pinion cover screws: pilots into the post / ear
         part = part - _ycyl(1.3, yf - 0.5, min(yf + 9.0, CAP_Y0 - 0.3) if yf == CAP_BASE_Y0 else yf + 9.0, x, z)
+    part = part + _clamp_front_half()
     part = engrave(part, mark("carriage_pod"), (ARM_POST[0], (ARM_POST[2] + ARM_POST[3]) / 2, 40.0), (0, 0, 1), (-1, 0, 0), 4.0)
     part.label = "Option1_Carriage_Pod_40T"
     part.color = bd.Color(0.18, 0.55, 0.88)
@@ -418,15 +419,24 @@ def _clamp_flanges(y0, y1):
     return out
 
 
-def build_motor_clamp_option1() -> bd.Part:
-    """front half of the motor can's sleeve (Y < can centre), Z 44.2 .. 78, flanges + 3 bolt holes; comes off along -Y"""
+def _clamp_front_half() -> bd.Part:
+    """front half of the motor can's sleeve (Y < can centre), Z 43.6 .. 78, flanges + 3 bolt holes - printed as part of P01
+    (it grows out of the front wall's top; the can slides into it as the gearbox is pushed onto the wall).  Print P01 with
+    tree supports under the shell's lower edge (it spans the open gearbox space)."""
     mc_x, mc_y, r_in, r_out = _clamp_geom()
-    z0 = T.GB_Z_CENTER + M.GB_L / 2 + 0.8 + 2.4 + 0.2              # just above the front wall's top (44)
+    z0 = T.GB_Z_CENTER + M.GB_L / 2 + 0.8 + 0.2                    # 41.8: 1 mm above the gearbox top (its cavity ends 41.6)
     ring = bd.Cylinder(r_out, CLAMP_TOP_Z - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((mc_x, mc_y, z0))) \
         - bd.Cylinder(r_in, CLAMP_TOP_Z - z0 + 2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((mc_x, mc_y, z0 - 1)))
     half = bd.Box(2 * r_out + 2, r_out + 1, CLAMP_TOP_Z - z0 + 2, align=(bd.Align.CENTER, bd.Align.MAX, bd.Align.MIN)).moved(
         bd.Location((mc_x, mc_y - 0.1, z0 - 1)))
     c = ring & half
+    # bridge down into the front wall (its top is cut to Z 39 around the can): wall Y band, Z 38.5 .. 42.4, can bore kept
+    gtop = T.GB_Z_CENTER + M.GB_L / 2                              # 40.8: gearbox top = bottom of the can
+    bridge = bd.Box(2 * r_out, 2.6, 42.4 - 38.5, align=(bd.Align.CENTER, bd.Align.MIN, bd.Align.MIN)).moved(
+        bd.Location((mc_x, T.GB_FACE_Y - 2.6, 38.5)))
+    bridge = bridge & bd.Cylinder(r_out, 10, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((mc_x, mc_y, 35)))
+    bridge = bridge - bd.Cylinder(r_in, 10, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((mc_x, mc_y, gtop - 0.2)))
+    c = c + bridge
     for f in _clamp_flanges(mc_y - 0.1 - CLAMP_FL_T, mc_y - 0.1):
         c = c + f
     for x, z in CLAMP_BOLTS:
@@ -435,9 +445,6 @@ def build_motor_clamp_option1() -> bd.Part:
     zt0, zt1 = CAP_SCREWS[2][1] - CAP_BOSS_R - 0.4, CAP_SCREWS[2][1] + CAP_BOSS_R + 0.4
     c = c - bd.Box(20, 40, zt1 - z0 + 1.0, align=(bd.Align.MIN,) * 3).moved(bd.Location((65.0, mc_y - 30, z0 - 1.0)))   # (+ the base's column)
     c = c - bd.Box(20, 40, zt1 - zt0, align=(bd.Align.MAX, bd.Align.MIN, bd.Align.MIN)).moved(bd.Location((mc_x - r_in + 0.2, mc_y - 30, zt0)))
-    c = engrave(c, mark("motor_clamp"), (mc_x, mc_y - r_out, 64.0), (0, 0, 1), (0, -1, 0), 3.0)
-    c.label = "Option1_Motor_Clamp"
-    c.color = bd.Color(0.25, 0.37, 0.84)        # royal blue
     return c
 
 
@@ -626,7 +633,7 @@ FASTENERS = [   # (part, qty per pod, where, buy as)
     ("M3 x 14 pan head thread-forming (for plastics, 'PT' / self-tapping)", 4, "TD-8125MG ears -> body mount", "or M3 x 14 machine screw + M3 heat-set insert"),
     ("M3 x 12 pan head thread-forming (for plastics, 'PT' / self-tapping)", 5, "motor cap -> carriage pod (4) + pinion cover -> arm post (1)", "or M3 x 12 + M3 heat-set insert"),
     ("M3 x 10 pan head thread-forming (for plastics, 'PT' / self-tapping)", 2, "pinion cover -> ear beside the front wall", ""),
-    ("M3 x 10 socket cap (DIN 912) + M3 hex nut (DIN 934, or nyloc DIN 985)", 3, "motor can clamp: front half-shell <-> cap's half (flanges)", ""),
+    ("M3 x 10 socket cap (DIN 912) + M3 hex nut (DIN 934, or nyloc DIN 985)", 3, "motor can clamp: P01's front half-shell <-> the cap's half (flanges)", ""),
     ("M3 x 12 socket cap (DIN 912)", 4, "20T gear -> 25T aluminium horn (horn holes are tapped M3)", ""),
     ("M3 x 8 servo spline screw", 1, "horn -> servo spline", "supplied with the servo"),
     ("M4 x 12 socket cap (DIN 912)", 4, "body mount -> column bar (tapped M4); fit before the servo", "+ 4 x M4 washer (DIN 125)"),
@@ -689,7 +696,6 @@ def build_assembled_parts():
     carriage_pod = build_carriage_pod_option1()
     motor_cap = build_motor_cap_option1()
     pinion_cover = build_pinion_cover_option1()
-    motor_clamp = build_motor_clamp_option1()
     bearing_bot = build_608zz_bearing(B_BOT_Z0)
     bearing_top = build_608zz_bearing(B_TOP_Z0)
     m8_hardware = build_m8_bolt_assembly()
@@ -717,7 +723,6 @@ def build_assembled_parts():
         "carriage_pod": carriage_pod,
         "motor_cap": motor_cap,
         "pinion_cover": pinion_cover,
-        "motor_clamp": motor_clamp,
         "bearing_bot": bearing_bot,
         "bearing_top": bearing_top,
         "m8_hardware": m8_hardware,
@@ -741,7 +746,6 @@ def main():
         "opt1_carriage_pod_40t": parts["carriage_pod"],
         "opt1_motor_cap": parts["motor_cap"],
         "opt1_pinion_cover": parts["pinion_cover"],
-        "opt1_motor_clamp": parts["motor_clamp"],
         "opt1_body_mount": parts["body_mount"],
         "opt1_20t_servo_gear": parts["gear_20t"],
         "opt1_25t_horn": parts["alum_horn"],

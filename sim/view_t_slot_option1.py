@@ -98,7 +98,7 @@ HTML = r"""<!doctype html>
   <div class="sec">
     <div class="sec-title">3. Layer Visibility</div>
     <div class="row">
-      <span><span class="dot" style="background:#33b873"></span>Body Mount (Fixed)</span>
+      <span><span class="dot" style="background:#33b873"></span>P04 Body Mount (Fixed)</span>
       <div class="btn-group">
         <button id="v-body-solid" onclick="setVis('body','solid')">Solid</button>
         <button id="v-body-xray" class="active" onclick="setVis('body','xray')">Ghost</button>
@@ -121,7 +121,7 @@ HTML = r"""<!doctype html>
       </div>
     </div>
     <div class="row">
-      <span><span class="dot" style="background:#2e8ee6"></span>P01 Carriage Pod (base) + 40T + Arm</span>
+      <span><span class="dot" style="background:#2e8ee6"></span>P01 Carriage Pod + 40T + Arm + Can Clamp (front)</span>
       <div class="btn-group">
         <button id="v-pod-solid" onclick="setVis('pod','solid')">Solid</button>
         <button id="v-pod-xray" class="active" onclick="setVis('pod','xray')">Ghost</button>
@@ -134,14 +134,6 @@ HTML = r"""<!doctype html>
         <button id="v-cap-solid" class="active" onclick="setVis('cap','solid')">Solid</button>
         <button id="v-cap-xray" onclick="setVis('cap','xray')">Ghost</button>
         <button id="v-cap-off" onclick="setVis('cap','off')">Hide</button>
-      </div>
-    </div>
-    <div class="row">
-      <span><span class="dot" style="background:#3f5fd6"></span>P04 Motor Can Clamp (front half)</span>
-      <div class="btn-group">
-        <button id="v-clamp-solid" class="active" onclick="setVis('clamp','solid')">Solid</button>
-        <button id="v-clamp-xray" onclick="setVis('clamp','xray')">Ghost</button>
-        <button id="v-clamp-off" onclick="setVis('clamp','off')">Hide</button>
       </div>
     </div>
     <div class="row">
@@ -269,7 +261,6 @@ const mats = {
   retainer:     new THREE.MeshStandardMaterial({ color: 0x333942, roughness: 0.45 }),
   gantry_plate: new THREE.MeshStandardMaterial({ color: 0x22262d, metalness: 0.5, roughness: 0.45 }),
   v_wheels:     new THREE.MeshStandardMaterial({ color: 0x3c414a, roughness: 0.5 }),
-  motor_clamp:  new THREE.MeshStandardMaterial({ color: 0x3f5fd6, roughness: 0.45, transparent: true, opacity: 0.8 }),
   pinion_cover: new THREE.MeshStandardMaterial({ color: 0x8fd0ff, roughness: 0.45, transparent: true, opacity: 0.8 }),
   motor_cap:    new THREE.MeshStandardMaterial({ color: 0x1b4a99, roughness: 0.45, transparent: true, opacity: 0.8 }),
   fasteners_turn:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
@@ -316,7 +307,6 @@ addStl('fasteners_gear', servoPinionPivot);
 addStl('carriage_pod',  carriagePivot);
 addStl('motor_cap',     carriagePivot);
 addStl('pinion_cover',  carriagePivot);
-addStl('motor_clamp',   carriagePivot);
 addStl('motor_housing', carriagePivot);
 addStl('gantry_plate',  carriagePivot);
 addStl('v_wheels',      carriagePivot);
@@ -359,7 +349,6 @@ const groups = {
   servo:  ['servo_body', 'servo_spline', 'alum_horn', 'gear_20t'],
   pod:    ['carriage_pod'],
   cap:    ['motor_cap'],
-  clamp:  ['motor_clamp'],
   pcover: ['pinion_cover'],
   screws: ['fasteners_turn', 'fasteners_fixed', 'fasteners_gear'],
   motor:  ['motor_housing', 'motor_shaft', 'pinion', 'retainer'],
@@ -391,7 +380,6 @@ window.setExplode = (pct) => {
   if (meshes.fx_housing_screws) meshes.fx_housing_screws.position.z = -50 * k;
   if (meshes.xp_pivot_608zz)    meshes.xp_pivot_608zz.position.z    = -38 * k;
   if (meshes.motor_cap)    meshes.motor_cap.position.y    = 40 * k;    // pulls off +Y
-  if (meshes.motor_clamp)  meshes.motor_clamp.position.y  = -30 * k;   // pulls off -Y
   if (meshes.pinion_cover) meshes.pinion_cover.position.y = -40 * k;   // pulls off -Y
   if (meshes.v_wheels)     meshes.v_wheels.position.z     = -8 * k;
   if (meshes.carriage_pod) meshes.carriage_pod.position.z = 12 * k;

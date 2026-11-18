@@ -286,15 +286,15 @@ Every printed pod part has its ID and print batch engraved 0.6 mm deep (3 layers
 
 | ID | Part | Where the mark is | Colour in the viewer |
 |---|---|---|---|
-| P01 | Carriage pod (base: deck, bearing tower, 40T gear, front wall, arm + post) | arm post, side facing the swivel axis | medium blue |
-| P02 | Motor cap (back half: walls, lid, can sleeve) - pulls off +Y | back face | navy |
-| P03 | Pinion cover - pulls off -Y | front plate, above the retainer hole | sky blue |
-| P04 | Motor can clamp (front half-shell) - bolted to P02 | front of the shell, vertical | royal blue |
-| P05 | Body mount (fixed: servo cage, M8 cap, top-bearing boss) | servo cage side wall | green |
-| P06 | 20T swivel servo gear | underside, between the horn screws (ID only) | orange |
-| P07 | 14T climb pinion | outer face, outside the retainer (ID only) | orange |
+| P01 | Carriage pod: deck, bearing tower, 40T gear, front wall, arm + post, front half of the motor-can clamp | arm post, side facing the swivel axis | medium blue `#2E8EE6` |
+| P02 | Motor cap (back half: walls, lid, back half of the can clamp) - pulls off +Y | back face | navy `#1B4A99` |
+| P03 | Pinion cover - pulls off -Y | front plate, above the retainer hole | sky blue `#8FD0FF` |
+| P04 | Body mount (fixed: servo cage, M8 cap, top-bearing boss) | servo cage side wall | green `#33B873` |
+| P05 | 20T swivel servo gear | underside, between the horn screws (ID only) | amber `#F59E0B` |
+| P06 | 14T climb pinion | outer face, outside the retainer (ID only) | orange `#EB7A24` |
 
-The 10 x 10 x 2.5 mm shaft retainer is too small to mark.
+P01 prints deck-down; use tree supports (under the arm hub, and under the can clamp's lower edge, which spans the open
+gearbox space - reach them from the open back). The 10 x 10 x 2.5 mm shaft retainer is too small to mark.
 
 ## Fasteners (v3 swivel pod + crossing pivot) - what to buy in Sri Lanka
 
