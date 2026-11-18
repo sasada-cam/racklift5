@@ -264,6 +264,9 @@ const mats = {
   v_wheels:     new THREE.MeshStandardMaterial({ color: 0x3c414a, roughness: 0.5 }),
   pinion_cover: new THREE.MeshStandardMaterial({ color: 0x8fd0ff, roughness: 0.45, transparent: true, opacity: 0.8 }),
   motor_cap:    new THREE.MeshStandardMaterial({ color: 0x1b4a99, roughness: 0.45, transparent: true, opacity: 0.8 }),
+  screw_pinion:    new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
+  screws_pcover:   new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
+  screws_cap:      new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_turn:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_fixed: new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   fasteners_gear:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
@@ -318,6 +321,9 @@ addStl('fasteners_turn', carriagePivot);
 addStl('motor_shaft',   climbPivot);
 addStl('pinion',        climbPivot);
 addStl('retainer',      climbPivot);
+addStl('screw_pinion',  climbPivot);
+addStl('screws_pcover', carriagePivot);
+addStl('screws_cap',    carriagePivot);
 
 let rpm = 100;
 let swAuto = true;
@@ -353,7 +359,7 @@ const groups = {
   pod:    ['carriage_pod'],
   cap:    ['motor_cap'],
   pcover: ['pinion_cover'],
-  screws: ['fasteners_turn', 'fasteners_fixed', 'fasteners_gear'],
+  screws: ['fasteners_turn', 'fasteners_fixed', 'fasteners_gear', 'screw_pinion', 'screws_pcover', 'screws_cap'],
   motor:  ['motor_housing', 'motor_shaft', 'pinion', 'retainer'],
   gantry: ['gantry_plate', 'v_wheels'],
   rail:   ['xp_rail', 'xp_rack', 'fx_rails_x', 'fx_racks_x', 'fx_rails_y', 'fx_racks_y'],
@@ -393,6 +399,9 @@ window.setExplode = (pct) => {
   if (meshes.retainer)       meshes.retainer.position.y       = -34 * k;             // stepped collar pulls out -Y
   if (meshes.bearing_pinion) meshes.bearing_pinion.position.set(0, -48 * k, 12 * k); // 623ZZ pulls out -Y
   if (meshes.pinion_cover)   meshes.pinion_cover.position.set(0, -68 * k, 12 * k);   // P03 pulls out -Y clear of 623ZZ
+  if (meshes.screws_pcover)  meshes.screws_pcover.position.set(0, -82 * k, 12 * k);  // its 3 screws come out ahead of it
+  if (meshes.screw_pinion)   meshes.screw_pinion.position.y   = -58 * k;             // M3 into the shaft tip: between 623ZZ and P03
+  if (meshes.screws_cap)     meshes.screws_cap.position.set(0, 76 * k, 12 * k);      // P02's 4 screws out behind it
   if (meshes.bearing_top)  meshes.bearing_top.position.z  = 18 * k;
   if (meshes.gear_20t)     meshes.gear_20t.position.z     = 22 * k;
   if (meshes.alum_horn)    meshes.alum_horn.position.z    = 28 * k;

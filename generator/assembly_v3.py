@@ -16,6 +16,7 @@ import assembly_v2 as A
 import parts as P1
 import parts_v2 as P2
 import pod_v3 as POD                   # the Option 1 swivel pod (cad/build_t_slot_option1.py) = the hub
+import part_ids_v3 as PID              # printed-part IDs + colour scheme (CLAUDE.md)
 
 MT = A.MT
 C_HUB, C_BAT, C_ARM = (240, 120, 40), (60, 60, 70), (175, 180, 190)
@@ -1038,7 +1039,7 @@ def build(S, baskets=None):
             items.append((f"basket on dock {b[1]+1}", bs.transform(dock_basket_M(b[1], b[2], BASKET_Y0)), A.BASKET_COLS[k % 10], "static"))
         else:
             items.append((f"basket bay{b[0]+1}-L{b[1]+1}", bs.transform(basket_M(*b)), A.BASKET_COLS[k % 10], "static"))
-    return items
+    return [(n, s, PID.colour(n, c), g) for n, s, c, g in items]     # printed parts in their registry colours
 
 
 def pose(name):

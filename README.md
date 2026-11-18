@@ -111,6 +111,13 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
       shoulder: tightening the nyloc preloads both bearings back-to-back, which takes out all radial and axial play;
     - a disc spring (DIN 6796) under the nut keeps the preload when parts settle.
   * A stop pin on the piece runs in a quarter slot in the bracket, so the piece stops exactly at 0 and -90 deg.
+  * Each crossing piece is cut 1 mm short of the fixed rails on both ends; the racks keep the tooth pitch across the cut.
+    The **lower pod is mirrored** (turned 180 deg about its hub, `HUB_BASE` in `params_v3.py`), so its pinion sits on
+    the other side of its hub: the two pinions are 105 mm apart along the rail and **never cross a cut at the same time**
+    (worst case the other pinion is 32 mm, about 7 teeth, inside solid rack). With both pods the same way, both pinions
+    would be in a cut together at 56 climbing and 393 travelling positions. `pixi run clearance-v3` checks this
+    ("pinion stagger") on every run; the MuJoCo sim and the dual-leg studio (`sim/view_option1_dual_legs.py`) use the
+    same mirrored layout.
   * The body never rotates, so the tray is always level.
 * **Picker:** two 2-stage **telescopic arms** run in the 23 mm gaps beside the basket. **Two servos drive everything**, and
   every part of the mechanism is modelled and moves in the sim:
@@ -194,7 +201,8 @@ Not covered yet: servo 2 and its gear pair, the lock solenoids, the hub drives a
 Background: [docs/design/001-load-carrying-single-vs-two-rail.md](docs/design/001-load-carrying-single-vs-two-rail.md) (section 8h).
 Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 ```
-python3 sim/view_t_slot_option1.py   # Option 1 Dual-608ZZ Swivel Studio (http://127.0.0.1:8840/, interactive 3D + exploded view)
+python3 sim/view_t_slot_option1.py     # Option 1 Dual-608ZZ Swivel Studio (http://127.0.0.1:8840/, interactive 3D + exploded view)
+python3 sim/view_option1_dual_legs.py  # Dual-Leg Option 1 + Complete 2-Bay 2020 Railing Studio (http://127.0.0.1:8845/)
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
@@ -294,9 +302,81 @@ Every printed pod part has its ID and print batch engraved 0.6 mm deep (3 layers
 | P04 | Body mount (fixed: servo cage, M8 cap, top-bearing boss) | servo cage side wall | green `#33B873` |
 | P05 | 20T swivel servo gear | underside, between the horn screws (ID only) | amber `#F59E0B` |
 | P06 | 14T climb pinion | outer face, outside the retainer (ID only) | orange `#EB7A24` |
+| P07 | Column anti-crush plug (top & bottom inside `40 × 25 × 2 mm` hollow alu column) | front face (`P07-B01`) | amber `#F29429` |
+| P08 | Crossing `49E` differential Hall bracket (gusseted `MT0134` corner pocket + dual-fang head, `opt1_crossing_sensor_bracket.stl`) | - | cyan `#06B6D4` |
+| P09 | Top swivel `A3144` dual-sensor bridge (`P04` underside) + `P01` hub magnet lug | - | cyan `#06B6D4` |
+
+### Alignment Sensors (Non-Contact Hall + NdFeB Magnets)
+Modelled in [`cad/build_option1_dual_legs.py`](cad/build_option1_dual_legs.py) and inspectable in `python3 sim/view_option1_dual_legs.py` (toggle **Ghost Legs** + **Hall Sensors + Magnets**):
+
+1. **Crossing turntable center alignment (`2 × 49E` differential pair per hub + `Ø5 × 1.2 mm` crossing magnets):**
+   * The **two "fangs"** (`ic_a`, `ic_b`) at the tip of **`P08`** (`(-46.0, +42.0)` and `(-38.0, +42.0)`, **`Z_pod = -28.3..-26.8`**, spaced **`8.0 mm` center-to-center**) are two `49E` analog ratiometric linear Hall ICs hovering **`~1.0 mm`** in front of `Ø5 × 1.2 mm` NdFeB magnets (`H40`, Red) glued (same pole out) onto every `M12` fixed crossing bracket at **`(-42.0, +42.0)`** (vertical arrival) and **`(-42.0, -42.0)`** (horizontal arrival).
+   * **Differential centering (`V_A − V_B = 0`):** As the pod approaches, `ic_a` leads so `V_A > V_B`; past center, `V_B > V_A`; when straddling the magnet symmetrically (`4 mm` either side), **`V_A − V_B = 0.00 V`** while **`(V_A + V_B)` exceeds threshold** (confirming magnet presence, not empty rail). Common-mode drift from hot/cold temperature and small V-wheel play cancels out to **`~0.1–0.2 mm`** repeatability without optical dust/glare issues.
+   * **Mounting (`P08` monoblock pocket):** A gusseted U-pocket (`10.4 × 19 mm` bridge shoulder + diagonal spine rib) slips snugly over the exposed `(-X, +Y)` corner of `MT0134` against `P01`'s deck walls (`0.13–0.15 mm` fit clearance) and clamps straight through `MT0134`'s existing `6.5 × 3.0 mm` outer slot via **`1 × H17` (`M3 × 12`)** from the top and **`1 × H22` (`M3` hex nut)** in a side-entry captive bottom pocket (`(-27.85, +21.60)`).
+
+2. **Swivel end-stop confirmation (`2 × A3144` digital Hall switches per hub + `Ø3 × 1.8 mm` hub magnet):**
+   * Mounted on the **`P09`** bridge under `P04`'s top plate at **`(-11.0, +11.0)` (`0°` vertical)** and **`(-11.0, -11.0)` (`+90°` horizontal)** (`Z_pod = 75.0..78.4`), **`3.35 mm`** clear of the `M4` steel hex nuts (`H25`), **`> 2 mm`** outside `P04`'s `r = 11` center boss, and clear of the servo cage during the full `0°..90°` sweep.
+   * Reads `1 × Ø3 × 1.8 mm` NdFeB target magnet (`H27`) carried on `P01`'s top arm rim lug at **`(-11.0, +11.0, Z_pod = 71.7..73.5)`** (`1.5 mm` air gap).
 
 P01 prints deck-down; use tree supports (under the arm hub, and under the can clamp's lower edge, which spans the open
 gearbox space - reach them from the open back). The stepped `Ø9.6 × 3.1 mm` shaft retainer collar is too small to mark.
+
+## Printed part IDs (v3 rack, robot body, cart, docks, covers)
+
+Every printed part outside the swivel pod has an ID from `generator/part_ids_v3.py`, engraved 0.6 mm deep with the
+batch (`ID-B01`, or the ID alone where the text does not fit) by `pixi run export-components`. The engraver
+picks the largest flat face where the text + 1 mm margin fits, the cut stays inside the part and nothing of the part
+covers it. The mark actually used per part is in `models/v3/components/BOM_v3.csv` (column "engraved mark"). Set the
+batch in `generator/part_ids_v3.py: BATCH`. A part that comes in several lengths gets one ID per length, longest
+first: the in-slot racks X10, X11, ... (they slide into the slot in that order) and the transfer rack segments C10, C11.
+
+**Unmarked** (no flat face fits even the 2 mm ID): R22 GT2 8T pulley, R10 / R11 belt anchors, R28 / R29 stage-2
+pulleys, and the 10 x 10 x 2.5 mm pinion shaft retainer. Keep them in a labelled bag per batch. The colours are used by the v3 model, the MuJoCo sim and the viewers.
+
+| ID | Part | Colour |
+|---|---|---|
+| R01 | printed lift carriage | `#33B873` green (robot) |
+| R02 | printed turn-drive mast | `#1F7A4D` green (robot) |
+| R03 | printed front post (rod + cross-shaft bearings) | `#7FD8A6` green (robot) |
+| R04 | printed arm post | `#4CAF50` green (robot) |
+| R05 | printed arm post (rear, idler axle) | `#2E6B47` green (robot) |
+| R06 | printed basket stop | `#A5D6A7` green (robot) |
+| R07 | printed flip finger (front) | `#66BB6A` green (robot) |
+| R08 | printed flip finger (rear) | `#388E3C` green (robot) |
+| R09 | printed stage-1 belt clamp (middle bar) | `#81C784` green (robot) |
+| R10 | belt anchor (inner bar) | `#1B5E20` green (robot) |
+| R11 | belt anchor (outer bar) | `#C8E6C9` green (robot) |
+| R12 | finger shaft bearing (inner bar) | `#43A047` green (robot) |
+| R13 | lock solenoid bracket (docking bolt) | `#00897B` green (robot) |
+| R14 | lock solenoid bracket (release plunger) | `#26A69A` green (robot) |
+| R20 | GT2 25T pulley (servo 1) | `#F59E0B` amber/orange (gears, pulleys, racks) |
+| R21 | GT2 33T pulley (stage-1 drive) | `#EB7A24` amber/orange (gears, pulleys, racks) |
+| R22 | GT2 8T pulley (step-up, cross shaft) | `#D97706` amber/orange (gears, pulleys, racks) |
+| R23 | GT2 idler (stage-1 belt) | `#FBBF24` amber/orange (gears, pulleys, racks) |
+| R24 | GT2 pulley (right rod) | `#C2410C` amber/orange (gears, pulleys, racks) |
+| R25 | GT2 pulley (servo 2) | `#FDBA74` amber/orange (gears, pulleys, racks) |
+| R26 | finger drive gear (left rod) | `#B45309` amber/orange (gears, pulleys, racks) |
+| R27 | finger drive gear (servo 2) | `#FCD34D` amber/orange (gears, pulleys, racks) |
+| R28 | stage-2 pulley (extend) | `#EA580C` amber/orange (gears, pulleys, racks) |
+| R29 | stage-2 pulley (retract) | `#FB923C` amber/orange (gears, pulleys, racks) |
+| R30 | turn drive pinion 16T (robot) | `#92400E` amber/orange (gears, pulleys, racks) |
+| X01 | printed rail bridge | `#06B6D4` teal (rails, crossings) |
+| X02 | cart lock socket (printed, funnel lead-in, on the lower rail-end arm) | `#0E7490` teal (rails, crossings) |
+| X10 .. (one per length) | printed in-slot rack | `#FDE68A` amber/orange (gears, pulleys, racks) |
+| X30 | printed in-slot rack (turntable) | `#F97316` amber/orange (gears, pulleys, racks) |
+| X31 | printed in-slot rack (cart) | `#FFB74D` amber/orange (gears, pulleys, racks) |
+| C01 | cart docking bar (printed, with the bolt socket) | `#EC4899` pink (cart) |
+| C10 .. (one per length) | printed transfer rack segment (module 1.5) | `#E65100` amber/orange (gears, pulleys, racks) |
+| D01 | jack: motor bracket (printed) | `#8B5CF6` purple (docks, jacks) |
+| D02 | jack: screw bearing block (printed) | `#5B21B6` purple (docks, jacks) |
+| D03 | jack: lead nut block (printed) | `#C4B5FD` purple (docks, jacks) |
+| D04 | jack: slider shoe (printed) | `#7C3AED` purple (docks, jacks) |
+| D05 | jack: bottom pivot lug | `#A78BFA` purple (docks, jacks) |
+| D06 | jack: top pivot lug | `#4C1D95` purple (docks, jacks) |
+| D07 | jack: shaft coupling + index flag | `#DDD6FE` purple (docks, jacks) |
+| K01 | cover: front drive (servo 1 + belt) | `#E5E7EB` light grey (covers) |
+| K02 | cover: jack motor | `#CBD5E1` light grey (covers) |
+| K03 | cover: turn-drive cap | `#F8FAFC` light grey (covers) |
 
 ## Fasteners (v3 swivel pod + crossing pivot) - what to buy in Sri Lanka
 
@@ -319,13 +399,13 @@ electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to ma
 | M5 x 12 button head, ISO 7380 + M5 nyloc DIN 985 | 4 + 4 | - | carriage pod deck -> MT0134 plate |
 | M5 x 10 button head, ISO 7380 + M5 V-slot T-nut (drop-in) | - | 2 + 2 | rotor disc -> rail piece |
 | M5 x 25 socket cap DIN 912 + 10 x 5.2 x 20 sleeve + washer + T-nut | - | 1 | stop pin |
-| M4 x 12 socket cap, DIN 912 | 4 | 4 | pod: body mount -> tapped column bar (fit before the servo); crossing: housing -> tapped bracket |
+| M4 x 35 socket cap DIN 912 + M4 DIN 125 steel washer + M4 EPDM rubber washer (9 x 1.2) + M4 DIN 934 hex nut | 4 + 4 + 4 + 4 | 4 (socket cap M4 x 12) | pod: front through `40 x 25 x 2 mm` hollow column + `P07` anti-crush plug -> captive `P04` nut slots; crossing: housing -> tapped bracket |
 | M3 x 6 button head, ISO 7380 | 4 | - | 4632-370 gearbox -> pod wall (low head: clears the pinion by 1.25 mm) |
-| M3 x 12 socket cap, DIN 912 | 5 | - | 20T gear -> aluminium horn (4) + `623ZZ` pinion outboard bearing -> motor shaft (1) |
+| M3 x 12 socket cap, DIN 912 | 6 | - | 20T gear -> aluminium horn (4) + `623ZZ` pinion outboard bearing -> motor shaft (1) + `P08` corner pocket -> `MT0134` slot (1) |
 | M3 x 14 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | servo ears -> printed body mount (or M3 machine screw + heat-set insert) |
 | M3 x 12 pan head thread-forming ("PT" / self-tapping for plastic) | 5 | - | motor cap -> carriage pod (4) + pinion cover -> arm post (1) |
 | M3 x 10 pan head thread-forming ("PT" / self-tapping for plastic) | 2 | - | pinion cover -> `+X` ear |
-| M3 x 10 socket cap, DIN 912 + M3 DIN 934 hex nut | 3 + 3 | - | motor-can clamp flanges (`P01` <-> `P02`; use M3 x 12 if substituting 4 mm DIN 985 nyloc) |
+| M3 x 10 socket cap, DIN 912 + M3 DIN 934 hex nut | 3 + 4 (nut) | - | motor-can clamp flanges (`P01` <-> `P02`, 3+3; use M3 x 12 if substituting 4 mm DIN 985 nyloc) + `P08` captive bottom nut pocket (1 nut) |
 | M3 x 8 spline screw | 1 (comes with the servo) | - | horn -> servo spline |
 
 Head types in one line: **socket cap** (DIN 912) where there is room for a hex key, **button head** (ISO 7380) where
