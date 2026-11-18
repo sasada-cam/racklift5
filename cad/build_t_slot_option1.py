@@ -321,6 +321,9 @@ def build_body_mount_option1() -> bd.Part:
             for sy in (-1, 1):
                 with bd.Locations((-32.0 + sx * 30.0, sy * 12.0, top_plate_z1 + 5.0)):
                     bd.Hole(radius=2.25, depth=6.0)
+                # head pocket under the plate for the M4 x 12 socket cap (fitted from below, before the servo goes in)
+                with bd.Locations((-32.0 + sx * 30.0, sy * 12.0, top_plate_z1 - 4.5)):
+                    bd.Cylinder(3.8, 4.6, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
 
         # 4. Subtract flipped TD-8125MG servo pocket cleanly + wire-boot slot
         with bd.Locations((SERVO_X_OFF, 0, SERVO_CAP_Z - 0.3)):
@@ -343,6 +346,65 @@ def build_body_mount_option1() -> bd.Part:
     return part
 
 
+# --- Fasteners (all metric, ISO/DIN, stocked by Sri Lankan fastener shops; see FASTENERS) ---
+DECK_SCREWS = [(sx, sy) for sx in (-10.0, 10.0) for sy in (-G.WHEEL_Y, G.WHEEL_Y)]        # carriage pod -> MT0134
+DECK_TOP_Z = G.PLATE_T + 5.5                                                               # 8.5
+MOTOR_SCREWS = [(T.GB_X_CENTER + sx * 9.0, T.GB_Z_CENTER + sz * 16.5) for sx in (-1, 1) for sz in (-1, 1)]   # (X, Z)
+MOTOR_WALL_Y = T.GB_FACE_Y - 2.6                                                           # outer face of the pod wall (10.2)
+EAR_SCREWS = [(SERVO_X_OFF + sx * S.HOLE_PITCH_X / 2, sy * S.HOLE_PITCH_Y / 2) for sx in (-1, 1) for sy in (-1, 1)]
+EAR_BOT_Z = SERVO_TOP_Z - S.BOT_H - S.MID_H - S.EAR_T                                      # 43.5: underside of the ears
+HORN_SCREWS = [(SERVO_PIVOT_X + sx * 5.0, sy * 5.0) for sx in (-1, 1) for sy in (-1, 1)]
+COLUMN_SCREWS = [(-32.0 + sx * 30.0, sy * 12.0) for sx in (-1, 1) for sy in (-1, 1)]
+TOP_PLATE_Z0 = SERVO_TOP_Z + 5.0                                                           # 78.5
+
+FASTENERS = [   # (part, qty per pod, where, buy as)
+    ("M5 x 12 button head (ISO 7380), A2 or 10.9 black", 4, "carriage pod deck -> MT0134 plate", "+ 4 x M5 nyloc (DIN 985) under the plate"),
+    ("M3 x 6 button head (ISO 7380)", 4, "4632-370 gearbox -> pod wall (head 1.65 high: 1.25 mm clear of the pinion)", "into the gearbox's tapped bosses; the 0.8 mm wall skin is clamped onto the boss"),
+    ("M3 x 14 pan head thread-forming (for plastics, 'PT' / self-tapping)", 4, "TD-8125MG ears -> body mount", "or M3 x 14 machine screw + M3 heat-set insert"),
+    ("M3 x 12 socket cap (DIN 912)", 4, "20T gear -> 25T aluminium horn (horn holes are tapped M3)", ""),
+    ("M3 x 8 servo spline screw", 1, "horn -> servo spline", "supplied with the servo"),
+    ("M4 x 12 socket cap (DIN 912)", 4, "body mount -> column bar (tapped M4); fit before the servo", "+ 4 x M4 washer (DIN 125)"),
+    ("M8 x 40 hex bolt (DIN 933, 8.8) + M8 nyloc (DIN 985) + 2 x M8 washer", 1, "swivel pivot through the 608ZZ pair", "+ 12 x 8.2 x 4 steel spacer"),
+    ("608ZZ (8 x 22 x 7)", 2, "swivel pivot", "tronic.lk / bearing shops (608-2RS for dust)"),
+]
+
+
+def _cz(r, z0, z1, x, y, seg=None):
+    c = bd.Cylinder(r, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    return c.moved(bd.Location((x, y, z0)))
+
+
+def _hexz(r, z0, z1, x, y):
+    with bd.BuildPart() as h:
+        with bd.Locations((x, y, z0)):
+            with bd.BuildSketch():
+                bd.RegularPolygon(r, 6)
+            bd.extrude(amount=z1 - z0)
+    return h.part
+
+
+def build_fasteners():
+    """screws of the pod in the pod frame: turning with the carriage / on the body mount / turning with the 20T gear"""
+    turn, fixed, gear = [], [], []
+    for x, y in DECK_SCREWS:                     # button head on the deck, nyloc under the MT0134 plate
+        turn += [_cz(4.75, DECK_TOP_Z, DECK_TOP_Z + 2.75, x, y), _cz(2.5, -3.5, DECK_TOP_Z, x, y), _hexz(4.6, -5.0, 0.0, x, y)]
+    for x, z in MOTOR_SCREWS:                    # button head on the pod wall's outer face, into the gearbox bosses
+        rot = bd.Location((x, MOTOR_WALL_Y, z), (-90, 0, 0))
+        cyl = lambda r, h0, h1: bd.Cylinder(r, h1 - h0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, h0)))
+        turn += [cyl(2.85, -1.65, 0.0).moved(rot), cyl(1.5, 0.0, 6.0).moved(rot)]
+    for x, y in EAR_SCREWS:                      # pan head under the ears, up into the body mount
+        fixed += [_cz(2.75, EAR_BOT_Z - 2.4, EAR_BOT_Z, x, y), _cz(1.5, EAR_BOT_Z, EAR_BOT_Z + 14.0, x, y)]
+    for x, y in COLUMN_SCREWS:                   # socket cap from below, up into the tapped column bar
+        fixed += [_cz(3.5, TOP_PLATE_Z0 - 4.0, TOP_PLATE_Z0, x, y), _cz(2.0, TOP_PLATE_Z0, TOP_PLATE_Z0 + 12.0, x, y)]
+    for x, y in HORN_SCREWS:                     # socket cap under the 20T gear, up into the horn
+        gear += [_cz(2.75, GEAR_Z0 - 3.0, GEAR_Z0, x, y), _cz(1.5, GEAR_Z0, GEAR_Z0 + 12.0, x, y)]
+    gear += [_cz(2.75, GEAR_Z0 - 2.0, GEAR_Z0, SERVO_PIVOT_X, 0), _cz(1.5, GEAR_Z0, SPLINE_TIP_Z + 3.0, SERVO_PIVOT_X, 0)]
+    out = {}
+    for k, lst in (("fasteners_turn", turn), ("fasteners_fixed", fixed), ("fasteners_gear", gear)):
+        out[k] = bd.Compound(children=lst, label=k)
+    return out
+
+
 def build_assembled_parts():
     """Return dict of all 14 bodies in exact gantry-centered coordinates (mm)."""
     base = T.build_assembled_parts()
@@ -354,6 +416,7 @@ def build_assembled_parts():
     gear_20t = build_20t_servo_pinion()
     alum_horn = build_25t_horn_offset()
     body_mount = build_body_mount_option1()
+    fasteners = build_fasteners()
 
     servo_flip = bd.Location((SERVO_X_OFF, 0, SERVO_TOP_Z), (180, 0, 0))
     servo_solids = []
@@ -379,6 +442,7 @@ def build_assembled_parts():
         "servo_spline": servo_spline,
         "servo_body": servo_body,
         "body_mount": body_mount,
+        **fasteners,
         "t_rail": base["t_rail"],
         "t_rack": base["t_rack"],
     }
@@ -414,7 +478,7 @@ def main():
     for k, v in parts.items():
         if k in ("motor_shaft", "pinion", "retainer"):
             m = v.moved(pinion_origin)
-        elif k in ("gear_20t", "alum_horn", "servo_spline"):
+        elif k in ("gear_20t", "alum_horn", "servo_spline", "fasteners_gear"):
             m = v.moved(servo_origin)
         else:
             m = v

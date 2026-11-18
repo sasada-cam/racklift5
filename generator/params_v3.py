@@ -39,9 +39,34 @@ SEG_V3 = 17.5 * P + RACK_E     # crossing turntable piece half length (84.32).  
                                # (52.5 out) reaches r 64.5 -> both must stay on the turning piece while it swivels
                                # (cad/build_option1_crossing.py: 11.5 P = 39 collisions, 17.5 P = 0)
 RAIL_TOP_V3 = 1080.0           # vertical rails 80 mm above the rack (upper hub at the top shelf)
-BEARING_R = 25.0               # 50 mm lazy-susan bearing behind each crossing piece
-TT_SCREW_Z = 10.0              # 2 x M5 screws fix the bearing's rotating inner ring to the piece (T-nuts in its back slot)
-TT_ACCESS_R = 4.75             # counterbores for those screw heads in the inner ring
+# Crossing pivot: PRELOADED 608ZZ DUPLEX (same bearing + M8 as the swivel pod) - turns freely, cannot shift or tilt.
+#   * the M8 bolt's hex head is caught in a hex pocket in the ROTOR DISC (screwed to the rail piece) -> the bolt turns with
+#     the piece and the nyloc can be tightened from behind with one spanner
+#   * two 608ZZ, 15 mm apart (centres), sit in a turned aluminium HOUSING whose spigot is a close fit in a bored hole in the
+#     bracket (centres it: no sideways slip of the housing on its screws) and whose flange is held by 4 x M4 (tapped bracket)
+#   * the outer races bear on a shoulder in the housing, the inner races on a steel spacer 0.05 mm SHORTER than that shoulder:
+#     tightening the nyloc pulls the inner races together -> both bearings preloaded back-to-back ("O"), radial + axial play
+#     taken out, tilt stiffness of a 15 mm + contact-angle spread.  A disc spring (DIN 6796) under the nut keeps the preload
+#     when the parts settle; the collar under it touches the inner race only.
+# TT_STACK: axisymmetric parts on the pivot, d = depth behind the rail piece's back face (mm), r_out / r_in (mm), turning?
+TT_STACK = [
+    ("turntable M8 x 40 hex bolt (DIN 933, 8.8) - head in the rotor's hex pocket", [(0.2, 5.5, 7.5, 0.0), (5.5, 45.5, 4.0, 0.0)], True),
+    ("turntable front spacer (steel, 12 x 8.2 x 2.5)", [(6.0, 8.5, 6.0, 4.1)], True),
+    ("turntable 608ZZ bearing (front)", [(8.5, 15.5, 11.0, 4.0)], True),
+    ("turntable inner-race spacer (steel, 12 x 8.2 x 7.95: 0.05 short = preload)", [(15.5, 23.5, 6.0, 4.1)], True),
+    ("turntable 608ZZ bearing (rear)", [(23.5, 30.5, 11.0, 4.0)], True),
+    ("turntable preload collar (steel, 12 x 8.2 x 2)", [(30.5, 32.5, 6.0, 4.1)], True),
+    ("turntable M8 disc spring (DIN 6796)", [(32.5, 34.5, 9.0, 4.2)], True),
+    ("turntable M8 washer (DIN 125)", [(34.5, 36.1, 8.0, 4.2)], True),
+    ("turntable M8 nyloc nut (DIN 985)", [(36.1, 44.1, 7.5, 4.0)], True),
+]
+TT_ROTOR = (0.0, 6.0, 21.0)    # rotor disc (6 mm aluminium, laser cut + hex pocket): d 0..6, r 21
+TT_HOUSING = dict(spigot=(8.5, 18.0, 13.5), flange=(18.0, 23.0, 22.5), body=(23.0, 33.0, 13.5),
+                  bore=[(8.5, 15.5, 11.0), (15.5, 23.5, 9.0), (23.5, 33.0, 11.0)])   # (d0, d1, r)
+TT_SPIGOT_HOLE_R = 13.55       # bored hole in the bracket for the housing's spigot (27 H7 / g6)
+TT_M4_R = 18.0                 # 4 x M4 x 12 socket cap (DIN 912) on a 36 mm circle at 45 deg, into tapped bracket holes
+TT_SCREW_Z = 14.0              # 2 x M5 x 10 button head (ISO 7380) + V-slot T-nut: rotor disc -> the piece's back slot
+TT_ACCESS_R = 5.0              # counterbores for those heads in the rotor disc (head 9.5 x 2.75)
 TT_PIN_R = 36.0                # stop pin on the piece's axis, this far from the crossing (beyond the bearing, clear of the stems)
 TT_SLEEVE_R = 5.0              # 10 mm steel sleeve on the stop pin (bears on the slot ends)
 

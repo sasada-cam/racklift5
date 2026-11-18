@@ -1,17 +1,17 @@
 """Option 1 swivel pod ON a real rail crossing (the turntable ported from generator/assembly_v3.py into the pod's frame).
 
 The pod alone (build_t_slot_option1.py) sits on a plain straight rail, so its 90 deg swivel had nothing to turn.  Here the
-rail under the pod is the crossing: a short rail piece + in-slot rack on a slewing ring, turning WITH the carriage (the
+rail under the pod is the crossing: a short rail piece + in-slot rack on a preloaded 608ZZ duplex pivot (M8), turning WITH the carriage (the
 V-wheels clamp it), between four fixed rail arms (+-X = one rail direction, +-Y = the other).
 
 Pod frame (same as build_t_slot_option1.py): rail along X at 0 deg, rail centre Z = -12.475, bottom face Z = -22.475,
 swivel axis = Z through (0, 0), carriage turns +deg.
 
   turning with the carriage : crossing rail piece, its rack (one comb with the arms' racks: tooth SPACE at the centre,
-                              whole pitches, 1.0 mm gaps), slewing-ring inner ring, 2 x M5 low-head screws (T-nuts in the
-                              piece's bottom slot), stop pin (M5 + 10 mm sleeve, T-nut) 36 mm out on the -X side
-  fixed                     : 4 rail arms + racks, slewing-ring outer ring, aluminium bracket plate (4 x M4 on the 40 mm
-                              circle for the outer ring, quarter slot for the stop pin: its ends are the 0 / 90 deg stops)
+                              whole pitches, 1.0 mm gaps), rotor disc (2 x M5 button head + T-nuts in the piece's bottom
+                              slot) with the M8 bolt's head in its hex pocket, 2 x 608ZZ + spacers + disc spring + nyloc, stop pin (M5 + 10 mm sleeve, T-nut) 36 mm out on the -X side
+  fixed                     : 4 rail arms + racks, turned pivot housing (spigot in the bracket's 27 mm bore, 4 x M4 on the
+                              36 mm circle, 2 x 608ZZ seats + shoulder), aluminium bracket plate (quarter slot for the stop pin: its ends are the 0 / 90 deg stops)
 
     pixi run python cad/build_option1_crossing.py                 # 17.5-pitch piece (needed by this pod: its side pod
                                                                   # hangs below the rail top out to r = 81.4 mm)
@@ -39,12 +39,13 @@ GAP = 1.0                         # piece <-> arm gap (as v3)
 RACK_E = (P - GAP) / 2.0          # rack end face this far past its last tooth centre -> pitch P across the gap
 ARM_L = 90.0                      # length of each fixed arm shown
 Z_RB = -G.RAIL_CENTER_DROP - G.RAIL_W / 2.0      # rail bottom face, -22.475
-BEARING_R, INNER_R, OUTER_R0 = 25.0, 16.5, 17.0
-SCREW_X = 10.0                    # 2 x M5 rotor screws on the piece axis
+sys.path.insert(0, os.path.join(HERE, "..", "generator"))
+import params_v3 as PV                      # noqa: E402  the crossing pivot (preloaded 608ZZ duplex) - one definition for both models
+SCREW_X = PV.TT_SCREW_Z           # 2 x M5 button-head rotor screws on the piece axis
 PIN_R, SLEEVE_R = 36.0, 5.0       # stop pin radius / sleeve radius
 SLOT_W = SLEEVE_R + 0.2           # 0.2 mm play -> 0.3 deg
 PLATE_T = 10.0                    # bracket plate (same as v3's bearing plate)
-PLATE_Z1 = Z_RB - 8.0             # bracket top face (0.5 mm under the inner ring)
+PLATE_Z1 = Z_RB - 8.0             # bracket top face (2 mm under the rotor disc)
 PLATE_Z0 = PLATE_Z1 - PLATE_T
 
 ALIGN_MIN = (bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)
@@ -85,25 +86,52 @@ def rail(x0, x1):
 def crossing_parts(seg):
     """seg = piece half length.  returns (turning, fixed) dicts of solids at 0 deg"""
     g = seg + GAP
-    screws = [cyl(2.5, Z_RB - 4.5, Z_RB, x) + cyl(4.25, Z_RB - 7.5, Z_RB - 4.5, x) for x in (-SCREW_X, SCREW_X)]
-    inner = cyl(INNER_R, Z_RB - 7.5, Z_RB)
+    D = lambda d: Z_RB - d                                   # depth behind the piece's bottom face -> pod Z
+    d0, d1, rr = PV.TT_ROTOR
+    rotor = cyl(rr, D(d1), D(d0)) - cyl(4.1, D(d1) - 1, D(d0) + 1)
+    rotor = rotor - bd.extrude(bd.RegularPolygon(7.65, 6, align=None).moved(bd.Location((0, 0, D(5.6)))), amount=6.6)
+    screws = []
     for x in (-SCREW_X, SCREW_X):
-        inner = inner - cyl(2.75, Z_RB - 8, Z_RB + 1, x) - cyl(4.75, Z_RB - 8, Z_RB - 4.5, x)
+        rotor = rotor - cyl(2.75, D(d1) - 1, D(d0) + 1, x) - cyl(PV.TT_ACCESS_R, D(d1) - 1, D(d1 - 3.0), x)
+        screws += [cyl(2.5, D(d1 - 2.75), D(d0), x), cyl(4.75, D(d1), D(d1 - 2.75), x)]
+    stack = {}
+    for name, rings, _ in PV.TT_STACK:
+        sol = None
+        for a, b, ro, ri in rings:
+            hexa = "nyloc" in name or ("bolt" in name and ri == 0 and ro > 5)
+            ring = bd.extrude(bd.RegularPolygon(ro, 6, align=None).moved(bd.Location((0, 0, D(b)))), amount=b - a) if hexa else cyl(ro, D(b), D(a))
+            if ri > 0:
+                ring = ring - cyl(ri, D(b) - 1, D(a) + 1)
+            sol = ring if sol is None else sol + ring
+        stack[name] = sol
+    pivot = bd.Compound(children=[v for k, v in stack.items() if "608" not in k])
+    bearings = bd.Compound(children=[v for k, v in stack.items() if "608" in k])
+    H = PV.TT_HOUSING
+    housing = cyl(H["spigot"][2], D(H["spigot"][1]), D(H["spigot"][0])) + cyl(H["flange"][2], D(H["flange"][1]), D(H["flange"][0])) \
+        + cyl(H["body"][2], D(H["body"][1]), D(H["body"][0]))
+    for i, (a, b, r) in enumerate(H["bore"]):
+        housing = housing - cyl(r, D(b) - (1 if i == 2 else 0.01), D(a) + (1 if i == 0 else 0.01))
+    m4 = [(PV.TT_M4_R * math.cos(math.radians(a)), PV.TT_M4_R * math.sin(math.radians(a))) for a in (45, 135, 225, 315)]
+    hs = []
+    for x, y in m4:
+        housing = housing - cyl(2.25, D(H["flange"][1]) - 1, D(H["flange"][0]) + 1, x, y)
+        hs += [cyl(2.0, D(H["flange"][1]), D(H["flange"][0] - 7), x, y), cyl(3.5, D(H["flange"][1]) - 4, D(H["flange"][1]), x, y)]
     pin = cyl(SLEEVE_R, Z_RB - 20, Z_RB, -PIN_R) + cyl(6, Z_RB - 21, Z_RB - 20, -PIN_R) + cyl(4.25, Z_RB - 24, Z_RB - 21, -PIN_R)
     turning = {
         "xp_rail": rail(-seg, seg),
         "xp_rack": comb(-seg, seg),
-        "xp_bearing_inner": inner,
+        "xp_rotor": rotor,
         "xp_rotor_screws": bd.Compound(children=screws),
+        "xp_pivot_608zz": bearings,
+        "xp_pivot_m8_stack": pivot,
         "xp_stop_pin": pin,
     }
     # fixed: arms along +-X, and the same turned 90 deg for +-Y (the comb is symmetric, so the phase holds)
     arm_r = [rail(g, g + ARM_L), rail(-g - ARM_L, -g)]
     arm_k = [comb(g, g + ARM_L), comb(-g - ARM_L, -g)]
-    outer = cyl(BEARING_R, Z_RB - 8, Z_RB - 0.5) - cyl(OUTER_R0, Z_RB - 9, Z_RB)
-    plate = box(-48, 48, -48, 48, PLATE_Z0, PLATE_Z1)
-    for a in (45, 135, 225, 315):
-        plate = plate - cyl(2.25, PLATE_Z0 - 1, PLATE_Z1 + 1, 20 * math.cos(math.radians(a)), 20 * math.sin(math.radians(a)))
+    plate = box(-48, 48, -48, 48, PLATE_Z0, PLATE_Z1) - cyl(PV.TT_SPIGOT_HOLE_R, PLATE_Z0 - 1, PLATE_Z1 + 1)
+    for x, y in m4:
+        plate = plate - cyl(1.65, PLATE_Z0 - 1, PLATE_Z1 + 1, x, y)
     # quarter slot: the pin goes from (-36, 0) at 0 deg to (0, -36) at 90 deg
     ring = (cyl(PIN_R + SLOT_W, PLATE_Z0 - 1, PLATE_Z1 + 1) - cyl(PIN_R - SLOT_W, PLATE_Z0 - 2, PLATE_Z1 + 2)) \
         & box(-PIN_R - SLOT_W - 1, 0, -PIN_R - SLOT_W - 1, 0, PLATE_Z0 - 1, PLATE_Z1 + 1)
@@ -113,7 +141,8 @@ def crossing_parts(seg):
         "fx_racks_x": bd.Compound(children=arm_k),
         "fx_rails_y": rot_z(bd.Compound(children=arm_r), 90),
         "fx_racks_y": rot_z(bd.Compound(children=arm_k), 90),
-        "fx_bearing_outer": outer,
+        "fx_pivot_housing": housing,
+        "fx_housing_screws": bd.Compound(children=hs),
         "fx_bracket": plate,
     }
     return turning, fixed

@@ -47,6 +47,9 @@ PARTS = {
     "gear_20t":      ("pod: printed 20T swivel gear", (245, 158, 11), "gear"),
     "alum_horn":     ("pod: 25T aluminium servo horn", (224, 64, 64), "gear"),
     "servo_spline":  ("pod: TD-8125MG output spline", (212, 173, 82), "gear"),
+    "fasteners_turn":  ("pod: screws on the carriage pod (4 x M5 x 12 button head + nyloc, 4 x M3 x 6 button head)", (100, 116, 139), "turn"),
+    "fasteners_fixed": ("pod: screws on the body mount (4 x M3 x 14 PT servo ears, 4 x M4 x 12 socket cap to the column)", (100, 116, 139), "fixed"),
+    "fasteners_gear":  ("pod: screws on the 20T gear (4 x M3 x 12 socket cap + M3 spline screw)", (100, 116, 139), "gear"),
 }
 PINION_NAME = "printed climber pinion"          # (as the old hub: the clearance check skips it against the racks it meshes)
 

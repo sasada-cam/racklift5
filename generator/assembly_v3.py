@@ -287,7 +287,9 @@ def crossing_bracket(jx, zc, has_left):
     # ends 85 mm out, beyond the post), whose web goes straight back from the support plate behind the rail end
     parts += [box(fr - 12, fr + 12, -22, -3, zc - 15, zc + 15), box(fr - 19, max(fr + 19, xs + 3.5), -3, 0, zc - 20, zc + 20)]
     parts += [box(xs + 0.5, xs + 34, -40, -37, zc - 15, zc + 15), box(xs + 0.5, xs + 3.5, -37, -3, zc - 15, zc + 15)]
-    cut = [cyl(2.25, -33, -21, 'y', (jx + 20 * math.cos(a), zc + 20 * math.sin(a)), 14) for a in (0.785, 2.356, 3.927, 5.498)]
+    # pivot housing: bored hole for its spigot + 4 tapped M4 on the 36 mm circle (modelled at the tap drill, 3.3 mm)
+    cut = [cyl(TT_SPIGOT_HOLE_R, -33, -21, 'y', (jx, zc), 48)]
+    cut += [cyl(1.65, -33, -21, 'y', (jx + TT_M4_R * math.cos(a), zc + TT_M4_R * math.sin(a)), 14) for a in (0.785, 2.356, 3.927, 5.498)]
     cut += _holes_y([(fr, zc - 12.5), (fr, zc + 12.5)], -4, 1, 2.75)
     cut += _holes_y([(xs + 10, zc), (xs + 24, zc)], -41, -36, 2.75)
     cut += [tt_stop_slot(jx, zc)]
@@ -297,6 +299,21 @@ def crossing_bracket(jx, zc, has_left):
         cut += _holes_y([(fl, zc - 12.5), (fl, zc + 12.5)], -4, 1, 2.75)
         cut += _holes_y([(xe - 10, zc), (xe - 24, zc)], -41, -36, 2.75)
     return union_all(parts) - union_all(cut)
+
+
+def tt_housing(jx, zc):
+    """fixed half of the crossing pivot (row frame, axis y through (jx, zc)): turned aluminium housing for the 608ZZ duplex +
+    its 4 x M4 x 12 socket caps (DIN 912) into the tapped bracket"""
+    y0 = -40.0
+    H = TT_HOUSING
+    h = union_all([cyl(r, y0 + a, y0 + b, 'y', (jx, zc), 48) for a, b, r in (H["spigot"], H["flange"], H["body"])])
+    h = h - union_all([cyl(r, y0 + a - (0.01 if i else 1), y0 + b + (1 if i == 2 else 0.01), 'y', (jx, zc), 48) for i, (a, b, r) in enumerate(H["bore"])])
+    pts = [(jx + TT_M4_R * math.cos(a), zc + TT_M4_R * math.sin(a)) for a in (0.785, 2.356, 3.927, 5.498)]
+    h = h - union_all([cyl(2.25, y0 + H["flange"][0] - 1, y0 + H["flange"][1] + 1, 'y', p, 14) for p in pts])
+    scr = union_all([cyl(2.0, y0 + H["flange"][0] - 7, y0 + H["flange"][1], 'y', p, 14) + cyl(3.5, y0 + H["flange"][1], y0 + H["flange"][1] + 4, 'y', p, 20)
+                     for p in pts])
+    return [("turntable pivot housing (turned aluminium, 2 x 608ZZ seats + shoulder, 27 mm spigot)", h, A.C_JUNC),
+            ("turntable housing screws (4 x M4 x 12 socket cap DIN 912, tapped bracket)", scr, A.C_STEEL)]
 
 
 def mid_support(fx, zc):
@@ -329,6 +346,8 @@ def row_static_local():
             add("printed rail bridge", P2.rail_bridge().translate(jx, 0, zb), A.C_PRINT)
         for zc in CROSS_Z:      # aluminium bracket: bearing plate + stems to both neighbouring rack posts + rail supports
             add("aluminium crossing bracket", crossing_bracket(jx, zc, bx > ROW_BAY_X[0]), A.C_ANGLE)
+            for n, s, c in tt_housing(jx, zc):
+                add(n, s, c)
         if bx == ROW_BAY_X[-1]:
             for zc in CROSS_Z:  # the last stretch to the cart (~490 mm) also rests on the post's flange half way
                 add("aluminium rail support (last stretch)", mid_support(bx + XI, zc), A.C_ANGLE)
@@ -464,19 +483,30 @@ def crossing_local():
     global _R
     if _R is None:
         h = SEG_V3
-        # bearing: rotating ring (front, on the rail piece) / fixed ring (back, on the bracket).  The rotating ring is fixed with
-        # 2 x M5 low-head screws into T-nuts in the piece's back slot (fitted before the bearing goes on the bracket, through
-        # the fixed ring's access holes); the fixed ring with 4 x M4 on the 40 mm circle into the bracket
-        # slewing ring: fixed OUTER ring r 17..25 (y -39.5..-32, M4 holes on the 40 mm circle -> bracket), rotating INNER ring
-        # r < 16.5 (y -40..-32.5, clear of the bracket); the screws' heads sit in counterbores in the inner ring
-        holes = union_all([cyl(2.75, -41, -35, 'y', (0, z), 16) + cyl(TT_ACCESS_R, -35.5, -32, 'y', (0, z), 20) for z in (-TT_SCREW_Z, TT_SCREW_Z)])
-        brg = (cyl(BEARING_R, -39.5, -32, 'y', (0, 0), 48) - cyl(17, -41, -31, 'y', (0, 0), 48)) + (cyl(16.5, -40, -32.5, 'y', (0, 0), 48) - holes)
-        scr = union_all([cyl(2.5, -40, -35.5, 'y', (0, z), 16) + cyl(4.25, -35.5, -32.5, 'y', (0, z), 20) for z in (-TT_SCREW_Z, TT_SCREW_Z)])
+        # pivot = preloaded 608ZZ duplex (see TT_STACK in params_v3): rotor disc on the piece (2 x M5 button head + T-nuts in the
+        # back slot, heads in counterbores), M8 bolt head caught in its hex pocket, the turning stack through the housing
+        y0 = -40.0                                         # the piece's back face (-40)
+        d0, d1, rr = TT_ROTOR
+        holes = union_all([cyl(2.75, y0 - 1, y0 + d1 + 1, 'y', (0, z), 16) + cyl(TT_ACCESS_R, y0 + d1 - 3.0, y0 + d1 + 1, 'y', (0, z), 20)
+                           for z in (-TT_SCREW_Z, TT_SCREW_Z)])
+        rotor = cyl(rr, y0 + d0, y0 + d1, 'y', (0, 0), 48) - holes - cyl(7.65, y0 - 1, y0 + 5.6, 'y', (0, 0), 6) - cyl(4.1, y0, y0 + d1 + 1, 'y', (0, 0), 20)
+        scr = union_all([cyl(2.5, y0, y0 + d1 - 2.75, 'y', (0, z), 16) + cyl(4.75, y0 + d1 - 2.75, y0 + d1, 'y', (0, z), 20)
+                         for z in (-TT_SCREW_Z, TT_SCREW_Z)])
+        stack = []
+        for name, rings, _ in TT_STACK:
+            s = None
+            for a, b, ro, ri in rings:
+                seg = 6 if ("nyloc" in name or ("bolt" in name and ri == 0 and ro > 5)) else 40
+                ring = cyl(ro, y0 + a, y0 + b, 'y', (0, 0), seg)
+                if ri > 0:
+                    ring = ring - cyl(ri, y0 + a - 1, y0 + b + 1, 'y', (0, 0), 24)
+                s = ring if s is None else s + ring
+            stack.append((name, s, A.C_STEEL if "608" not in name else (216, 222, 230)))
         pz = -TT_PIN_R
         pin = union_all([cyl(TT_SLEEVE_R, -40, -20, 'y', (0, pz), 24), cyl(6, -20, -19, 'y', (0, pz), 24),
                          cyl(4.25, -19, -16, 'y', (0, pz), 24)])
-        _R = [("50 mm turntable bearing", brg, A.C_JUNC),
-              ("turntable rotor screws (2 x M5 x 8 low head + T-nut)", scr, A.C_STEEL),
+        _R = [("turntable rotor disc (6 mm aluminium, M8 hex pocket)", rotor, A.C_JUNC)] + stack + [
+              ("turntable rotor screws (2 x M5 x 10 button head ISO 7380 + V-slot T-nut)", scr, A.C_STEEL),
               ("turntable stop pin (M5 x 25 + 10 mm steel sleeve + washer, T-nut)", pin, A.C_STEEL),
               ("rail piece on turntable", A.vslot_z(-h, h), A.C_RAIL),
               ("printed in-slot rack (turntable)", P2.rack_strip(RACK_A0, 2 * h + RACK_A0).translate(0, 0, -h), A.C_PRINT)]

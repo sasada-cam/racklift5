@@ -1,5 +1,5 @@
-"""Exact B-rep check of a crossing turntable (rail piece + slewing ring + rotor screws + stop pin) against its aluminium
-bracket and the fixed rails, over the whole swivel 0 .. -90 deg, for a first-bay bracket and a bracket with a left stem.
+"""Exact B-rep check of a crossing turntable (rail piece + rotor disc + preloaded 608ZZ duplex on M8 + stop pin) against its
+aluminium bracket, the fixed pivot housing (+ its 4 M4 screws) and the fixed rails, over the whole swivel 0 .. -90 deg, for a first-bay bracket and a bracket with a left stem.
 Also proves the hard stops: just past either end (+3 / -93 deg) the stop pin must hit the slot end.
 
     pixi run python cad/check_crossing_turntable.py
@@ -34,7 +34,7 @@ fixed_rails = [("fixed vertical rails", A3.A.vslot_z(zc + g, zc + 200) + A3.A.vs
 
 for has_left in (False, True):
     br = A3.crossing_bracket(0.0, zc, has_left)
-    others = [("bracket", br)] + fixed_rails
+    others = [("bracket", br)] + [(n, h) for n, h, _ in A3.tt_housing(0.0, zc)] + fixed_rails
     worst = 0.0
     for ang in ANGLES:
         for n, s in piece_at(ang):
@@ -44,7 +44,7 @@ for has_left in (False, True):
                 if v > TOL:
                     fails += 1
                     print(f"  COLLISION  {'left stem' if has_left else 'first bay'}  {ang:4d} deg  {n} <-> {m}: {v:.3f} mm^3")
-    print(f"[{'bracket with left stem' if has_left else 'first-bay bracket':22s}] {len(ANGLES)} angles x 4 parts x 3: worst {worst:.4f} mm^3")
+    print(f"[{'bracket with left stem' if has_left else 'first-bay bracket':22s}] {len(ANGLES)} angles x {len(A3.crossing_local())} parts x {len(others)}: worst {worst:.4f} mm^3")
     # hard stops: 0.5 deg past either end (0.31 mm at the pin, more than the 0.2 mm slot play) the pin must hit the slot end
     for ang in (0.5, -90.5):
         pin = [s for n, s in piece_at(ang) if n.startswith("turntable stop pin")][0]

@@ -5,7 +5,7 @@ Rigged kinematics:
   - 20T Servo Gear + 25T Aluminum Horn rotates 0 <-> -180 deg (full TD-8125MG travel!)
   - 40T Carriage Pod + MT0134 + 4x V-Wheels + Sideways 4632-370 rotates 0 <-> +90 deg (2x torque!)
   - 14T Climb Pinion spins at 100 RPM inside the 2020 T-Slot Rail + In-Slot Rack
-  - Rail crossing (cad/build_option1_crossing.py): the rail piece + rack on a slewing ring turns WITH the carriage
+  - Rail crossing (cad/build_option1_crossing.py): the rail piece + rack on a preloaded 608ZZ duplex pivot (M8) turns WITH the carriage
     (0 deg = rail X, 90 deg = rail Y) between four fixed arms; a stop pin in the bracket's quarter slot ends the swivel
 
 Usage:
@@ -238,17 +238,23 @@ const mats = {
   retainer:     new THREE.MeshStandardMaterial({ color: 0x333942, roughness: 0.45 }),
   gantry_plate: new THREE.MeshStandardMaterial({ color: 0x22262d, metalness: 0.5, roughness: 0.45 }),
   v_wheels:     new THREE.MeshStandardMaterial({ color: 0x3c414a, roughness: 0.5 }),
+  fasteners_turn:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
+  fasteners_fixed: new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
+  fasteners_gear:  new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   // rail crossing: the piece turns WITH the carriage (wheels clamp it), the four arms + bracket stay fixed
   xp_rail:          new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.7, roughness: 0.3 }),
   xp_rack:          new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.4 }),
-  xp_bearing_inner: new THREE.MeshStandardMaterial({ color: 0xd8dee6, metalness: 0.85, roughness: 0.25 }),
+  xp_rotor:         new THREE.MeshStandardMaterial({ color: 0xa8b2c0, metalness: 0.7, roughness: 0.35 }),
+  xp_pivot_608zz:   new THREE.MeshStandardMaterial({ color: 0xd8dee6, metalness: 0.85, roughness: 0.25 }),
+  xp_pivot_m8_stack: new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.3 }),
   xp_rotor_screws:  new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.3 }),
   xp_stop_pin:      new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.3 }),
   fx_rails_x:       new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.7, roughness: 0.3 }),
   fx_rails_y:       new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.7, roughness: 0.3 }),
   fx_racks_x:       new THREE.MeshStandardMaterial({ color: 0xc2410c, roughness: 0.45 }),
   fx_racks_y:       new THREE.MeshStandardMaterial({ color: 0xc2410c, roughness: 0.45 }),
-  fx_bearing_outer: new THREE.MeshStandardMaterial({ color: 0xa8b2c0, metalness: 0.85, roughness: 0.25 }),
+  fx_pivot_housing: new THREE.MeshStandardMaterial({ color: 0x8b98aa, metalness: 0.75, roughness: 0.3, transparent: true, opacity: 0.55 }),
+  fx_housing_screws: new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8, roughness: 0.3 }),
   fx_bracket:       new THREE.MeshStandardMaterial({ color: 0x7c8a9c, metalness: 0.6, roughness: 0.4 }),
 };
 
@@ -267,15 +273,18 @@ addStl('bearing_bot',   fixedGroup);
 addStl('bearing_top',   fixedGroup);
 addStl('m8_hardware',   fixedGroup);
 addStl('servo_body',    fixedGroup);
-['fx_rails_x', 'fx_racks_x', 'fx_rails_y', 'fx_racks_y', 'fx_bearing_outer', 'fx_bracket'].forEach(k => addStl(k, fixedGroup));
+addStl('fasteners_fixed', fixedGroup);
+['fx_rails_x', 'fx_racks_x', 'fx_rails_y', 'fx_racks_y', 'fx_pivot_housing', 'fx_housing_screws', 'fx_bracket'].forEach(k => addStl(k, fixedGroup));
 addStl('gear_20t',      servoPinionPivot);
 addStl('alum_horn',     servoPinionPivot);
 addStl('servo_spline',  servoPinionPivot);
+addStl('fasteners_gear', servoPinionPivot);
 addStl('carriage_pod',  carriagePivot);
 addStl('motor_housing', carriagePivot);
 addStl('gantry_plate',  carriagePivot);
 addStl('v_wheels',      carriagePivot);
-['xp_rail', 'xp_rack', 'xp_bearing_inner', 'xp_rotor_screws', 'xp_stop_pin'].forEach(k => addStl(k, carriagePivot));
+addStl('fasteners_turn', carriagePivot);
+['xp_rail', 'xp_rack', 'xp_rotor', 'xp_pivot_608zz', 'xp_pivot_m8_stack', 'xp_rotor_screws', 'xp_stop_pin'].forEach(k => addStl(k, carriagePivot));
 addStl('motor_shaft',   climbPivot);
 addStl('pinion',        climbPivot);
 addStl('retainer',      climbPivot);
@@ -315,7 +324,7 @@ const groups = {
   motor:  ['motor_housing', 'motor_shaft', 'pinion', 'retainer'],
   gantry: ['gantry_plate', 'v_wheels'],
   rail:   ['xp_rail', 'xp_rack', 'fx_rails_x', 'fx_racks_x', 'fx_rails_y', 'fx_racks_y'],
-  tt:     ['xp_bearing_inner', 'xp_rotor_screws', 'xp_stop_pin', 'fx_bearing_outer', 'fx_bracket'],
+  tt:     ['xp_rotor', 'xp_pivot_608zz', 'xp_pivot_m8_stack', 'xp_rotor_screws', 'xp_stop_pin', 'fx_pivot_housing', 'fx_housing_screws', 'fx_bracket'],
 };
 window.setVis = (name, state) => {
   (groups[name] || []).forEach(k => {

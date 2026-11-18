@@ -99,11 +99,18 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
 * **Rails:**
   * Travel: one hub rides each of the **two horizontal rails** (z 70 and 330, 260 mm apart).
   * Climbing: both hubs climb the **single vertical rail**.
-  * Every rail crossing has a small turntable piece on a 50 mm bearing. A hub **swivels 90 deg** together with its piece,
-    one hub at a time, while the other stays locked.
-  * The bearing is a slewing ring: fixed outer ring bolted to the aluminium crossing bracket, rotating inner ring
-    screwed to the rail piece. A stop pin on the piece runs in a quarter slot in the bracket, so the piece stops exactly
-    at 0 and -90 deg.
+  * Every rail crossing has a small turntable piece. A hub **swivels 90 deg** together with its piece, one hub at a time,
+    while the other stays locked.
+  * The piece turns on a **preloaded 608ZZ pair on an M8 bolt** (the same bearing + bolt as the swivel pod), so it can
+    only rotate - no sideways shift, no tilt:
+    - the M8 bolt's hex head is caught in a hex pocket in a 6 mm aluminium rotor disc screwed to the rail piece
+      (2 x M5 button head + V-slot T-nuts), so the bolt turns with the piece;
+    - the two 608ZZ sit 15 mm apart in a turned aluminium housing; its 27 mm spigot is a close fit in a bored hole in
+      the bracket (centres it), its flange is held by 4 x M4 into the tapped bracket;
+    - the outer races rest on a shoulder in the housing, the inner races on a steel spacer 0.05 mm shorter than that
+      shoulder: tightening the nyloc preloads both bearings back-to-back, which takes out all radial and axial play;
+    - a disc spring (DIN 6796) under the nut keeps the preload when parts settle.
+  * A stop pin on the piece runs in a quarter slot in the bracket, so the piece stops exactly at 0 and -90 deg.
   * The body never rotates, so the tray is always level.
 * **Picker:** two 2-stage **telescopic arms** run in the 23 mm gaps beside the basket. **Two servos drive everything**, and
   every part of the mechanism is modelled and moves in the sim:
@@ -271,6 +278,34 @@ Known v3 limits:
 * **FreeCAD 1.0** – open `models/assembly/*.FCStd` or any `.step` (File → Open).
 * **Fusion 360** – Upload / Open the `.step` files; every body comes in as a separate component.
 * **Slicer** – `models/print/*.stl` (already in print orientation).
+
+## Fasteners (v3 swivel pod + crossing pivot) - what to buy in Sri Lanka
+
+All metric (ISO / DIN), modelled in the CAD (`cad/build_t_slot_option1.py: FASTENERS`, `generator/params_v3.py: TT_STACK`).
+Plain zinc-plated 8.8 steel is fine everywhere; A2 stainless costs more but does not rust. Screws, nuts and washers:
+Pettah fastener / hardware shops (or any town hardware shop) by the piece or by the 100; 608ZZ and V-slot T-nuts from
+electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to match the thread if unsure.
+
+| Fastener | Per swivel pod (x2) | Per crossing (x every crossing) | Where |
+|---|---|---|---|
+| 608ZZ bearing 8 x 22 x 7 (608-2RS = sealed, for dust) | 2 | 2 | pod swivel pivot; crossing pivot |
+| M8 x 40 hex bolt, DIN 933 (fully threaded), 8.8 | 1 | 1 | through the 608ZZ pair |
+| M8 nyloc nut, DIN 985 | 1 | 1 | preloads the pair (do not use a plain nut + spring washer) |
+| M8 flat washer, DIN 125 | 2 | 1 | under the nyloc |
+| M8 disc spring, DIN 6796 (Belleville) - may need ordering online; fallback: tighten the nyloc to "no play, still free" | - | 1 | crossing preload |
+| Steel spacer tube 12 x 8.2 (cut + faced) | 1 x 4 mm | 2.5 + 7.95 + 2 mm | between the inner races (the 7.95 one is 0.05 mm under the housing shoulder) |
+| M5 x 12 button head, ISO 7380 + M5 nyloc DIN 985 | 4 + 4 | - | carriage pod deck -> MT0134 plate |
+| M5 x 10 button head, ISO 7380 + M5 V-slot T-nut (drop-in) | - | 2 + 2 | rotor disc -> rail piece |
+| M5 x 25 socket cap DIN 912 + 10 x 5.2 x 20 sleeve + washer + T-nut | - | 1 | stop pin |
+| M4 x 12 socket cap, DIN 912 | 4 | 4 | pod: body mount -> tapped column bar (fit before the servo); crossing: housing -> tapped bracket |
+| M3 x 6 button head, ISO 7380 | 4 | - | 4632-370 gearbox -> pod wall (low head: clears the pinion by 1.25 mm) |
+| M3 x 12 socket cap, DIN 912 | 4 | - | 20T gear -> aluminium horn (horn is tapped M3) |
+| M3 x 14 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | servo ears -> printed body mount (or M3 machine screw + heat-set insert) |
+| M3 x 8 spline screw | 1 (comes with the servo) | - | horn -> servo spline |
+
+Head types in one line: **socket cap** (DIN 912) where there is room for a hex key, **button head** (ISO 7380) where
+a head must stay low (1.65 mm for M3, 2.75 mm for M5), **hex bolt** (DIN 933) for the M8 pivots (a spanner on the
+nyloc, the head held by its pocket), **thread-forming** screws straight into PETG, **nyloc** wherever something turns.
 
 ## Notes on the exact CAD
 * Bought parts (motors, servos, rails, V-wheels, angle iron, baskets) are simplified envelopes.
