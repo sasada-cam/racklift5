@@ -288,12 +288,13 @@ electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to ma
 
 | Fastener | Per swivel pod (x2) | Per crossing (x every crossing) | Where |
 |---|---|---|---|
-| 608ZZ bearing 8 x 22 x 7 (608-2RS = sealed, for dust) | 2 | 2 | pod swivel pivot; crossing pivot |
-| M8 x 40 hex bolt, DIN 933 (fully threaded), 8.8 | 1 | 1 | through the 608ZZ pair |
-| M8 nyloc nut, DIN 985 | 1 | 1 | preloads the pair (do not use a plain nut + spring washer) |
-| M8 flat washer, DIN 125 | 2 | 1 | under the nyloc |
+| 608ZZ bearing 8 x 22 x 7 (608-2RS = sealed, for dust) | 2 | 2 | pod: one in the tower + one in the top arm (55 mm apart); crossing: preloaded pair |
+| M8 x 40 hex bolt, DIN 933 (fully threaded), 8.8 | 1 | 1 | pod: bottom bearing; crossing: through the pair |
+| M8 x 20 hex bolt, DIN 933, 8.8 + M8 hex nut DIN 934 | 1 + 1 | - | pod: top bearing, from below into the nut in the body mount's side slot |
+| M8 nyloc nut, DIN 985 | 1 | 1 | bottom bearing / crossing preload (do not use a plain nut + spring washer) |
+| M8 flat washer, DIN 125 | 1 | 1 | under the nyloc |
 | M8 disc spring, DIN 6796 (Belleville) - may need ordering online; fallback: tighten the nyloc to "no play, still free" | - | 1 | crossing preload |
-| Steel spacer tube 12 x 8.2 (cut + faced) | 1 x 4 mm | 2.5 + 7.95 + 2 mm | between the inner races (the 7.95 one is 0.05 mm under the housing shoulder) |
+| Steel spacer tube 12 x 8.2 (cut + faced) | 12 + 2 + 1.5 mm | 2.5 + 7.95 + 2 mm | between the inner races (the 7.95 one is 0.05 mm under the housing shoulder) |
 | M5 x 12 button head, ISO 7380 + M5 nyloc DIN 985 | 4 + 4 | - | carriage pod deck -> MT0134 plate |
 | M5 x 10 button head, ISO 7380 + M5 V-slot T-nut (drop-in) | - | 2 + 2 | rotor disc -> rail piece |
 | M5 x 25 socket cap DIN 912 + 10 x 5.2 x 20 sleeve + washer + T-nut | - | 1 | stop pin |
