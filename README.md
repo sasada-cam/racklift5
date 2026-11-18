@@ -99,8 +99,18 @@ Images: `docs/renders/v3_*.png`, rendered from the MuJoCo model: `pixi run -e si
 * **Rails:**
   * Travel: one hub rides each of the **two horizontal rails** (z 70 and 330, 260 mm apart).
   * Climbing: both hubs climb the **single vertical rail**.
-  * Every rail crossing has a small turntable piece on a 50 mm bearing. A hub **swivels 90 deg** together with its piece,
-    one hub at a time, while the other stays locked.
+  * Every rail crossing has a small turntable piece. A hub **swivels 90 deg** together with its piece, one hub at a time,
+    while the other stays locked.
+  * The piece turns on a **preloaded 608ZZ pair on an M8 bolt** (the same bearing + bolt as the swivel pod), so it can
+    only rotate - no sideways shift, no tilt:
+    - the M8 bolt's hex head is caught in a hex pocket in a 6 mm aluminium rotor disc screwed to the rail piece
+      (2 x M5 button head + V-slot T-nuts), so the bolt turns with the piece;
+    - the two 608ZZ sit 15 mm apart in a turned aluminium housing; its 27 mm spigot is a close fit in a bored hole in
+      the bracket (centres it), its flange is held by 4 x M4 into the tapped bracket;
+    - the outer races rest on a shoulder in the housing, the inner races on a steel spacer 0.05 mm shorter than that
+      shoulder: tightening the nyloc preloads both bearings back-to-back, which takes out all radial and axial play;
+    - a disc spring (DIN 6796) under the nut keeps the preload when parts settle.
+  * A stop pin on the piece runs in a quarter slot in the bracket, so the piece stops exactly at 0 and -90 deg.
   * The body never rotates, so the tray is always level.
 * **Picker:** two 2-stage **telescopic arms** run in the 23 mm gaps beside the basket. **Two servos drive everything**, and
   every part of the mechanism is modelled and moves in the sim:
@@ -184,11 +194,13 @@ Not covered yet: servo 2 and its gear pair, the lock solenoids, the hub drives a
 Background: [docs/design/001-load-carrying-single-vs-two-rail.md](docs/design/001-load-carrying-single-vs-two-rail.md) (section 8h).
 Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 ```
+python3 sim/view_t_slot_option1.py   # Option 1 Dual-608ZZ Swivel Studio (http://127.0.0.1:8840/, interactive 3D + exploded view)
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
 pixi run export-components   # every unique component as its own STEP + STL + BOM -> models/v3/components/
 pixi run clearance-v3        # collision check, 157 poses + 3 swept checks (picks, swivels, climb, rows, cart, locks, docks)
+pixi run turntable-v3        # exact check of a crossing turntable: full 0..-90 deg swivel against its bracket + both hard stops
 pixi run -e sim legs --v3    # wheel loads, v3 vs v2
 pixi run -e sim sim-v2       # the v2 robot (with physics)
 ```
@@ -264,9 +276,61 @@ Known v3 limits:
 * Masses and motor ratings are estimates.
 
 ### Opening the models
+* **Interactive 3D Swivel Studio (Option 1 pod + crossing):** run `python3 sim/view_t_slot_option1.py` and open `http://127.0.0.1:8840/` (Ctrl+C to stop).
 * **FreeCAD 1.0** – open `models/assembly/*.FCStd` or any `.step` (File → Open).
 * **Fusion 360** – Upload / Open the `.step` files; every body comes in as a separate component.
 * **Slicer** – `models/print/*.stl` (already in print orientation).
+
+## Printed part IDs (swivel pod)
+
+Every printed pod part has its ID and print batch engraved 0.6 mm deep (3 layers at 0.2 mm) on a visible flat face, e.g.
+`P02-B01`. Set the batch in `cad/build_t_slot_option1.py: BATCH` before each print run.
+
+| ID | Part | Where the mark is | Colour in the viewer |
+|---|---|---|---|
+| P01 | Carriage pod: deck, bearing tower, 40T gear, front wall, arm + post, front half of the motor-can clamp | arm post, side facing the swivel axis | medium blue `#2E8EE6` |
+| P02 | Motor cap (back half: walls, lid, back half of the can clamp) - pulls off +Y | back face | navy `#1B4A99` |
+| P03 | Pinion cover (`623ZZ` outboard bearing housing) - pulls off -Y | front plate, above the bearing boss | sky blue `#8FD0FF` |
+| P04 | Body mount (fixed: servo cage, M8 cap, top-bearing boss) | servo cage side wall | green `#33B873` |
+| P05 | 20T swivel servo gear | underside, between the horn screws (ID only) | amber `#F59E0B` |
+| P06 | 14T climb pinion | outer face, outside the retainer (ID only) | orange `#EB7A24` |
+
+P01 prints deck-down; use tree supports (under the arm hub, and under the can clamp's lower edge, which spans the open
+gearbox space - reach them from the open back). The stepped `Ø9.6 × 3.1 mm` shaft retainer collar is too small to mark.
+
+## Fasteners (v3 swivel pod + crossing pivot) - what to buy in Sri Lanka
+
+All metric (ISO / DIN), modelled in the CAD (`cad/build_t_slot_option1.py: FASTENERS`, `generator/params_v3.py: TT_STACK`).
+Plain zinc-plated 8.8 steel is fine everywhere; A2 stainless costs more but does not rust. Screws, nuts and washers:
+Pettah fastener / hardware shops (or any town hardware shop) by the piece or by the 100; 608ZZ and V-slot T-nuts from
+electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to match the thread if unsure.
+
+| Fastener | Per swivel pod (x2) | Per crossing (x every crossing) | Where |
+|---|---|---|---|
+| 608ZZ bearing 8 x 22 x 7 (608-2RS = sealed, for dust) | 2 | 2 | pod: one in the tower + one in the top arm (55 mm apart); crossing: preloaded pair |
+| 623ZZ bearing 3 x 10 x 4 (`H24`) | 1 | - | pod: pinion outboard straddle support seated in `P03` front boss |
+| M8 x 40 hex bolt, DIN 933 (fully threaded), 8.8 | - | 1 | crossing: through the preloaded pair |
+| 8 mm steel rod, bright mild / silver steel (NOT a hardened linear rod), cut 69 mm, both ends drilled + tapped M4 x 10 (lathe shop) | 1 | - | pod: common swivel axle through both 608ZZ |
+| M4 x 10 socket cap DIN 912 + washer (bottom: DIN 9021 12 mm, top: DIN 125) | 2 | - | pod: axle end screws (bottom pushes the bearing stack up to the cap; top locks the rod, flush in the top plate) |
+| M8 nyloc nut, DIN 985 | - | 1 | crossing preload (do not use a plain nut + spring washer) |
+| M8 flat washer, DIN 125 | - | 1 | under the nyloc |
+| M8 disc spring, DIN 6796 (Belleville) - may need ordering online; fallback: tighten the nyloc to "no play, still free" | - | 1 | crossing preload |
+| Steel spacer tube 12 x 8.2 (cut + faced) | 12 + 4.5 (trim to fit) + 1.5 mm | 2.5 + 7.95 + 2 mm | between the inner races (the 7.95 one is 0.05 mm under the housing shoulder) |
+| M5 x 12 button head, ISO 7380 + M5 nyloc DIN 985 | 4 + 4 | - | carriage pod deck -> MT0134 plate |
+| M5 x 10 button head, ISO 7380 + M5 V-slot T-nut (drop-in) | - | 2 + 2 | rotor disc -> rail piece |
+| M5 x 25 socket cap DIN 912 + 10 x 5.2 x 20 sleeve + washer + T-nut | - | 1 | stop pin |
+| M4 x 12 socket cap, DIN 912 | 4 | 4 | pod: body mount -> tapped column bar (fit before the servo); crossing: housing -> tapped bracket |
+| M3 x 6 button head, ISO 7380 | 4 | - | 4632-370 gearbox -> pod wall (low head: clears the pinion by 1.25 mm) |
+| M3 x 12 socket cap, DIN 912 | 5 | - | 20T gear -> aluminium horn (4) + `623ZZ` pinion outboard bearing -> motor shaft (1) |
+| M3 x 14 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | servo ears -> printed body mount (or M3 machine screw + heat-set insert) |
+| M3 x 12 pan head thread-forming ("PT" / self-tapping for plastic) | 5 | - | motor cap -> carriage pod (4) + pinion cover -> arm post (1) |
+| M3 x 10 pan head thread-forming ("PT" / self-tapping for plastic) | 2 | - | pinion cover -> `+X` ear |
+| M3 x 10 socket cap, DIN 912 + M3 DIN 934 hex nut | 3 + 3 | - | motor-can clamp flanges (`P01` <-> `P02`; use M3 x 12 if substituting 4 mm DIN 985 nyloc) |
+| M3 x 8 spline screw | 1 (comes with the servo) | - | horn -> servo spline |
+
+Head types in one line: **socket cap** (DIN 912) where there is room for a hex key, **button head** (ISO 7380) where
+a head must stay low (1.65 mm for M3, 2.75 mm for M5), **hex bolt** (DIN 933) for the M8 pivots (a spanner on the
+nyloc, the head held by its pocket), **thread-forming** screws straight into PETG, **nyloc** wherever something turns.
 
 ## Notes on the exact CAD
 * Bought parts (motors, servos, rails, V-wheels, angle iron, baskets) are simplified envelopes.

@@ -29,6 +29,7 @@ test = { cmd = "python cad/tools/test_parts.py", description = "Validity + volum
 gen-stl = { cmd = "python export_v2.py", cwd = "generator", description = "Original mesh STL export" }
 gen-clearance = { cmd = "python clearance_v2.py", cwd = "generator", description = "67-pose collision check" }
 clearance-v3 = { cmd = "python clearance_v3.py", cwd = "generator", description = "v3: collision check, 157 poses + 3 swept checks (floor of racks: picks, hub swivels, climb, rows, cart transfer, locks, docks)" }
+turntable-v3 = { cmd = "python cad/check_crossing_turntable.py", description = "v3: exact B-rep check of a crossing turntable over its 0..-90 deg swivel + both hard stops" }
 gen-renders = { cmd = "python r2.py", cwd = "generator", description = "Preview renders" }
 check-tools = { cmd = "python -c \"import build123d, gmsh, meshio, numpy, PIL; print('build123d', build123d.__version__, '| gmsh', gmsh.__version__)\" && ccx -v", description = "Smoke test of the toolchain" }
 

@@ -31,7 +31,7 @@ def _pick(items, name):
 
 
 NEW_PARTS = {   # name: (builder, print orientation, qty)
-    "V01_hub_cover": (lambda: _pick(A3.hub_local(), "printed hub cover"), R.RX(90), 2),
+    # (V01 hub cover dropped: the hub is now the Option 1 swivel pod - its printed parts come from cad/build_t_slot_option1.py)
     "V03_flip_finger": (lambda: _pick(A3.finger_local(1, "front"), "printed flip finger (front)"), I, 4),
     "V04_arm_post": (lambda: _pick(A3.robot_local(), "printed arm post"), I, 2),
     "V06_front_post": (lambda: _pick(A3.robot_local(), "printed front post (rod + cross-shaft bearings)"), R.RX(90), 2),

@@ -31,13 +31,20 @@ CATEGORY = [
     (r"lock solenoid|cart lock|cart docking bar", "Locks (robot + cart)", "LCK"),
     (r"^cart|trolley|floor guide|transfer|beam", "Transfer cart + beam", "CRT"),
     (r"slotted angle rack", "Rack", "RAC"),
+    (r"^pod: ", "Robot body + hubs", "ROB"),
     (r"crossing|rail support|turntable|rail piece|V-slot rail|in-slot rack|rail bridge|rail end", "Rails + crossings", "RAI"),
     (r"hub|V wheel|spacer|climber|swivel axle|column bar|swivel motor|battery", "Robot body + hubs", "ROB"),
     (r"telescopic|finger|stage|belt|servo|pulley|idler|cross shaft|arm|tray|load cell|GT2|limit switch|basket stop|turn|front post|lift carriage",
      "Tray + picker + drives", "PIC"),
 ]
 PROCESS = [
+    (r"screws|nyloc|DIN \d|ISO 7380|disc spring|washer", "Buy (fasteners: see the fastener list in README - Pettah fastener shops)"),
+    (r"turntable 608ZZ", "Buy (608ZZ bearing - tronic.lk / bearing shops)"),
+    (r"turntable .*spacer|preload collar", "Steel tube 12 x 8.2 (cut + face; inner-race spacer 0.05 mm under the housing shoulder)"),
+    (r"pivot housing", "Turned aluminium (lathe): 2 x 22 mm H7 seats, 27 mm g6 spigot, 4 x M4 clearance"),
+    (r"rotor disc", "6 mm aluminium plate (laser / waterjet cut, M8 hex pocket milled or filed)"),
     (r"^cover:", "3D print (PETG), 2.4 mm walls, closed face down"),
+    (r"^pod: .*(MT0134|V wheel|4632-370 climb|TD-8125MG|608ZZ|M8|aluminium servo horn)", "Buy (pod hardware: see cad/build_t_slot_option1.py)"),
     (r"lock solenoid bracket|finger shaft bearing|pivot lug|belt anchor", "3D print (PETG)"),
     (r"column bar", "Aluminium bar 28 x 24 (cut to length, drill)"),
     (r"in-slot rack|transfer rack segment|climber pinion|turn drive pinion|transfer pinion", "Print fine (0.12 mm, 100 % infill) or order nylon (SLS)"),
@@ -92,7 +99,7 @@ def sources():
         for it in items:
             out.append((it[0], it[1]))
     for f in (A.robot_covers_local, A.dock_cover_local, A.row_static_local, A.xfer_static, A.dock_static_local, A.crossing_local, A.cart_local, A.cart_lock_local,
-              A.hub_local, A.hub_pinion_local, A.robot_local, A.arm_drive_local, A.idler_local, A.servo1_local, A.fservo_local,
+              A.hub_local, A.hub_pinion_local, A.hub_gear_local, A.robot_local, A.arm_drive_local, A.idler_local, A.servo1_local, A.fservo_local,
               A.arm_mid_local, A.arm_in_local, A.turn_carriage_local, A.turn_pinion_local, A.dock_bolt_local,
               A.release_plunger_local, A.jack_platform_local, A.jack_arm1_local, A.jack_arm2_local, A.jack_slider_local,
               A.jack_screw_local):
@@ -140,7 +147,8 @@ def main():
               ("Cover washers: M3 flat washer", "Covers", 14, "Buy (hardware)"),
               ("Rack fixing: in-slot racks slide into the rail's front slot from the free end in order (press fit), one drop of cyanoacrylate per piece; end caps stop them at the free ends", "Rails + crossings", 0, "Buy (hardware)"),
               ("Rail / bracket fixing: M5 x 10 button screw + M5 slot T-nut (V-slot) - rail to bracket support plates and bridges", "Rails + crossings", 0, "Buy (hardware)"),
-              ("Crossing bracket fixing: M5 x 12 screw + washer through the rack post flange (2 per post) + 4 x M4 x 12 bolts for the turntable bearing's fixed ring", "Rails + crossings", 0, "Buy (hardware)"),
+              ("Crossing bracket fixing: M5 x 12 socket cap (DIN 912) + M5 washer through the rack post flange (2 per post); bracket bored 27 H7 + 4 x M4 tapped for the pivot housing", "Rails + crossings", 0, "Buy (hardware)"),
+              ("Turntable stop pin per crossing: M5 x 25 socket cap + 10 x 5.2 x 20 mm steel sleeve + M5 washer + V-slot T-nut", "Rails + crossings", 0, "Buy (hardware)"),
               ("Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins", "Hardware", 0, "Buy (assorted; count from the drawings)")]
 
     # number + export, grouped by category

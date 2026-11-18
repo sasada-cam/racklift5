@@ -1,0 +1,136 @@
+# RackLift5 v3 - shopping list: swivel pods + rail crossings
+
+Every part that is bought, cut or machined gets a number, the same way printed parts carry P-numbers.
+
+| Prefix | Meaning |
+|---|---|
+| `E` | motors and servos |
+| `H` | hardware bought as-is (bearings, screws, nuts, washers, T-nuts, kits) |
+| `M` | workshop parts cut or machined from stock (lathe / cutting shop) |
+| `P` | 3D-printed parts (engraved ID + batch, see `CLAUDE.md`) |
+
+The quantities below are for the whole build:
+- **Swivel pods:** 2 (one per hub). The robot has 2 hubs, and each has one pod.
+- **Rail crossings:** 24 (12 bays × 2 rails). Each crossing has one turning rail piece on its own pivot.
+
+All screws are metric ISO/DIN. Plain zinc-plated 8.8 steel is fine, or A2 stainless if you want no rust.
+
+Where to buy:
+- screws, nuts and washers: Pettah fastener / hardware shops
+- bearings, motors and servos: tronic.lk (or bearing shops)
+- `M` parts: any lathe or metal-cutting shop
+
+Take this page and a sample part to the shop.
+
+---
+
+## 1. Swivel pod (×2)
+
+### Motors, servos, kits
+
+| ID | Part | Material / spec | Size | Per pod | Total | Where |
+|---|---|---|---|---|---|---|
+| E01 | 4632-370 worm gear motor, 12 V, 100 RPM | steel gearbox, 6 mm D-shaft (5.5 mm flat), M3 axial hole in shaft | gearbox 32 × 22.5 × 46, can Ø24.4 × 30.8 | 1 | 2 | tronic.lk |
+| E02 | TD-8125MG servo, 180°, 25T spline | metal gear | body 40 × 20.5, ears 54.5 span, ear holes Ø4.2 on 49.5 × 10 | 1 | 2 | tronic.lk |
+| H01 | OpenBuilds MT0134 gantry plate | aluminium | 65.5 × 65.5 × 3 | 1 | 2 | 3D-printer / CNC shop |
+| H02 | Delrin V-wheel kit (wheel + bearings + 6 mm spacer + M5 screw + nyloc) | Delrin, 2 × 625ZZ inside | wheel Ø24 × 10.95, spacer 6 mm | 4 | 8 | 3D-printer / CNC shop |
+| H03 | 25T aluminium servo horn, round | CNC aluminium | Ø20 × 3.5, 4 × M3 tapped on 14 mm PCD (bolt-circle diameter) | 1 | 2 | tronic.lk (often with the servo) |
+| H04 | 608ZZ ball bearing (608-2RS = sealed) | steel | 8 × 22 × 7 | 2 | 4 | tronic.lk / bearing shop |
+
+### Swivel axle + spacers (workshop)
+
+| ID | Part | Material | Size / work | Per pod | Total |
+|---|---|---|---|---|---|
+| M01 | Common swivel axle | 8 mm bright mild steel or silver steel. **Not** a hardened linear rod, because it can't be tapped. | Ø8 h9, **69 mm** long, faces square; both ends drilled Ø3.3 × 12 deep and tapped **M4 × 10** | 1 | 2 |
+| M02 | Axle spacer, bottom | steel tube 12 OD × 8.2 ID (or turned from 12 mm bar) | **12.0 mm** long, faces square | 1 | 2 |
+| M03 | Axle spacer, top-bearing | same tube | **4.5 mm**: trim on assembly so the top stack is snug | 1 | 2 |
+| M04 | Axle spacer, boss | same tube | **1.5 mm** | 1 | 2 |
+
+### Screws, nuts, washers
+
+| ID | Part | Standard | Per pod | Total | Used for |
+|---|---|---|---|---|---|
+| H10 | M4 × 10 socket cap | DIN 912 | 2 | 4 | axle ends (bottom + top) |
+| H11 | M4 large washer, 12 mm OD | DIN 9021 | 1 | 2 | under the bottom axle screw (bears on the 608 inner race only) |
+| H12 | M4 washer | DIN 125 | 5 | 10 | top axle screw (1) + column screws (4) |
+| H13 | M4 × 12 socket cap | DIN 912 | 4 | 8 | body mount → column bar (tap the bar M4); fit before the servo |
+| H14 | M5 × 12 button head | ISO 7380 | 4 | 8 | carriage pod deck → MT0134 plate |
+| H15 | M5 nyloc nut | DIN 985 | 4 | 8 | under the MT0134 plate |
+| H16 | M3 × 6 button head | ISO 7380 | 4 | 8 | 4632-370 gearbox → pod front wall (low head clears the pinion) |
+| H17 | M3 × 12 socket cap | DIN 912 | 5 | 10 | 20T gear → aluminium horn (4) + `623ZZ` pinion outboard bearing → motor shaft tip (1) |
+| H18 | M3 × 14 pan head thread-forming ("PT", for plastic) | - | 4 | 8 | servo ears → body mount |
+| H19 | M3 × 12 pan head thread-forming ("PT") | - | 5 | 10 | motor cap → pod (4), pinion cover → arm post (1) |
+| H20 | M3 × 10 pan head thread-forming ("PT") | - | 2 | 4 | pinion cover → ear beside the front wall |
+| H21 | M3 × 10 socket cap | DIN 912 | 3 | 6 | motor-can clamp: cap half ↔ P01 half |
+| H22 | M3 hex nut (or nyloc DIN 985) | DIN 934 | 3 | 6 | motor-can clamp (use M3 × 12 bolts if substituting 4 mm thick nyloc) |
+| H24 | 623ZZ miniature ball bearing (`3 × 10 × 4`) | steel | 1 | 2 | `P06` outboard straddle support seated in `P03` front boss (replaces `H23`) |
+| - | M3 × 8 servo spline screw | - | 1 | 2 | supplied with the servo |
+
+### Printed (PETG, see the README "Printed part IDs" table)
+
+Print settings: 0.2 mm layers, 4 walls, 40 % gyroid. Gears: 0.12 mm layers, 100 % infill.
+
+| ID | Part | Overall size mm (x y z) | Volume | Per pod | Total | Print notes |
+|---|---|---|---|---|---|---|
+| P01 | Carriage pod (deck, tower, 40T, front wall, arm + post, can clamp front) | 104.9 × 64.7 × 86.4 | 58.7 cm³ | 1 | 2 | deck down, tree supports (arm hub, clamp lower edge) |
+| P02 | Motor cap | 49.2 × 26.5 × 86.4 | 13.2 cm³ | 1 | 2 | back face down |
+| P03 | Pinion cover | 48.5 × 19.6 × 31.5 | 7.3 cm³ | 1 | 2 | front plate down |
+| P04 | Body mount (axle column, full-length cheeks, solid web) | 88.8 × 38.0 × 55.0 | 77.0 cm³ | 1 | 2 | top plate down |
+| P05 | 20T swivel gear | 27.1 × 27.1 × 8.0 | 3.4 cm³ | 1 | 2 | flat, 100 % |
+| P06 | 14T climb pinion | 23.6 × 9.8 × 24.0 | 2.1 cm³ | 1 | 2 | flat, 100 % |
+| - | Shaft retainer (unmarked) | 10.0 × 2.5 × 10.0 | 0.2 cm³ | 1 | 2 | flat |
+
+---
+
+## 2. Rail crossing pivot (×24)
+
+### Workshop parts
+
+| ID | Part | Material | Size / work | Per crossing | Total |
+|---|---|---|---|---|---|
+| M10 | Rotor disc | 6 mm aluminium plate (laser / waterjet) | Ø42 × 6. Centre: Ø8.2 through + **hex pocket 13 mm AF × 5.6 deep** (M8 bolt head). 2 × Ø5.5 holes at ±14 mm on a diameter, counterbored Ø10 × 3 for M5 button heads | 1 | 24 |
+| M11 | Pivot housing | aluminium bar Ø45 (lathe) | spigot **Ø27 g6** × 9.5 · flange Ø45 × 5 · body Ø27 × 10 · bores **Ø22 H7** × 7 (both ends) with a Ø18 shoulder 8 mm long between · 4 × Ø4.5 on a 36 mm circle at 45° | 1 | 24 |
+| M12 | Crossing bracket (existing part, new holes) | 3–10 mm aluminium plate | bore **Ø27.1 H7** at the pivot; 4 × M4 tapped on a 36 mm circle at 45° (tap drill Ø3.3) | 1 | 24 |
+| M13 | Front spacer | steel tube 12 × 8.2 | **2.5 mm** | 1 | 24 |
+| M14 | Inner-race spacer (sets the preload) | steel tube 12 × 8.2, faces ground | **7.95 mm** = 0.05 shorter than the housing shoulder. Measure the shoulder and make it 0.05 shorter. | 1 | 24 |
+| M15 | Preload collar | steel tube 12 × 8.2 | **2.0 mm** | 1 | 24 |
+| M16 | Stop-pin sleeve | steel tube 10 × 5.2 | **20 mm** | 1 | 24 |
+
+### Bought
+
+| ID | Part | Standard / size | Per crossing | Total | Used for |
+|---|---|---|---|---|---|
+| H04 | 608ZZ ball bearing | 8 × 22 × 7 | 2 | 48 | preloaded pair in M11 |
+| H30 | M8 × 40 hex bolt, 8.8 | DIN 933 | 1 | 24 | pivot (head in the M10 hex pocket) |
+| H31 | M8 nyloc nut | DIN 985 | 1 | 24 | preload |
+| H32 | M8 washer | DIN 125 | 1 | 24 | under the nyloc |
+| H33 | M8 disc spring (Belleville) | DIN 6796 | 1 | 24 | keeps the preload. May need ordering online; without it, tighten to "no play, still turns freely". |
+| H34 | M5 × 10 button head | ISO 7380 | 2 | 48 | rotor disc → rail piece |
+| H35 | M5 drop-in T-nut for 2020 slot (6 mm opening; sits inside the slot behind the lips, about 10 × 10 × 4.4) | - | 3 | 72 | rotor screws (2) + stop pin (1), in the turning piece's back slot |
+| H36 | M4 × 12 socket cap | DIN 912 | 4 | 96 | housing → bracket |
+| H37 | M5 × 25 socket cap | DIN 912 | 1 | 24 | stop pin |
+| H38 | M5 washer | DIN 125 | 1 | 24 | stop pin |
+| H39 | M5 × 12 socket cap + M5 washer | DIN 912 / 125 | 2 + 2 | 48 + 48 | bracket → rack post flange |
+
+---
+
+## 3. Totals to buy (pods + crossings)
+
+| Item | Qty |
+|---|---|
+| 608ZZ bearings (H04) | 4 + 48 = **52** |
+| 623ZZ bearings (H24) | **2** |
+| 8 mm bright steel rod (M01) | 2 × 69 mm (one 300 mm length is plenty) |
+| 12 × 8.2 steel tube (M02–M04, M13–M15) | 2 × (12 + 4.5 + 1.5) + 24 × (2.5 + 7.95 + 2) ≈ 340 mm + cutting waste: buy **500 mm** |
+| 10 × 5.2 steel tube (M16) | 24 × 20 mm: buy **600 mm** |
+| M3 screws | H16 8 · H17 10 · H18 8 · H19 10 · H20 4 · H21 6 |
+| M3 nuts (H22) | 6 |
+| M4 screws | H10 4 · H13 8 · H36 96 |
+| M4 washers | H11 2 · H12 10 |
+| M5 screws | H14 8 · H34 48 · H37 24 · H39 48 |
+| M5 nyloc (H15) | 8 |
+| M5 washers | H38 24 · H39 48 |
+| M5 T-nuts (H35) | 72 |
+| M8 × 40 bolts (H30) / nyloc (H31) / washers (H32) / disc springs (H33) | 24 each |
+
+Buy roughly 10 % extra of every screw, nut and washer: small screws get lost.
