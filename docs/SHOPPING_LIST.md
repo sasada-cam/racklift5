@@ -57,13 +57,13 @@ Take this page and a sample part to the shop.
 | H14 | M5 × 12 button head | ISO 7380 | 4 | 8 | carriage pod deck → MT0134 plate |
 | H15 | M5 nyloc nut | DIN 985 | 4 | 8 | under the MT0134 plate |
 | H16 | M3 × 6 button head | ISO 7380 | 4 | 8 | 4632-370 gearbox → pod front wall (low head clears the pinion) |
-| H17 | M3 × 12 socket cap | DIN 912 | 4 | 8 | 20T gear → aluminium horn |
+| H17 | M3 × 12 socket cap | DIN 912 | 5 | 10 | 20T gear → aluminium horn (4) + `623ZZ` pinion outboard bearing → motor shaft tip (1) |
 | H18 | M3 × 14 pan head thread-forming ("PT", for plastic) | - | 4 | 8 | servo ears → body mount |
 | H19 | M3 × 12 pan head thread-forming ("PT") | - | 5 | 10 | motor cap → pod (4), pinion cover → arm post (1) |
 | H20 | M3 × 10 pan head thread-forming ("PT") | - | 2 | 4 | pinion cover → ear beside the front wall |
 | H21 | M3 × 10 socket cap | DIN 912 | 3 | 6 | motor-can clamp: cap half ↔ P01 half |
-| H22 | M3 hex nut (or nyloc DIN 985) | DIN 934 | 3 | 6 | motor-can clamp |
-| H23 | M3 × 6 socket cap | DIN 912 | 1 | 2 | pinion retainer → motor shaft tip (axial M3 hole). Not yet in the CAD. |
+| H22 | M3 hex nut (or nyloc DIN 985) | DIN 934 | 3 | 6 | motor-can clamp (use M3 × 12 bolts if substituting 4 mm thick nyloc) |
+| H24 | 623ZZ miniature ball bearing (`3 × 10 × 4`) | steel | 1 | 2 | `P06` outboard straddle support seated in `P03` front boss (replaces `H23`) |
 | - | M3 × 8 servo spline screw | - | 1 | 2 | supplied with the servo |
 
 ### Printed (PETG, see the README "Printed part IDs" table)
@@ -119,10 +119,11 @@ Print settings: 0.2 mm layers, 4 walls, 40 % gyroid. Gears: 0.12 mm layers, 100 
 | Item | Qty |
 |---|---|
 | 608ZZ bearings (H04) | 4 + 48 = **52** |
+| 623ZZ bearings (H24) | **2** |
 | 8 mm bright steel rod (M01) | 2 × 69 mm (one 300 mm length is plenty) |
 | 12 × 8.2 steel tube (M02–M04, M13–M15) | 2 × (12 + 4.5 + 1.5) + 24 × (2.5 + 7.95 + 2) ≈ 340 mm + cutting waste: buy **500 mm** |
 | 10 × 5.2 steel tube (M16) | 24 × 20 mm: buy **600 mm** |
-| M3 screws | H16 8 · H17 8 · H18 8 · H19 10 · H20 4 · H21 6 · H23 2 |
+| M3 screws | H16 8 · H17 10 · H18 8 · H19 10 · H20 4 · H21 6 |
 | M3 nuts (H22) | 6 |
 | M4 screws | H10 4 · H13 8 · H36 96 |
 | M4 washers | H11 2 · H12 10 |

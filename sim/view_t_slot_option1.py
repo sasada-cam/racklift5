@@ -145,7 +145,7 @@ HTML = r"""<!doctype html>
       </div>
     </div>
     <div class="row">
-      <span><span class="dot" style="background:#9aa5b4"></span>Screws, Bolts + Nuts</span>
+      <span><span class="dot" style="background:#9aa5b4"></span>H10–H23 Screws, Bolts + Nuts</span>
       <div class="btn-group">
         <button id="v-screws-solid" class="active" onclick="setVis('screws','solid')">Show</button>
         <button id="v-screws-off" onclick="setVis('screws','off')">Hide</button>
@@ -249,6 +249,7 @@ const mats = {
   body_mount:   new THREE.MeshStandardMaterial({ color: 0x33b873, roughness: 0.42, transparent: true, opacity: 0.35, depthWrite: false }),
   bearing_bot:  new THREE.MeshStandardMaterial({ color: 0xd8dee6, metalness: 0.85, roughness: 0.25 }),
   bearing_top:  new THREE.MeshStandardMaterial({ color: 0xd8dee6, metalness: 0.85, roughness: 0.25 }),
+  bearing_pinion: new THREE.MeshStandardMaterial({ color: 0xd8dee6, metalness: 0.85, roughness: 0.25 }),
   m8_hardware:  new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.80, roughness: 0.30 }),
   servo_body:   new THREE.MeshStandardMaterial({ color: 0xc41e24, metalness: 0.5, roughness: 0.35 }),
   servo_spline: new THREE.MeshStandardMaterial({ color: 0xd4ad52, metalness: 0.85, roughness: 0.25 }),
@@ -307,8 +308,9 @@ addStl('servo_spline',  servoPinionPivot);
 addStl('fasteners_gear', servoPinionPivot);
 addStl('carriage_pod',  carriagePivot);
 addStl('motor_cap',     carriagePivot);
-addStl('pinion_cover',  carriagePivot);
-addStl('motor_housing', carriagePivot);
+addStl('pinion_cover',   carriagePivot);
+addStl('bearing_pinion', carriagePivot);
+addStl('motor_housing',  carriagePivot);
 addStl('gantry_plate',  carriagePivot);
 addStl('v_wheels',      carriagePivot);
 addStl('fasteners_turn', carriagePivot);
@@ -346,7 +348,7 @@ window.setSwivelAuto = () => {
 
 const groups = {
   body:   ['body_mount'],
-  brg:    ['bearing_bot', 'bearing_top', 'm8_hardware'],
+  brg:    ['bearing_bot', 'bearing_top', 'bearing_pinion', 'm8_hardware'],
   servo:  ['servo_body', 'servo_spline', 'alum_horn', 'gear_20t'],
   pod:    ['carriage_pod'],
   cap:    ['motor_cap'],
@@ -380,10 +382,17 @@ window.setExplode = (pct) => {
   if (meshes.fx_pivot_housing)  meshes.fx_pivot_housing.position.z  = -44 * k;
   if (meshes.fx_housing_screws) meshes.fx_housing_screws.position.z = -50 * k;
   if (meshes.xp_pivot_608zz)    meshes.xp_pivot_608zz.position.z    = -38 * k;
-  if (meshes.motor_cap)    meshes.motor_cap.position.y    = 40 * k;    // pulls off +Y
-  if (meshes.pinion_cover) meshes.pinion_cover.position.y = -40 * k;   // pulls off -Y
   if (meshes.v_wheels)     meshes.v_wheels.position.z     = -8 * k;
+  // Centerpiece P01 (carriage_pod) + aligned horizontal Y stack (-Y cover/bearing/retainer/pinion, +Y motor/cap)
   if (meshes.carriage_pod) meshes.carriage_pod.position.z = 12 * k;
+  climbPivot.position.z = 5.325 + 12 * k;
+  if (meshes.motor_housing)  meshes.motor_housing.position.set(0, 24 * k, 12 * k);   // motor slides out +Y from P01
+  if (meshes.motor_shaft)    meshes.motor_shaft.position.y    = 24 * k;              // stays with motor_housing while spinning
+  if (meshes.motor_cap)      meshes.motor_cap.position.set(0, 62 * k, 12 * k);       // P02 pulls out behind motor (+Y)
+  if (meshes.pinion)         meshes.pinion.position.y         = -18 * k;             // P06 pulls out -Y along shaft axis
+  if (meshes.retainer)       meshes.retainer.position.y       = -34 * k;             // stepped collar pulls out -Y
+  if (meshes.bearing_pinion) meshes.bearing_pinion.position.set(0, -48 * k, 12 * k); // 623ZZ pulls out -Y
+  if (meshes.pinion_cover)   meshes.pinion_cover.position.set(0, -68 * k, 12 * k);   // P03 pulls out -Y clear of 623ZZ
   if (meshes.bearing_top)  meshes.bearing_top.position.z  = 18 * k;
   if (meshes.gear_20t)     meshes.gear_20t.position.z     = 22 * k;
   if (meshes.alum_horn)    meshes.alum_horn.position.z    = 28 * k;

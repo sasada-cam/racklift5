@@ -288,13 +288,13 @@ Every printed pod part has its ID and print batch engraved 0.6 mm deep (3 layers
 |---|---|---|---|
 | P01 | Carriage pod: deck, bearing tower, 40T gear, front wall, arm + post, front half of the motor-can clamp | arm post, side facing the swivel axis | medium blue `#2E8EE6` |
 | P02 | Motor cap (back half: walls, lid, back half of the can clamp) - pulls off +Y | back face | navy `#1B4A99` |
-| P03 | Pinion cover - pulls off -Y | front plate, above the retainer hole | sky blue `#8FD0FF` |
+| P03 | Pinion cover (`623ZZ` outboard bearing housing) - pulls off -Y | front plate, above the bearing boss | sky blue `#8FD0FF` |
 | P04 | Body mount (fixed: servo cage, M8 cap, top-bearing boss) | servo cage side wall | green `#33B873` |
 | P05 | 20T swivel servo gear | underside, between the horn screws (ID only) | amber `#F59E0B` |
 | P06 | 14T climb pinion | outer face, outside the retainer (ID only) | orange `#EB7A24` |
 
 P01 prints deck-down; use tree supports (under the arm hub, and under the can clamp's lower edge, which spans the open
-gearbox space - reach them from the open back). The 10 x 10 x 2.5 mm shaft retainer is too small to mark.
+gearbox space - reach them from the open back). The stepped `Ø9.6 × 3.1 mm` shaft retainer collar is too small to mark.
 
 ## Fasteners (v3 swivel pod + crossing pivot) - what to buy in Sri Lanka
 
@@ -306,6 +306,7 @@ electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to ma
 | Fastener | Per swivel pod (x2) | Per crossing (x every crossing) | Where |
 |---|---|---|---|
 | 608ZZ bearing 8 x 22 x 7 (608-2RS = sealed, for dust) | 2 | 2 | pod: one in the tower + one in the top arm (55 mm apart); crossing: preloaded pair |
+| 623ZZ bearing 3 x 10 x 4 (`H24`) | 1 | - | pod: pinion outboard straddle support seated in `P03` front boss |
 | M8 x 40 hex bolt, DIN 933 (fully threaded), 8.8 | - | 1 | crossing: through the preloaded pair |
 | 8 mm steel rod, bright mild / silver steel (NOT a hardened linear rod), cut 69 mm, both ends drilled + tapped M4 x 10 (lathe shop) | 1 | - | pod: common swivel axle through both 608ZZ |
 | M4 x 10 socket cap DIN 912 + washer (bottom: DIN 9021 12 mm, top: DIN 125) | 2 | - | pod: axle end screws (bottom pushes the bearing stack up to the cap; top locks the rod, flush in the top plate) |
@@ -318,9 +319,11 @@ electronics / 3D-printer shops (e.g. tronic.lk). Take one part to the shop to ma
 | M5 x 25 socket cap DIN 912 + 10 x 5.2 x 20 sleeve + washer + T-nut | - | 1 | stop pin |
 | M4 x 12 socket cap, DIN 912 | 4 | 4 | pod: body mount -> tapped column bar (fit before the servo); crossing: housing -> tapped bracket |
 | M3 x 6 button head, ISO 7380 | 4 | - | 4632-370 gearbox -> pod wall (low head: clears the pinion by 1.25 mm) |
-| M3 x 12 socket cap, DIN 912 | 4 | - | 20T gear -> aluminium horn (horn is tapped M3) |
+| M3 x 12 socket cap, DIN 912 | 5 | - | 20T gear -> aluminium horn (4) + `623ZZ` pinion outboard bearing -> motor shaft (1) |
 | M3 x 14 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | servo ears -> printed body mount (or M3 machine screw + heat-set insert) |
-| M3 x 12 pan head thread-forming ("PT" / self-tapping for plastic) | 4 | - | motor cap -> carriage pod (lift the cap off to change the motor) |
+| M3 x 12 pan head thread-forming ("PT" / self-tapping for plastic) | 5 | - | motor cap -> carriage pod (4) + pinion cover -> arm post (1) |
+| M3 x 10 pan head thread-forming ("PT" / self-tapping for plastic) | 2 | - | pinion cover -> `+X` ear |
+| M3 x 10 socket cap, DIN 912 + M3 DIN 934 hex nut | 3 + 3 | - | motor-can clamp flanges (`P01` <-> `P02`; use M3 x 12 if substituting 4 mm DIN 985 nyloc) |
 | M3 x 8 spline screw | 1 (comes with the servo) | - | horn -> servo spline |
 
 Head types in one line: **socket cap** (DIN 912) where there is room for a hex key, **button head** (ISO 7380) where
