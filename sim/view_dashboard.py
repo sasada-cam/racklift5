@@ -620,9 +620,15 @@ _GALLERY_TEMPLATE = r"""<!doctype html>
   #zoom{position:fixed;inset:0;background:rgba(2,6,23,.92);display:none;align-items:center;justify-content:center;z-index:9;cursor:zoom-out}
   #zoom img{max-width:94vw;max-height:92vh;border-radius:8px}
   .note{color:#94a3b8;font-size:11.5px;margin-top:18px}
+  .notice{background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.45);color:#fde68a;border-radius:8px;
+          padding:8px 11px;font-size:12px;margin:0 0 14px;max-width:900px}
 </style></head><body>
 <h1>__TITLE__</h1>
 <div class="sub">__SUB__ - images rendered by MuJoCo from the original code (commit __COMMIT__).</div>
+<div class="notice"><b>Note - updated v3:</b> this is the <b>last revision of v3</b> (design of 2026-11-08, commit d8c801f, kept in
+  e40004d), not the first v3 of 2026-11-05 (45746b7). Between them the v3 was revised 9 times - e.g. the hub wheels, racks,
+  crossings and brackets, robot / cart locks, docks with scissor jacks and printed covers were updated - so parts look
+  different from the earliest v3.</div>
 <div class="bar">
   <button id="open">Open in MuJoCo (original v3)</button>
   <span id="status">Opens the MuJoCo viewer window on this computer; the task buttons page is at
@@ -820,7 +826,7 @@ STAGES = [
         "xml_sub": "Pure pre-Option-1 Compact Squid robot, crossings, transfer cart & dock jack (commit e40004d: the original v3, before any of the Option 1 / crossing-pivot work)",
         "cad_files": ["git:e40004d/sim/model_v3.py", "git:e40004d/generator/assembly_v3.py"],
         "sim_file": "sim/build/racklift5_v3_legacy.xml",
-        "summary": "Pure Compact Squid layout before today's changes: plain 50 mm bearing crossings, original hub, 2-stage telescopic arms, transfer cart & dock.",
+        "summary": "Last revision of v3 (2026-11-08, d8c801f; updated 9 times since the first v3 of 2026-11-05, e.g. hub wheels, racks, locks, docks, covers): plain 50 mm bearing crossings, original hub, 2-stage telescopic arms, transfer cart & dock.",
         "notes": "521 STL parts built by sim/model_v3.py at commit e40004d (original v3: plain 50 mm crossing bearing, original hub), saved under meshes_v3_legacy without altering any repo files.",
         "uses": ["02_legacy_v2"],
         "used_by": ["10_option1_hub", "11_dual_legs", "12_option1_body", "13_option1_full"],
