@@ -1,5 +1,20 @@
 # RackLift 5 (v2)
 
+> ## ⭐ Recommended: view every version in the dashboard
+>
+> ```bash
+> .pixi/envs/default/bin/python sim/view_dashboard.py          # -> http://127.0.0.1:8860/
+> ```
+>
+> **Always use the dashboard to look at the design.** It puts every version of RackLift5 on one timeline, in order, with
+> what each one reuses: v1, v2, the original v3, the motor / servo / OpenBuilds kits, the swivel-leg prototypes, the
+> Option 1 swivel pod + crossing turntable, the dual legs on the rails, the body + picker and the full robot.
+>
+> * Pick a stage on the left to open its 3D view (or images + **Open in MuJoCo** for the original v3).
+> * The live MuJoCo sim of the current v3 (task buttons in the browser): `pixi run -e sim sim`
+>   (macOS: it must run under `mjpython`, which this task does).
+> * The single studios (`sim/view_*.py`) still work on their own, but the dashboard is the one place that shows them all.
+
 A climbing rack-and-pinion robot for a slotted-angle shelf rack. One robot climbs vertical V-slot rails
 with in-slot printed gear racks, turns 90° on turntable junctions to drive along the bottom rail, keeps its
 tray level, and picks baskets off 5 shelf levels with a 2-link SCARA hook arm.
