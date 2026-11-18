@@ -83,6 +83,20 @@ def rail(x0, x1):
     return G.build_t_slot_2020(x1 - x0).moved(bd.Location(((x0 + x1) / 2, 0, -G.RAIL_CENTER_DROP)))
 
 
+def tnut(x, z_face, up=1.0):
+    """M5 drop-in T-nut for the 2020 slot, inside the slot at x on the rail's face z_face (slot depth along +up*Z):
+    plate 10 x 10 behind the 6 mm lips (depth 1.6 .. 2.9) + wedge into the slot's 45 deg taper (to depth 4.4), M5 hole"""
+    d0, d1, d2 = 1.6, 2.9, 4.4
+    z = lambda d: z_face + up * d
+    plate = box(x - 5.0, x + 5.0, -5.0, 5.0, min(z(d0), z(d1)), max(z(d0), z(d1)))
+    with bd.BuildPart() as w:
+        with bd.BuildSketch(bd.Plane.XZ.offset(0)) as sk:
+            bd.Polygon((-5.0, z(d1)), (5.0, z(d1)), (3.5, z(d2)), (-3.5, z(d2)), align=None)
+        bd.extrude(amount=5.0, both=True)
+    wedge = w.part.moved(bd.Location((0, 0, 0))).rotate(bd.Axis.Z, 90).moved(bd.Location((x, 0, 0)))
+    return (plate + wedge) - cyl(2.5, min(z(0), z(d2)) - 1, max(z(0), z(d2)) + 1, x)
+
+
 def crossing_parts(seg):
     """seg = piece half length.  returns (turning, fixed) dicts of solids at 0 deg"""
     g = seg + GAP
@@ -93,7 +107,7 @@ def crossing_parts(seg):
     screws = []
     for x in (-SCREW_X, SCREW_X):
         rotor = rotor - cyl(2.75, D(d1) - 1, D(d0) + 1, x) - cyl(PV.TT_ACCESS_R, D(d1) - 1, D(d1 - 3.0), x)
-        screws += [cyl(2.5, D(d1 - 2.75), D(d0), x), cyl(4.75, D(d1), D(d1 - 2.75), x)]
+        screws += [cyl(2.5, D(d1 - 2.75), Z_RB + 4.4, x), cyl(4.75, D(d1), D(d1 - 2.75), x)]   # (up into the T-nut)
     stack = {}
     for name, rings, _ in PV.TT_STACK:
         sol = None
@@ -116,7 +130,11 @@ def crossing_parts(seg):
     for x, y in m4:
         housing = housing - cyl(2.25, D(H["flange"][1]) - 1, D(H["flange"][0]) + 1, x, y)
         hs += [cyl(2.0, D(H["flange"][1]), D(H["flange"][0] - 7), x, y), cyl(3.5, D(H["flange"][1]) - 4, D(H["flange"][1]), x, y)]
-    pin = cyl(SLEEVE_R, Z_RB - 20, Z_RB, -PIN_R) + cyl(6, Z_RB - 21, Z_RB - 20, -PIN_R) + cyl(4.25, Z_RB - 24, Z_RB - 21, -PIN_R)
+    # stop pin: M5 x 25 socket cap from below -> washer -> 10 x 5.2 x 20 steel sleeve -> up through the slot lips into a T-nut
+    # inside the piece's bottom T-slot (anchored in the slot, not just stuck on the rail's face)
+    pin = (cyl(SLEEVE_R, Z_RB - 20, Z_RB, -PIN_R) - cyl(2.6, Z_RB - 21, Z_RB + 1, -PIN_R)) + cyl(6, Z_RB - 21, Z_RB - 20, -PIN_R) \
+        + cyl(4.25, Z_RB - 24, Z_RB - 21, -PIN_R) + cyl(2.5, Z_RB - 21, Z_RB + 4.4, -PIN_R)
+    tnuts = [tnut(x, Z_RB) for x in (-PIN_R, -SCREW_X, SCREW_X)]
     turning = {
         "xp_rail": rail(-seg, seg),
         "xp_rack": comb(-seg, seg),
@@ -125,6 +143,7 @@ def crossing_parts(seg):
         "xp_pivot_608zz": bearings,
         "xp_pivot_m8_stack": pivot,
         "xp_stop_pin": pin,
+        "xp_tnuts": bd.Compound(children=tnuts),
     }
     # fixed: arms along +-X, and the same turned 90 deg for +-Y (the comb is symmetric, so the phase holds)
     arm_r = [rail(g, g + ARM_L), rail(-g - ARM_L, -g)]

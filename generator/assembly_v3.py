@@ -336,10 +336,10 @@ def row_static_local():
         add("slotted angle rack (bay)", A.rack_bay(bx), A.C_ANGLE)
         jx = bx - RAIL_OFF
         z0 = JZ_UP + g
-        add("V-slot rail (vertical)", A.vslot_z(z0, RAIL_TOP_V3).translate(jx), A.C_RAIL)
+        add("V-slot rail (vertical)", vslot_z(z0, RAIL_TOP_V3).translate(jx), A.C_RAIL)
         for off, st in comb_line(z0, RAIL_TOP_V3, JZ_LO):
             add("printed in-slot rack", st.translate(jx, 0, z0 + off), A.C_PRINT)
-        add("V-slot rail (vertical, between crossings)", A.vslot_z(JZ_LO + g, JZ_UP - g).translate(jx), A.C_RAIL)
+        add("V-slot rail (vertical, between crossings)", vslot_z(JZ_LO + g, JZ_UP - g).translate(jx), A.C_RAIL)
         for off, st in comb_line(JZ_LO + g, JZ_UP - g, JZ_LO):
             add("printed in-slot rack", st.translate(jx, 0, JZ_LO + g + off), A.C_PRINT)
         for zb in (RAIL_TOP - 45, 650.0, (JZ_LO + JZ_UP) / 2 - 20):
@@ -356,7 +356,7 @@ def row_static_local():
         if x2 - x1 < 20.0:
             continue                       # no stubs: the rail simply starts at the first crossing piece
         for zc in CROSS_Z:
-            add("V-slot rail (horizontal)", A.vslot_z(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_RAIL)
+            add("V-slot rail (horizontal)", vslot_z(0, x2 - x1).rotate('y', 90).translate(x1, 0, zc), A.C_RAIL)
             for off, st in comb_line(x1, x2, ROW_BAY_X[0] - RAIL_OFF):
                 add("printed in-slot rack", st.rotate('y', 90).translate(x1 + off, 0, zc), A.C_PRINT)
     # the rails run on ~120 mm past the last rack to meet the cart: short arms from the rack's end post carry their ends,
@@ -436,7 +436,7 @@ def cart_local():
         ya, yz = -40.0, CART_TROLLEY_Y[1] + 20           # frame extent in y (the robot stays at y < -40)
         it = []
         for zc in CROSS_Z:
-            it += [("rail piece on cart", A.vslot_z(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_RAIL),
+            it += [("rail piece on cart", vslot_z(0, x1 - x0).rotate('y', 90).translate(x0, 0, zc), A.C_RAIL),
                    ("printed in-slot rack (cart)", comb_line(x0, x1, ROW_BAY_X[0] - RAIL_OFF)[0][1].rotate('y', 90).translate(x0, 0, zc), A.C_PRINT)]
         top = BEAM_Z[1] + 24
         xr = min(x1, xt0 - 1.0)                          # right post: stays clear of the trolley plate
@@ -472,11 +472,28 @@ def cart_lock_local():
     tx0, tx1 = X_CART + TAB_X[0], X_CART + TAB_X[1]
     tab = box(tx0, tx1, TAB_RISER_Y[0], yl + 7, LOCK_Z - 5, LOCK_Z + 5) \
         + box(tx0, tx1, TAB_RISER_Y[0], TAB_RISER_Y[1], LOCK_Z - 5, TAB_Z[1]) \
-        + box(tx0, tx1, -92, TAB_RISER_Y[0] + 0.5, TAB_Z[0], TAB_Z[1])
+        + box(tx0, tx1, -89, TAB_RISER_Y[0] + 0.5, TAB_Z[0], TAB_Z[1])     # (y from -89: 2 mm past the plunger, 1.5 mm off the lower pod's cheek)
     return [("cart lock pin + release tab (spring)", pin + tab, A.C_STEEL)]
 
 
 _R = None
+
+
+def vslot_z(z0, z1):
+    """2020 T-slot rail along z, centre (0, -50), with the REAL slot (as cad/build_openbuilds_gantry.py): 6.0 opening through
+    1.5 mm lips, 11.9 pocket behind them, 45 deg taper to 3.75 at 7 deep - so T-nuts and the in-slot racks' wings have room
+    (the v2 profile had plain 6.2 x 6 slots)"""
+    h = 10.0
+    slot = [(-3.0, 0.0), (-3.0, 1.5), (-5.95, 1.5), (-5.95, 2.926), (-1.875, 7.0), (1.875, 7.0), (5.95, 2.926), (5.95, 1.5),
+            (3.0, 1.5), (3.0, 0.0)]                                      # (across, depth) from the face, drawn left -> right
+    pts = []
+    for k in range(4):                                                 # faces -y, +x, +y, -x (counter-clockwise)
+        c, s_ = [(0, -1), (1, 0), (0, 1), (-1, 0)][k], [(1, 0), (0, 1), (-1, 0), (0, -1)][k]
+        corner = (h * (c[0] - s_[0]), h * (c[1] - s_[1]))
+        pts.append(corner)
+        for u, d in slot:
+            pts.append((h * c[0] + u * s_[0] - d * c[0], h * c[1] + u * s_[1] - d * c[1]))
+    return extrude([(a, b - 50) for a, b in pts], z0, z1, 'z')
 
 
 def crossing_local():
@@ -490,8 +507,15 @@ def crossing_local():
         holes = union_all([cyl(2.75, y0 - 1, y0 + d1 + 1, 'y', (0, z), 16) + cyl(TT_ACCESS_R, y0 + d1 - 3.0, y0 + d1 + 1, 'y', (0, z), 20)
                            for z in (-TT_SCREW_Z, TT_SCREW_Z)])
         rotor = cyl(rr, y0 + d0, y0 + d1, 'y', (0, 0), 48) - holes - cyl(7.65, y0 - 1, y0 + 5.6, 'y', (0, 0), 6) - cyl(4.1, y0, y0 + d1 + 1, 'y', (0, 0), 20)
-        scr = union_all([cyl(2.5, y0, y0 + d1 - 2.75, 'y', (0, z), 16) + cyl(4.75, y0 + d1 - 2.75, y0 + d1, 'y', (0, z), 20)
-                         for z in (-TT_SCREW_Z, TT_SCREW_Z)])
+        scr = union_all([cyl(2.5, y0 - 4.4, y0 + d1 - 2.75, 'y', (0, z), 16) + cyl(4.75, y0 + d1 - 2.75, y0 + d1, 'y', (0, z), 20)
+                         for z in (-TT_SCREW_Z, TT_SCREW_Z)])                 # (shanks run up into the T-nuts in the slot)
+
+        def tnut(zc):
+            """M5 drop-in T-nut inside the piece's back slot: 10 x 10 plate behind the lips (1.6 .. 2.9 deep) + stepped wedge
+            into the slot's 45 deg taper (to 4.4 deep), M5 hole"""
+            t = box(-5.0, 5.0, y0 - 2.9, y0 - 1.6, zc - 5.0, zc + 5.0) + box(-4.25, 4.25, y0 - 3.65, y0 - 2.9, zc - 5.0, zc + 5.0) \
+                + box(-3.5, 3.5, y0 - 4.4, y0 - 3.65, zc - 5.0, zc + 5.0)
+            return t - cyl(2.5, y0 - 5.0, y0 - 1.0, 'y', (0, zc), 16)
         stack = []
         for name, rings, _ in TT_STACK:
             s = None
@@ -503,12 +527,15 @@ def crossing_local():
                 s = ring if s is None else s + ring
             stack.append((name, s, A.C_STEEL if "608" not in name else (216, 222, 230)))
         pz = -TT_PIN_R
-        pin = union_all([cyl(TT_SLEEVE_R, -40, -20, 'y', (0, pz), 24), cyl(6, -20, -19, 'y', (0, pz), 24),
-                         cyl(4.25, -19, -16, 'y', (0, pz), 24)])
+        # stop pin: M5 x 25 socket cap -> washer -> 10 x 5.2 x 20 steel sleeve -> through the slot lips into a T-nut in the slot
+        pin = union_all([cyl(TT_SLEEVE_R, -40, -20, 'y', (0, pz), 24) - cyl(2.6, -41, -19, 'y', (0, pz), 16), cyl(6, -20, -19, 'y', (0, pz), 24),
+                         cyl(4.25, -19, -16, 'y', (0, pz), 24), cyl(2.5, y0 - 4.4, -19, 'y', (0, pz), 16)])
+        tn = union_all([tnut(z) for z in (pz, -TT_SCREW_Z, TT_SCREW_Z)])
         _R = [("turntable rotor disc (6 mm aluminium, M8 hex pocket)", rotor, A.C_JUNC)] + stack + [
               ("turntable rotor screws (2 x M5 x 10 button head ISO 7380 + V-slot T-nut)", scr, A.C_STEEL),
               ("turntable stop pin (M5 x 25 + 10 mm steel sleeve + washer, T-nut)", pin, A.C_STEEL),
-              ("rail piece on turntable", A.vslot_z(-h, h), A.C_RAIL),
+              ("turntable T-nuts (3 x M5 drop-in, 2020 slot: rotor screws + stop pin)", tn, A.C_STEEL),
+              ("rail piece on turntable", vslot_z(-h, h), A.C_RAIL),
               ("printed in-slot rack (turntable)", P2.rack_strip(RACK_A0, 2 * h + RACK_A0).translate(0, 0, -h), A.C_PRINT)]
     return _R
 

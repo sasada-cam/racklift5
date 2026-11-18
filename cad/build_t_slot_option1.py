@@ -5,8 +5,8 @@ Solves every load/strength limitation of the direct-drive plastic collar:
        - Two 608ZZ steel ball bearings (8 x 22 x 7 mm, Rs. 85 on tronic.lk) 55 mm apart (straddle mount):
          bottom one in the Carriage Pod's tower (Z = 9..16, locating), top one in a hub on the pod's new top
          arm (Z = 64..71, floating) right under the Body Mount's top plate - i.e. right under the column.
-       - Bottom: M8 x 40 bolt + 12 mm spacer + M8 nyloc in a hidden Z=3.5..8.8 mm pocket (no protrusion below
-         the 3.0 mm MT0134 plate).  Top: M8 x 20 bolt from below into a nut in a side slot of the Body Mount boss.
+       - ONE common 8 mm steel axle (69 mm) through both bearings, held by the Body Mount's cap (middle) and boss (top),
+         locked by an M4 screw in each tapped end (bottom one pushes the bearing stack up to the cap).
        - Carries 100% of radial shear, axial pull-out, and cantilever tilting moments.
   2. 1:2 Torque-Doubling Gear Drive (MOD=1.25, PA=20 deg):
        - 40T Driven Gear (R_pitch=25.0 mm, Z=18.0..26.0) integrated onto the Carriage Pod hub.
@@ -86,9 +86,11 @@ CLAMP_TOP_Z = 78.0                                  # below the body mount's top
 CLAMP_BOLTS = [(71.4, 58.5), (71.4, 75.1), (33.6, 75.1)]   # (X, Z), axis along Y, M3 x 10 socket cap + M3 nut
 CLAMP_FL_T = 3.0                                    # each flange 3 mm thick (Y)
 PC_SCREWS = [(32.0, 15.0, ARM_POST[2]), (73.0, 16.0, CAP_BASE_Y0), (73.0, 28.0, CAP_BASE_Y0)]   # (X, Z, base face Y)
+AXLE_COL_Z1 = 59.5                 # green axle column (cap -> up the axle), r 12: 1.5 mm under the arm hub (Z 61)
+AXLE_COL_R = 12.0
+BEAM_DEEP_Z0 = 48.0                # arm beam deepened down to here (outside r 13.5 of the axis), 1.5 mm over the cheeks
 BOSS_Z0 = 72.5                     # body mount boss under the top plate: Z 72.5 .. 78.5, r 11
 BOSS_R = 11.0
-TOP_NUT_Z = (75.0, 81.5)           # M8 hex nut (DIN 934) in the boss's side slot (slot opens toward +X under the plate)
 
 # --- 1:2 Swivel Gear Drive (MOD = 1.25, C = 25.0 + 12.5 = 37.5 mm) ---
 SW_MOD = 1.25
@@ -154,52 +156,34 @@ def build_608zz_bearing(z0: float) -> bd.Part:
     return part
 
 
+# Common axle: ONE 8 mm steel rod through both 608ZZ (they stay exactly coaxial - two separate bolts relied on the print).
+# Bright mild / silver steel (not a hardened linear rod: both ends are drilled + tapped M4 x 10), cut to AXLE_Z.
+#   bottom 608 (tower) -> 12 mm spacer -> green cap + axle column (rod passes, Z 28..59.5) -> 4.5 mm spacer -> top 608 (arm) ->
+#   1.5 mm spacer -> green boss (rod passes, top support) ; rod top end inside the boss, Z 78
+#   M4 x 10 socket cap + M4 x 12 washer (DIN 9021, bears on the inner race only) in the bottom end pushes the stack up
+#   against the cap; M4 x 10 socket cap + M4 washer in the top end, in a counterbore in the top plate (flush, under the
+#   column), pulls the rod up against the plate -> the rod is locked to the body mount both ways, the bottom 608's inner
+#   race is clamped.  Fit before the pod goes onto the MT0134 plate (the bottom screw is reached from below) and before the
+#   column is bolted on (the top screw).  Trim the 4.5 mm spacer so the top stack is snug.
+AXLE_R = 4.0
+AXLE_Z = (B_BOT_Z0, 78.0)                 # 69 mm rod
+AXLE_TOP_CB_R = 4.7                       # counterbore in the top plate for the top screw's washer (M4: 9 mm OD) + head
+
+
 def build_m8_bolt_assembly() -> bd.Compound:
-    """Bottom: M8 x 40 bolt + 12 mm spacer (Z=16..28, up to the Body Mount cap) + washer + nyloc clamping the bottom 608ZZ's
-    inner race.  Top: M8 x 20 bolt from below (hex head Z 56.7..62) + 2 mm spacer + top 608ZZ inner race + 1.5 mm spacer
-    -> boss, nut in the boss's side slot."""
-    with bd.BuildPart() as b:
-        # Bolt head on top (Z = BOLT_TOP_Z .. BOLT_TOP_Z + 5.0) + Ø8.0 mm shank down to Z = 4.0
-        with bd.Locations((0, 0, BOLT_TOP_Z)):
-            bd.Cylinder(radius=6.8, height=5.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-        with bd.Locations((0, 0, 4.0)):
-            bd.Cylinder(radius=3.95, height=BOLT_TOP_Z - 4.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    bolt = b.part
-    bolt.color = bd.Color(0.32, 0.34, 0.38)
+    """the common 8 mm swivel axle + spacers + its two M4 end screws (name kept for the parts dict: 'm8_hardware')"""
+    def cyl(r, z0, z1):
+        return bd.Cylinder(r, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, z0)))
 
-    # Inner race spacer sleeve from the bottom 608ZZ (16.0) up to the Body Mount cap (28.0), OD 12, ID 8.2
-    with bd.BuildPart() as sp:
-        with bd.Locations((0, 0, B_BOT_Z0 + B608_W)):
-            bd.Cylinder(radius=6.0, height=28.0 - (B_BOT_Z0 + B608_W), align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-        with bd.Locations((0, 0, 28.5)):
-            bd.Hole(radius=4.05, depth=14.0)
-        # Bottom washer + M8 nut clamping lower 608ZZ inner race (Z = 4.0 .. 8.8)
-        with bd.Locations((0, 0, 7.5)):
-            bd.Cylinder(radius=6.2, height=1.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-            bd.Hole(radius=4.05, depth=3.0)
-        with bd.Locations((0, 0, 4.0)):
-            bd.Cylinder(radius=6.8, height=3.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-            bd.Hole(radius=4.05, depth=5.0)
-    sleeves = sp.part
-    sleeves.color = bd.Color(0.65, 0.67, 0.70)
-
-    # Top pivot: M8 x 20 hex bolt (DIN 933) from below, spacers, M8 hex nut (DIN 934) in the boss slot
     def ring(r, z0, z1, ri=4.05):
-        c = bd.Cylinder(r, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, z0)))
-        return c - bd.Cylinder(ri, z1 - z0 + 2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, z0 - 1)))
-
-    def hexa(r, z0, z1):
-        with bd.BuildPart() as h:
-            with bd.Locations((0, 0, z0)):
-                with bd.BuildSketch():
-                    bd.RegularPolygon(r, 6)
-                bd.extrude(amount=z1 - z0)
-        return h.part
-    top_bolt = hexa(7.5, B_TOP_Z0 - 2.0 - 5.3, B_TOP_Z0 - 2.0) + bd.Cylinder(3.95, 20.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(
-        bd.Location((0, 0, B_TOP_Z0 - 2.0)))
-    top_sp = ring(6.0, B_TOP_Z0 - 2.0, B_TOP_Z0) + ring(6.0, B_TOP_Z0 + B608_W, BOSS_Z0)
-    top_nut = hexa(7.5, *TOP_NUT_Z) - bd.Cylinder(4.0, 10.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, TOP_NUT_Z[0] - 1)))
-    return bd.Compound(children=[bolt, sleeves, top_bolt, top_sp, top_nut], label="M8_Pivot_Hardware")
+        return cyl(r, z0, z1) - cyl(ri, z0 - 1, z1 + 1)
+    rod = cyl(AXLE_R, *AXLE_Z) - cyl(1.6, AXLE_Z[0] - 1, AXLE_Z[0] + 10) - cyl(1.6, AXLE_Z[1] - 10, AXLE_Z[1] + 1)
+    spacers = [ring(6.0, B_BOT_Z0 + B608_W, 28.0), ring(6.0, AXLE_COL_Z1, B_TOP_Z0), ring(6.0, B_TOP_Z0 + B608_W, BOSS_Z0)]
+    z = AXLE_Z[0]                                                     # bottom: DIN 9021 washer + M4 x 10 socket cap from below
+    bottom = [ring(6.0, z - 1.0, z, 2.2), cyl(3.5, z - 5.0, z - 1.0), cyl(2.0, z - 1.0, z + 9.0)]
+    z = AXLE_Z[1]                                                     # top: DIN 125 washer + M4 x 10 socket cap from above
+    top = [ring(4.5, z, z + 0.8, 2.2), cyl(3.5, z + 0.8, z + 4.8), cyl(2.0, z - 9.2, z + 0.8)]
+    return bd.Compound(children=[rod] + spacers + bottom + top, label="Swivel_Axle_8mm")
 
 
 def _build_carriage_pod_full() -> bd.Part:
@@ -294,6 +278,11 @@ def _build_carriage_pod_full() -> bd.Part:
         ln = math.hypot(*ARM_END)
         with bd.Locations(bd.Location((ARM_END[0] / 2, ARM_END[1] / 2, ARM_Z[0]), (0, 0, math.degrees(ang)))):
             bd.Box(ln, ARM_W, ARM_Z[1] - ARM_Z[0], align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        # deeper beam (Z 48 .. 62) outside r 13.5 of the axis (1.5 mm round the green axle column): ~13x stiffer arm
+        with bd.Locations(bd.Location((ARM_END[0] / 2, ARM_END[1] / 2, BEAM_DEEP_Z0), (0, 0, math.degrees(ang)))):
+            bd.Box(ln, ARM_W, ARM_Z[0] - BEAM_DEEP_Z0 + 0.1, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        with bd.Locations((0, 0, BEAM_DEEP_Z0 - 1.0)):
+            bd.Cylinder(radius=AXLE_COL_R + 1.5, height=ARM_Z[0] - BEAM_DEEP_Z0 + 1.05, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
         with bd.Locations((0, 0, B_TOP_Z0 - 3.0)):
             bd.Cylinder(radius=ARM_HUB_R, height=ARM_Z[1] - (B_TOP_Z0 - 3.0), align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
         with bd.Locations((0, 0, B_TOP_Z0)):           # top 608ZZ seat (light press fit), open to the top: the bearing floats
@@ -559,9 +548,16 @@ def build_body_mount_option1() -> bd.Part:
             bd.Cylinder(radius=12.0, height=5.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
         # Structural truss arm connecting M8 spindle cap (0, 0, 28..33) to Servo Cage (-18, 0, 46..52)
         # Split into two outer side cheeks at Y = ±15.5 mm (completely outside 25T horn R=10 and 40T gear!)
-        for sy in (-1, 1):
-            with bd.Locations((-14.0, sy * 14.5, 28.0)):
-                bd.Box(32.0, 4.0, 18.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        # Axle column: the cap grows up the axle to Z 59.5 (r 12) - the 8 mm axle is held by green over its whole length
+        with bd.Locations((0, 0, 28.0)):
+            bd.Cylinder(radius=AXLE_COL_R, height=AXLE_COL_Z1 - 28.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        # Solid web between the cheeks + round the column (Z 28 .. 46.5, X -19 .. 2): no slots between column and cheeks;
+        # stops 1.2 mm short of the servo body (X -20.2) and its ear screws, 1 mm over the blue tower, 1.5 mm under the beam
+        with bd.Locations((-19.0, -19.0, 28.0)):
+            bd.Box(21.0, 38.0, 18.5, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
+        for sy in (-1, 1):                       # cheeks 6.5 mm thick (were 4): Y 12.5 .. 19.0, running the whole length under the
+            with bd.Locations((-35.0, sy * 15.75, 28.0)):   # servo cage (X -72 .. 2, was -30 .. 2) so cage and cap are one beam
+                bd.Box(74.0, 6.5, 18.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
             with bd.Locations((0, sy * 10.0, 28.0)):
                 bd.Box(16.0, 11.0, 5.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
@@ -569,9 +565,9 @@ def build_body_mount_option1() -> bd.Part:
         with bd.Locations((0, 0, BOSS_Z0)):
             bd.Cylinder(radius=BOSS_R, height=SERVO_TOP_Z + 5.0 - BOSS_Z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
-        # Subtract M8 bolt bore (Ø8.2 mm) at (0, 0)
-        with bd.Locations((0, 0, 34.0)):
-            bd.Hole(radius=4.1, depth=8.0)
+        # Common axle bore through the cap + column (8 mm close fit)
+        with bd.Locations((0, 0, 26.0)):
+            bd.Cylinder(radius=4.05, height=AXLE_COL_Z1 - 26.0 + 1.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
 
         # 3. Top Robot Column Clamp Plate spanning X = -76 .. +12 mm (Z = 78.5 .. 83.0)
         with bd.Locations((-32.0, 0, top_plate_z1)):
@@ -584,15 +580,11 @@ def build_body_mount_option1() -> bd.Part:
                 with bd.Locations((-32.0 + sx * 30.0, sy * 12.0, BOSS_Z0 - 0.5)):     # (open below the top-bearing boss too)
                     bd.Cylinder(3.8, top_plate_z1 - BOSS_Z0 + 0.6, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
 
-        # Top pivot: M8 bore through the boss + side slot for the M8 hex nut (slides in from +X, under the column)
+        # Common axle: 8 mm bore (close fit) through the boss, counterbore in the plate top for the top end screw + washer
         with bd.Locations((0, 0, BOSS_Z0 - 0.5)):
-            bd.Cylinder(radius=4.1, height=TOP_NUT_Z[1] - BOSS_Z0 + 2.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
-        with bd.Locations((0, 0, TOP_NUT_Z[0] - 0.1)):
-            with bd.BuildSketch():
-                bd.RegularPolygon(7.65, 6)
-            bd.extrude(amount=TOP_NUT_Z[1] - TOP_NUT_Z[0] + 0.2, mode=bd.Mode.SUBTRACT)
-        with bd.Locations((8.0, 0, TOP_NUT_Z[0] - 0.1)):
-            bd.Box(16.0, 13.3, TOP_NUT_Z[1] - TOP_NUT_Z[0] + 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+            bd.Cylinder(radius=4.05, height=AXLE_Z[1] - BOSS_Z0 + 0.6, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+        with bd.Locations((0, 0, AXLE_Z[1])):
+            bd.Cylinder(radius=AXLE_TOP_CB_R, height=top_plate_z1 + 4.5 - AXLE_Z[1] + 0.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
 
         # 4. Subtract flipped TD-8125MG servo pocket cleanly + wire-boot slot
         with bd.Locations((SERVO_X_OFF, 0, SERVO_CAP_Z - 0.3)):
@@ -637,8 +629,8 @@ FASTENERS = [   # (part, qty per pod, where, buy as)
     ("M3 x 12 socket cap (DIN 912)", 4, "20T gear -> 25T aluminium horn (horn holes are tapped M3)", ""),
     ("M3 x 8 servo spline screw", 1, "horn -> servo spline", "supplied with the servo"),
     ("M4 x 12 socket cap (DIN 912)", 4, "body mount -> column bar (tapped M4); fit before the servo", "+ 4 x M4 washer (DIN 125)"),
-    ("M8 x 40 hex bolt (DIN 933, 8.8) + M8 nyloc (DIN 985) + M8 washer", 1, "bottom swivel bearing (in the tower)", "+ 12 x 8.2 x 12 steel spacer"),
-    ("M8 x 20 hex bolt (DIN 933, 8.8) + M8 hex nut (DIN 934)", 1, "top swivel bearing (in the arm), nut in the boss slot", "+ 12 x 8.2 spacers 2 mm + 1.5 mm"),
+    ("8 mm steel rod (bright mild / silver steel), 69 mm, both ends drilled + tapped M4 x 10", 1, "common swivel axle through both 608ZZ", "+ 12 x 8.2 steel spacers: 12, 4.5 (trim), 1.5 mm"),
+    ("M4 x 10 socket cap (DIN 912) + M4 washer: 1 x DIN 9021 (12 mm, bottom), 1 x DIN 125 (top)", 2, "axle end screws", "bottom pushes the stack up to the cap, top locks the rod to the plate"),
     ("608ZZ (8 x 22 x 7)", 2, "swivel: one in the tower, one in the top arm (55 mm apart)", "tronic.lk / bearing shops (608-2RS for dust)"),
 ]
 

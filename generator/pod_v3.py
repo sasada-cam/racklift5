@@ -44,7 +44,7 @@ PARTS = {
     "body_mount":    ("pod: printed body mount (bolts to the column)", (51, 184, 115), "fixed"),
     "bearing_bot":   ("pod: 608ZZ bearing (lower)", (216, 222, 230), "fixed"),
     "bearing_top":   ("pod: 608ZZ bearing (upper)", (216, 222, 230), "fixed"),
-    "m8_hardware":   ("pod: M8 x 40 pivot bolt + spacer + nyloc", (100, 116, 139), "fixed"),
+    "m8_hardware":   ("pod: 8 mm common swivel axle (69 mm rod, M4-tapped ends) + spacers", (100, 116, 139), "fixed"),
     "servo_body":    ("pod: TD-8125MG swivel servo", (196, 30, 36), "fixed"),
     "gear_20t":      ("pod: printed 20T swivel gear", (245, 158, 11), "gear"),
     "alum_horn":     ("pod: 25T aluminium servo horn", (224, 64, 64), "gear"),

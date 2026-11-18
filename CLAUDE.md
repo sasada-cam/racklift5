@@ -53,6 +53,16 @@ come apart from each other (base vs. removable cap or cover) must never share a 
 - The viewer: a layer row whose label starts with the ID, plus its group, material and exploded-view offset.
 - `generator/pod_v3.py` `PARTS` (pod parts) or the v3 assembly, and the BOM via `cad/export_v3_components.py`.
 
+## Bought and workshop parts: `docs/SHOPPING_LIST.md`
+- Every part that is not printed gets a number:
+  - `E`: motors and servos
+  - `H`: hardware bought as-is
+  - `M`: cut or machined from stock (lathe / cutting shop)
+- Each entry gives: material, exact size and work (length, bores and fits, tapped holes, tolerances), quantity per assembly
+  and total, and where to buy it. Keep the totals table at the bottom correct.
+- Model the real fixing, never a part stuck onto a face. For example, a screw into a rail slot ends in a T-nut inside the
+  slot.
+
 ## Hardware
 - Metric ISO/DIN parts only (DIN 912, ISO 7380, DIN 933/934/985, DIN 125, 608ZZ), bought in Sri Lanka (Pettah
   hardware shops, tronic.lk). Flag anything that probably has to be ordered online.

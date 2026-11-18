@@ -231,7 +231,7 @@ BAR_Y = (-66.0, -38.0)                         # in front of the rail line (the 
 BOLT_REST_Y, BOLT_STROKE = -70.0, 17.0         # bolt tip y when retracted (clear of the rails y >= -60 at every bay); stroke
 #                                                into the socket (13 mm engaged)
 REL_DZ = -55.0                                 # release plunger height above C (z 155.2 at travel height: inside the tab, TAB_Z)
-TAB_X = (-49.0, -39.0)                         # the pin's release tab, relative to the cart centre (x); y (-92, -78).  Pulled back
+TAB_X = (-49.0, -39.0)                         # the pin's release tab, relative to the cart centre (x); y (-89, -78).  Pulled back
                                                # (+LOCK_STROKE) it ends at -17: 3 mm clear of the lower pod's 20T gear (x +-14)
 TAB_Z = (143.0, 160.0)                         # tab plate: above the lower pod's 20T gear (z <= 141.1, y -88.5..-80.5), which
                                                # passes under it as the robot drives onto the cart; the tray's underside (166) over it.

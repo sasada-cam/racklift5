@@ -273,6 +273,7 @@ const mats = {
   xp_pivot_608zz:   new THREE.MeshStandardMaterial({ color: 0xd8dee6, metalness: 0.85, roughness: 0.25 }),
   xp_pivot_m8_stack: new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.3 }),
   xp_rotor_screws:  new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.3 }),
+  xp_tnuts:         new THREE.MeshStandardMaterial({ color: 0x9aa5b4, metalness: 0.9, roughness: 0.25 }),
   xp_stop_pin:      new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.3 }),
   fx_rails_x:       new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.7, roughness: 0.3 }),
   fx_rails_y:       new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.7, roughness: 0.3 }),
@@ -311,7 +312,7 @@ addStl('motor_housing', carriagePivot);
 addStl('gantry_plate',  carriagePivot);
 addStl('v_wheels',      carriagePivot);
 addStl('fasteners_turn', carriagePivot);
-['xp_rail', 'xp_rack', 'xp_rotor', 'xp_pivot_608zz', 'xp_pivot_m8_stack', 'xp_rotor_screws', 'xp_stop_pin'].forEach(k => addStl(k, carriagePivot));
+['xp_rail', 'xp_rack', 'xp_rotor', 'xp_pivot_608zz', 'xp_pivot_m8_stack', 'xp_rotor_screws', 'xp_stop_pin', 'xp_tnuts'].forEach(k => addStl(k, carriagePivot));
 addStl('motor_shaft',   climbPivot);
 addStl('pinion',        climbPivot);
 addStl('retainer',      climbPivot);
@@ -354,7 +355,7 @@ const groups = {
   motor:  ['motor_housing', 'motor_shaft', 'pinion', 'retainer'],
   gantry: ['gantry_plate', 'v_wheels'],
   rail:   ['xp_rail', 'xp_rack', 'fx_rails_x', 'fx_racks_x', 'fx_rails_y', 'fx_racks_y'],
-  tt:     ['xp_rotor', 'xp_pivot_608zz', 'xp_pivot_m8_stack', 'xp_rotor_screws', 'xp_stop_pin', 'fx_pivot_housing', 'fx_housing_screws', 'fx_bracket'],
+  tt:     ['xp_rotor', 'xp_pivot_608zz', 'xp_pivot_m8_stack', 'xp_rotor_screws', 'xp_stop_pin', 'xp_tnuts', 'fx_pivot_housing', 'fx_housing_screws', 'fx_bracket'],
 };
 window.setVis = (name, state) => {
   (groups[name] || []).forEach(k => {
