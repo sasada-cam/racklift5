@@ -26,7 +26,7 @@ HTML = r"""<!doctype html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Option 1 — Dual 608ZZ + M8 Bolt + 1:2 Gear Swivel Studio</title>
+<title>Geared Dual-Bearing Swivel Leg + Crossing Turntable</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #12161f; color: #e6ebf2; }
@@ -66,8 +66,8 @@ HTML = r"""<!doctype html>
 <div id="canvas-wrap"></div>
 
 <div id="panel">
-  <h1>Option 1 · Dual 608ZZ + 1:2 Gear</h1>
-  <div class="sub">M8 + 2×608ZZ Pivot · 20T→40T (50 kg·cm) · 0.000 mm³ Clash</div>
+  <h1>Geared Dual-Bearing Swivel Leg</h1>
+  <div class="sub">M8 Spindle · Dual 608ZZ · 1:2 Gear Drive (50 kg·cm) &amp; Crossing Turntable</div>
 
   <div class="sec">
     <div class="sec-title">1. Leg Carriage Swivel (180° Servo → 90° Leg)</div>

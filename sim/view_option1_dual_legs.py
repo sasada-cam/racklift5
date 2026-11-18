@@ -24,7 +24,7 @@ HTML = r"""<!doctype html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Option 1 — Dual Legs + Complete 2-Bay 2020 Railing Studio</title>
+<title>Dual-Leg Climber on 2-Bay 2020 Rails</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #10151f; color: #e6ebf2; }
@@ -67,8 +67,8 @@ HTML = r"""<!doctype html>
 <div id="canvas-wrap"></div>
 
 <div id="panel">
-  <h1>Option 1 · Dual Legs + Full Rail Bay</h1>
-  <div class="sub">Upper + Lower Swivel Pods · D_HUB = 240.33 mm · BAY_P = 438.25 mm</div>
+  <h1>Dual-Leg Climber on 2-Bay Rails</h1>
+  <div class="sub">Mirrored Upper &amp; Lower Swivel Legs (240.33 mm Spacing) · 4 Turntable Crossings</div>
 
   <div class="sec">
     <div class="sec-title">1. Pose & Motion</div>

@@ -123,7 +123,42 @@ Print settings: 0.2 mm layers, 4 walls, 40 % gyroid. Gears: 0.12 mm layers, 100 
 
 ---
 
-## 3. Totals to buy (pods + crossings)
+## 3. Body, tray, picker + leg hoods (×1 robot, `cad/build_option1_body.py`, `cad/build_option1_full.py`)
+
+### Bought
+
+| ID | Part | Spec | Qty | Used for |
+|---|---|---|---|---|
+| E05 | TAL220 bar load cell, 5 kg | 80 × 12.7 × 12.7, M5 (fixed end) / M4 (live end) holes | 1 | tray weighing: boom -> load cell -> live wishbone -> tray |
+| E06 | HX711 load-cell amplifier board | 24-bit ADC | 1 | reads E05 |
+| H50 | M4 × 30 socket cap | DIN 912 | 4 | R40 collar -> column front (through the column + P07-BODY plug, nut inside) |
+| H13 | M4 × 35 socket cap (same as the pod column bolts) | DIN 912 | +4 | R40 collar wings, lower row (z 146) -> R41 / R42 |
+| H52 | M4 × 40 socket cap | DIN 912 | 4 | R40 collar wings, upper row (z 210, through the rear strap) |
+| H53 | M5 × 20 socket cap | DIN 912 | 2 | R41 boom -> E05 fixed end |
+| H54 | M4 × 16 socket cap | DIN 912 | 2 | R45 wishbone -> E05 live end |
+| H55 | M4 × 14 socket cap | DIN 912 | 4 | R45 wishbone -> R44 tray (captive nuts in the tray) |
+| H25 | M4 hex nut | DIN 934 | +16 | collar (4) + wings (8) + tray (4) |
+| H26 | M4 EPDM washer | 9 × 1.2 | +4 | collar column bolts |
+| H12 | M4 washer | DIN 125 | +4 | collar column bolts |
+| H56 | M3 × 14 socket cap | DIN 912 | 4 | leg hoods P10-UP / P10-LO -> P04 cheeks (2 per hood; 3.3 mm hole drilled through each P04 cheek) |
+| H22 | M3 hex nut | DIN 934 | +4 | hood bolts (outside the hood ear) |
+
+### Printed (PETG)
+
+| ID | Part | Notes |
+|---|---|---|
+| R40 | Body column collar | 11 mm access holes over the lower pod's column bolts (z 152) |
+| R41 | Tray boom | |
+| R42 | Battery / controller box | |
+| R43 | Battery box lid | |
+| R44 | Printed tray 180 × 175 | basket rides centred between the fingers (y -210..-80) |
+| R45 | Live wishbone | |
+| P07 | Column anti-crush plugs: H2 (z 82..162), BODY (z 162.5..226), H1 (z 258..338) | 3 per column, holes for every bolt through the column |
+| P10-UP / P10-LO | Leg hoods (protective shrouds) | 11 mm access holes over their pod's column bolts; held by H56 |
+
+---
+
+## 4. Totals to buy (pods + crossings + body)
 
 | Item | Qty |
 |---|---|
@@ -132,13 +167,15 @@ Print settings: 0.2 mm layers, 4 walls, 40 % gyroid. Gears: 0.12 mm layers, 100 
 | 8 mm bright steel rod (M01) | 2 × 69 mm (one 300 mm length is plenty) |
 | 12 × 8.2 steel tube (M02–M04, M13–M15) | 2 × (12 + 4.5 + 1.5) + 24 × (2.5 + 7.95 + 2) ≈ 340 mm + cutting waste: buy **500 mm** |
 | 10 × 5.2 steel tube (M16) | 24 × 20 mm: buy **600 mm** |
-| M3 screws | H16 8 · H17 12 · H18 8 · H19 10 · H20 4 · H21 6 |
-| M3 nuts (H22) | 8 (`DIN 934`) |
+| M3 screws | H16 8 · H17 12 · H18 8 · H19 10 · H20 4 · H21 6 · H56 4 |
+| M3 nuts (H22) | 12 (`DIN 934`) |
 | Hall sensors & magnets | E03 `4 × 49E` linear Hall · E04 `4 × A3144` digital Hall · H27 `2 × Ø3 × 1.8 mm` · H40 `48 × Ø5 × 1.2 mm` |
-| M4 screws | H10 4 · H13 8 (`M4×35`) · H36 96 |
-| M4 nuts (H25) | 8 (`DIN 934`) |
-| M4 washers | H11 2 · H12 10 · H26 8 (`EPDM rubber`) |
-| Aluminium column box bar | 1 × `40 × 25 × 2.0 mm × 340 mm` (`~224 g`) + 2× `P07-B01` PETG anti-crush plugs (`35.8 × 20.8 × 80 mm`) |
+| M4 screws | H10 4 · H13 12 (`M4×35`) · H36 96 · H50 4 · H52 4 · H54 2 · H55 4 |
+| M4 nuts (H25) | 24 (`DIN 934`) |
+| M4 washers | H11 2 · H12 14 · H26 12 (`EPDM rubber`) |
+| M5 screws (body) | H53 2 |
+| Load cell | E05 TAL220 5 kg + E06 HX711 |
+| Aluminium column box bar | 1 × `40 × 25 × 2.0 mm × 276 mm` (z 74..350: the lower pod is mirrored, so the column starts above it) + 3× `P07` PETG anti-crush plugs |
 | M5 screws | H14 8 · H34 48 · H37 24 · H39 48 |
 | M5 nyloc (H15) | 8 |
 | M5 washers | H38 24 · H39 48 |

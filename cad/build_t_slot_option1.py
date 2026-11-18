@@ -623,6 +623,9 @@ def build_body_mount_option1() -> bd.Part:
                 bd.Box(74.0, 6.5, 18.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
             with bd.Locations((0, sy * 10.0, 28.0)):
                 bd.Box(16.0, 11.0, 5.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+            # M3 through-hole in cheek exterior zone (perpendicular Y-axis tie for outside-nut P10-UP / P10-LO ears)
+            with bd.Locations(bd.Location((-55.0, sy * 15.75, 32.0), (90, 0, 0))):
+                bd.Cylinder(radius=1.65, height=9.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.CENTER), mode=bd.Mode.SUBTRACT)
 
         # Top-bearing boss under the top plate (inner race of the top 608ZZ is clamped to its face, Z = BOSS_Z0)
         with bd.Locations((0, 0, BOSS_Z0)):
