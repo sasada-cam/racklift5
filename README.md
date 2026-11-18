@@ -194,6 +194,7 @@ Not covered yet: servo 2 and its gear pair, the lock solenoids, the hub drives a
 Background: [docs/design/001-load-carrying-single-vs-two-rail.md](docs/design/001-load-carrying-single-vs-two-rail.md) (section 8h).
 Source: `generator/params_v3.py`, `generator/assembly_v3.py`.
 ```
+python3 sim/view_t_slot_option1.py   # Option 1 Dual-608ZZ Swivel Studio (http://127.0.0.1:8840/, interactive 3D + exploded view)
 pixi run -e sim sim          # v3 in the MuJoCo viewer + task buttons in the browser
 pixi run -e sim sim-headless --task 1,4,5   # run tasks without a window, snapshots -> sim/build/snaps_v3/
 pixi run export-v3           # v3 STEP/STL -> models/v3/ (new parts + poses pick, swivel, travel, transfer, dock)
@@ -275,6 +276,7 @@ Known v3 limits:
 * Masses and motor ratings are estimates.
 
 ### Opening the models
+* **Interactive 3D Swivel Studio (Option 1 pod + crossing):** run `python3 sim/view_t_slot_option1.py` and open `http://127.0.0.1:8840/` (Ctrl+C to stop).
 * **FreeCAD 1.0** – open `models/assembly/*.FCStd` or any `.step` (File → Open).
 * **Fusion 360** – Upload / Open the `.step` files; every body comes in as a separate component.
 * **Slicer** – `models/print/*.stl` (already in print orientation).
