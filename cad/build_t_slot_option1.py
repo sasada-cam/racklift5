@@ -54,15 +54,23 @@ ARM_END = (31.5, 16.0)             # the beam runs from the axis to the top of t
 ARM_W = 12.0
 ARM_POST = (29.0, 35.3, 10.2, 22.0)  # X0, X1, Y0, Y1 of the post: deck (Z 3) -> arm (Z 71.5), part of the printed pod, so the
                                      # top bearing's load never goes through the motor cap's screws
-# Motor housing in two parts (the gearbox was boxed in on all sides - it could not be fitted):
-#   base (printed with the pod): deck, front wall the gearbox screws to (4 x M3), side/back/bottom walls, OPEN TOP
-#   MOTOR CAP (separate print): lid + the motor can's sleeve, lifts straight off after 4 x M3 x 12 thread-forming screws
-#   Fitting: lower the 4632-370 in from the top, screw the gearbox to the front wall (from the pinion side), cap on, 4 screws.
-CAP_SPLIT_Z = T.GB_Z_CENTER + M.GB_L / 2 + 0.8      # 41.6: top of the gearbox cavity = joint between base and cap
-CAP_X0 = 35.5                                       # the cap starts here (the arm post stays on the base)
-CAP_SCREWS = [(40.0, 7.0), (66.0, 7.0), (40.0, 41.0), (66.0, 41.0)]   # bosses on the base's front / back walls
+# Motor housing in two parts (the gearbox was boxed in on all sides - it could not be fitted).  The split is the plane of
+# the gearbox's mounting face: the face's bosses, shaft collar and ribs sit in pockets in the front wall, so the motor can
+# only go on square to that wall (along -Y), never slide along it.
+#   base (printed with the pod): front wall (the gearbox screws to it, 4 x M3 from the pinion side), -X side wall + arm
+#     post, deck
+#   MOTOR CAP (separate print): back wall, +X wall, bottom, lid and the can's sleeve - pulls straight off along +Y (the lid
+#     and sleeve are already open toward the front wall around the can), held by 4 x M3 x 12 thread-forming screws along
+#     -Y into bosses on the base: two on an ear beside the front wall (+X), two on columns above it
+#   Fitting: push the 4632-370 square onto the front wall, screw it from the pinion side, slide the cap on, 4 screws.
+CAP_Y0 = T.GB_FACE_Y                                # 12.8: the joint plane (gearbox mounting face)
+CAP_X0 = 35.5                                       # the cap starts here in X (the -X wall + arm post stay on the base)
+CAP_SCREWS = [(75.0, 6.0, T.GB_FACE_Y), (75.0, 38.0, T.GB_FACE_Y), (69.0, 50.0, T.GB_FACE_Y), (32.25, 50.0, 22.0)]
+# (X, Z, joint Y) of the 4 screws (axis along Y): 2 on the ear beside the front wall, 1 on a column above it (all clear of
+# the motor can's X 40.3..64.7 so the cap pulls off past it), 1 into the back face of the arm post
 CAP_BOSS_R = 3.75
-CAP_TAB_Z1 = 44.4                                   # top of the cap's screw tabs
+CAP_BASE_Y0 = 6.0                                   # base bosses / ear: Y 6.0 .. 12.8 (6.8 deep, pilot 10 deep)
+CAP_TAB_Y1 = 16.0                                   # cap tabs: Y 13.0 .. 16.0
 BOSS_Z0 = 72.5                     # body mount boss under the top plate: Z 72.5 .. 78.5, r 11
 BOSS_R = 11.0
 TOP_NUT_Z = (75.0, 81.5)           # M8 hex nut (DIN 934) in the boss's side slot (slot opens toward +X under the plate)
@@ -298,49 +306,70 @@ def _build_carriage_pod_full() -> bd.Part:
         with bd.Locations((36.0, -9.6, G.PLATE_T)):
             bd.Box(T.PINION_X - 6.0 - 36.0 + 0.5, 3.6, T.PINION_Z + 17.0 - G.PLATE_T, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
 
-        # 6. Arm post (deck -> arm) + the motor cap's 4 screw bosses on the base's front / back walls
+        # 6. Arm post (deck -> arm)
         x0, x1, y0, y1 = ARM_POST
         with bd.Locations((x0, y0, G.PLATE_T)):
             bd.Box(x1 - x0, y1 - y0, ARM_Z[1] - G.PLATE_T, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
-        for x, y in CAP_SCREWS:
-            with bd.Locations((x, y, 30.0)):
-                bd.Cylinder(CAP_BOSS_R, CAP_SPLIT_Z - 30.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+
+        # 7. Motor cap fixing - on the base side of the joint plane (Y <= 12.8): ear beside the front wall (+X) for the two
+        #    lower screws, columns on top of the front wall for the two upper ones
+        ear_x0 = gb_x1 + wall - 0.7
+        with bd.Locations((ear_x0, CAP_BASE_Y0, CAP_SCREWS[0][1] - CAP_BOSS_R)):
+            bd.Box(CAP_SCREWS[0][0] + CAP_BOSS_R - ear_x0, CAP_Y0 - CAP_BASE_Y0, CAP_SCREWS[1][1] - CAP_SCREWS[0][1] + 2 * CAP_BOSS_R,
+                   align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
+        x, z, _ = CAP_SCREWS[2]
+        with bd.Locations((x - CAP_BOSS_R, CAP_BASE_Y0, gb_z1 - 4.0)):
+            bd.Box(2 * CAP_BOSS_R, CAP_Y0 - CAP_BASE_Y0, z + CAP_BOSS_R - (gb_z1 - 4.0), align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN))
 
     part = cp.part
     return part
 
 
-_CAP_REGION = None
-
-
 def _cap_region(gap=0.0):
-    return bd.Box(60.0, 70.0, 80.0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(bd.Location((CAP_X0 + gap, -15.0, CAP_SPLIT_Z + gap)))
+    return bd.Box(60.0, 50.0, 100.0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(bd.Location((CAP_X0 + gap, CAP_Y0 + gap, -20.0)))
 
 
-def _cap_holes(r, z0, z1):
-    return [bd.Cylinder(r, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((x, y, z0))) for x, y in CAP_SCREWS]
+def _ycyl(r, y0, y1, x, z):
+    """cylinder along +Y from y0 to y1 through (x, z)"""
+    return bd.Cylinder(r, y1 - y0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((x, y0, z), (-90, 0, 0)))
 
 
 def build_carriage_pod_option1() -> bd.Part:
     """the printed carriage pod (base): everything except the motor cap, with pilot holes for the cap screws"""
     full = _build_carriage_pod_full()
     part = full - _cap_region()
-    for h in _cap_holes(1.3, CAP_SPLIT_Z - 10.0, CAP_SPLIT_Z + 0.5):     # M3 thread-forming pilots, 10 deep
-        part = part - h
+    for x, z, yj in CAP_SCREWS:                                          # M3 thread-forming pilots, 10 deep
+        part = part - _ycyl(1.3, yj - 10.0, yj + 0.5, x, z)
     part.label = "Option1_Carriage_Pod_40T"
     part.color = bd.Color(0.18, 0.55, 0.88)
     return part
 
 
 def build_motor_cap_option1() -> bd.Part:
-    """removable motor cap: lid over the gearbox + sleeve around the motor can + 4 screw tabs (0.2 mm off the base)"""
+    """removable motor cap (pulls off along +Y): back / +X / bottom walls, lid, can sleeve + 4 screw tabs (0.2 mm off the base)"""
     full = _build_carriage_pod_full()
+    cy0 = CAP_Y0 + 0.2
     cap = full & _cap_region(0.2)
-    for x, y in CAP_SCREWS:
-        cap = cap + bd.Cylinder(CAP_BOSS_R, CAP_TAB_Z1 - CAP_SPLIT_Z - 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(
-            bd.Location((x, y, CAP_SPLIT_Z + 0.2)))
-    for h in _cap_holes(1.7, CAP_SPLIT_Z, CAP_TAB_Z1 + 1.0):
-        cap = cap - h
+    # lower tabs: a plate on the +X wall over the base's ear
+    x0 = T.GB_X_CENTER + M.GB_W / 2 + 0.8
+    cap = cap + bd.Box(CAP_SCREWS[0][0] + CAP_BOSS_R - x0, CAP_TAB_Y1 - cy0, CAP_SCREWS[1][1] - CAP_SCREWS[0][1] + 2 * CAP_BOSS_R,
+                       align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(bd.Location((x0, cy0, CAP_SCREWS[0][1] - CAP_BOSS_R)))
+    # upper right tab: disc + rib back to the sleeve's closed half (the motor can's bore, r 13, kept clear)
+    mc_x, mc_y, bore = T.GB_X_CENTER, T.GB_FACE_Y + M.GB_H / 2, M.MOTOR_D / 2 + 0.8
+    x, z, _ = CAP_SCREWS[2]
+    cap = cap + _ycyl(CAP_BOSS_R, cy0, CAP_TAB_Y1, x, z)
+    cap = cap + bd.Box(x + CAP_BOSS_R - (mc_x + bore), mc_y + 2.0 - cy0, 2 * CAP_BOSS_R, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
+        bd.Location((mc_x + bore, cy0, z - CAP_BOSS_R)))
+    # upper left tab: plate on the arm post's back face (Y 22), joined to the sleeve's -X side
+    x, z, yj = CAP_SCREWS[3]
+    px0 = ARM_POST[0] + 0.5
+    cap = cap + bd.Box(mc_x - bore - px0, 3.2, 2 * CAP_BOSS_R, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
+        bd.Location((px0, yj + 0.2, z - CAP_BOSS_R)))
+    for x, z, yj in CAP_SCREWS:
+        y0 = cy0 if yj == CAP_Y0 else yj + 0.2
+        cap = cap - _ycyl(1.7, y0 - 1.0, y0 + 3.0 + 1.0 + (CAP_TAB_Y1 - cy0 - 3.0 if yj == CAP_Y0 else 0.2), x, z)
+    x, z, _ = CAP_SCREWS[2]                                              # head pocket through the right rib
+    cap = cap - _ycyl(3.1, CAP_TAB_Y1, CAP_TAB_Y1 + 20.0, x, z)
     if isinstance(cap, bd.Compound) or len(cap.solids()) > 1:
         cap = max(cap.solids(), key=lambda q: q.volume) if len(cap.solids()) > 1 else cap
     cap.label = "Option1_Motor_Cap"
@@ -517,8 +546,9 @@ def build_fasteners():
         rot = bd.Location((x, MOTOR_WALL_Y, z), (-90, 0, 0))
         cyl = lambda r, h0, h1: bd.Cylinder(r, h1 - h0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)).moved(bd.Location((0, 0, h0)))
         turn += [cyl(2.85, -1.65, 0.0).moved(rot), cyl(1.5, 0.0, 6.0).moved(rot)]
-    for x, y in CAP_SCREWS:                      # motor cap -> base: pan head on the cap's tab, into the base's boss
-        turn += [_cz(2.75, CAP_TAB_Z1, CAP_TAB_Z1 + 2.4, x, y), _cz(1.5, CAP_TAB_Z1 - 12.0, CAP_TAB_Z1, x, y)]
+    for x, z, yj in CAP_SCREWS:                  # motor cap -> base: pan head on the cap's tab, along -Y into the base's boss
+        yh = CAP_TAB_Y1 if yj == CAP_Y0 else yj + 3.4
+        turn += [_ycyl(2.75, yh, yh + 2.4, x, z), _ycyl(1.5, yh - 12.0, yh, x, z)]
     for x, y in EAR_SCREWS:                      # pan head under the ears, up into the body mount
         fixed += [_cz(2.75, EAR_BOT_Z - 2.4, EAR_BOT_Z, x, y), _cz(1.5, EAR_BOT_Z, EAR_BOT_Z + 14.0, x, y)]
     for x, y in COLUMN_SCREWS:                   # socket cap from below, up into the tapped column bar
