@@ -8,7 +8,7 @@
       272.15,
       46.1
     ],
-    "volume_cm3": 240.83,
+    "volume_cm3": 259.78,
     "holes": [
       "\u00d83.30 mm (\u00d718)",
       "\u00d83.40 mm (\u00d74)",
@@ -28,9 +28,9 @@
     "bbox_mm": [
       40.45,
       166.6,
-      7.2
+      6.5
     ],
-    "volume_cm3": 7.93,
+    "volume_cm3": 7.1,
     "holes": [],
     "svg_rel": "docs/drawings/R47.svg",
     "dxf_rel": "docs/drawings/dxf/R47.dxf",
@@ -43,9 +43,9 @@
     "bbox_mm": [
       40.45,
       166.6,
-      7.2
+      6.5
     ],
-    "volume_cm3": 7.93,
+    "volume_cm3": 7.1,
     "holes": [],
     "svg_rel": "docs/drawings/R48.svg",
     "dxf_rel": "docs/drawings/dxf/R48.dxf",
@@ -77,9 +77,9 @@
     "bbox_mm": [
       109.2,
       162.5,
-      11.6
+      11.4
     ],
-    "volume_cm3": 12.77,
+    "volume_cm3": 11.71,
     "holes": [
       "\u00d810.40 mm (\u00d74)",
       "\u00d82.95 mm (\u00d72)",
@@ -97,9 +97,9 @@
     "bbox_mm": [
       15.95,
       272.0,
-      4.0
+      6.8
     ],
-    "volume_cm3": 11.03,
+    "volume_cm3": 16.79,
     "holes": [],
     "svg_rel": "docs/drawings/R51.svg",
     "dxf_rel": "docs/drawings/dxf/R51.dxf",
@@ -112,9 +112,9 @@
     "bbox_mm": [
       15.95,
       272.0,
-      4.0
+      6.8
     ],
-    "volume_cm3": 11.03,
+    "volume_cm3": 16.79,
     "holes": [],
     "svg_rel": "docs/drawings/R52.svg",
     "dxf_rel": "docs/drawings/dxf/R52.dxf",
@@ -147,9 +147,9 @@
     "bbox_mm": [
       17.9,
       17.9,
-      4.0
+      3.7
     ],
-    "volume_cm3": 0.58,
+    "volume_cm3": 0.53,
     "holes": [
       "\u00d87.10 mm",
       "\u00d88.20 mm"
@@ -165,9 +165,9 @@
     "bbox_mm": [
       17.9,
       17.9,
-      4.0
+      3.7
     ],
-    "volume_cm3": 0.58,
+    "volume_cm3": 0.53,
     "holes": [
       "\u00d87.10 mm",
       "\u00d88.20 mm"

@@ -553,7 +553,7 @@ function animate() {
 
   if (carryingLoad) {
     const clampZ = (mode === 'auto') ? activeShelfZ : loadShelfZ;
-    const shelfLz = Math.max(clampZ - 3.6, poseZ - 7.7);
+    const shelfLz = Math.max(clampZ - 3.6, poseZ - 5.3);
     const tTray = Math.max(0, Math.min(1, (220.0 - forkMm) / 220.0));
     const lz = shelfLz * (1.0 - tTray) + poseZ * tTray;
     refLoadMesh.position.set(poseX + 60 * k, forkMm, lz + 185 * k);

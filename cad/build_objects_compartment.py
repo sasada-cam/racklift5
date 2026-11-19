@@ -81,7 +81,8 @@ CURB_W, CURB_TOP_ADD = 2.5, 2.2
 FORK_DX = 48.0          # left/right tine centers at X = 132 & 228 mm
 SCREW_X = OB.BXR        # 180.0 mm centered symmetrically
 SCREW_Z = 180.50        # lowered -4.0 mm so T8, copper nut & 688ZZ arch all stay strictly < 189.7 mm
-FORK_Z0, FORK_Z1 = 183.90, 187.90
+GEAR_Z0, GEAR_Z1 = 183.50, 187.20   # R47/R48 racks, R54/R55 cogwheels & R51/R52 rack tails stay low
+FORK_Z0, FORK_Z1 = 183.50, 190.30   # orange fork blades stand proud ABOVE cogwheels (188.15) & R49 arch (189.60)
 MID_STROKE_MAX = 120.0  # Stage-1 stroke (total tine reach = 240 mm)
 
 # Stage-2 Horizontal 1:2 Rack-and-Pinion geometry (16T MOD=1.0, rp=8.00 mm)
@@ -286,9 +287,9 @@ def build_forklift_deck(tray_clean: bd.Part):
     comp = comp - box(SCREW_X - 13.0, SCREW_X + 13.0, WALL_Y1, -78.0, NUT_TRENCH_Z, BAY_FLOOR_Z + 0.5)
     comp = comp - box(SCREW_X - 16.5, SCREW_X + 16.5, -78.0, OB.TRAY_Y1 + 0.5, 179.05, BAY_FLOOR_Z + 0.5)
     comp = comp - box(SCREW_X - 10.2, SCREW_X + 10.2, -78.0, OB.TRAY_Y1 + 0.5, NUT_TRENCH_Z, 179.20)
-    # Rear-wall pass-through tunnels for Left/Right R51/R52 Tine Rack tails (-335..-234 mm)
-    comp = comp - box(OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, FORK_Z0 - 0.5, FORK_Z1 + 0.6)
-    comp = comp - box(OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, FORK_Z0 - 0.5, FORK_Z1 + 0.6)
+    # Rear-wall pass-through tunnels for Left/Right R51/R52 Tine Rack tails (-335..-234 mm @ GEAR_Z0..GEAR_Z1)
+    comp = comp - box(OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
+    comp = comp - box(OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
     tray_clean = tray_clean - box(SCREW_X - 12.6, SCREW_X + 12.6, WALL_Y1, -77.5, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
     tray_clean = tray_clean - OB._cyl_axis(4.60, OB.TRAY_Y0 - 0.5, WALL_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(6.80, OB.TRAY_Y0 - 0.5, OB.TRAY_Y0 + 1.2, "y", SCREW_X, SCREW_Z)
@@ -368,6 +369,28 @@ def build_forklift_deck(tray_clean: bd.Part):
         SCREW_X - 7.5, SCREW_X + 7.5, REAR_CAP_Y0 - 0.2, BULK_Y0 - 40.1, 195.0, 202.2
     )
     comp = comp + rear_cap
+    # Protective U-channel cradles & rear bumper shrouds enclosing the exposed R51/R52 rear rack tails (Y=-338.9..-245)
+    # Tails span X=134.8..142.5 (L) and X=217.5..225.2 (R), Z=GEAR_Z0..GEAR_Z1 (183.5..187.2); shroud adds floor, outer wall, rear cap & retainer bridges
+    for gx_in, gx_out, sh_x0, sh_x1 in (
+        (SCREW_X - 32.9, OB.BXR - FORK_DX + 1.2, OB.BXR - FORK_DX - 1.8, SCREW_X - 32.8),   # Left tail cradle X=130.2..147.2
+        (OB.BXR + FORK_DX - 1.2, SCREW_X + 32.9, SCREW_X + 32.8, OB.BXR + FORK_DX + 1.8),   # Right tail cradle X=212.8..229.8
+    ):
+        w_x0, w_x1 = (sh_x0, sh_x0 + 3.0) if sh_x0 < OB.BXR else (sh_x1 - 3.0, sh_x1)
+        tail_pocket = (
+            box(sh_x0, sh_x1, REAR_CAP_Y0, WALL_Y0 + 0.1, 179.00, GEAR_Z0 - 0.70)            # bottom support floor Z=179.0..182.8
+            + box(w_x0, w_x1, REAR_CAP_Y0, WALL_Y0 + 0.1, 179.00, 191.00)                    # outer protective side wall
+            + box(sh_x0, sh_x1, REAR_CAP_Y0, REAR_CAP_Y0 + 2.8, 179.00, 191.00)              # closed rear end bumper behind -335 mm
+            + box(sh_x0, sh_x1, REAR_CAP_Y0, REAR_CAP_Y0 + 13.0, GEAR_Z1 + 0.80, 191.00)     # rear top anti-lift keeper lip
+            + box(sh_x0, sh_x1, WALL_Y0 - 10.0, WALL_Y0 + 0.1, GEAR_Z1 + 0.80, 191.00)       # front-wall top keeper bridge
+        )
+        # Keep motor cradle cheeks / bulkhead clearance clean; tie directly into R46 rear wall & cheeks
+        tail_cut = box(gx_in - 1.0 if sh_x0 < OB.BXR else sh_x0 - 0.5, sh_x1 + 0.5 if sh_x0 < OB.BXR else gx_out + 1.0,
+                       REAR_CAP_Y0 - 0.2, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
+        # Re-carve exact sliding tail tunnel so inner tooth clearance stays >= 0.7 mm
+        x_clear0 = (OB.BXR - FORK_DX + 2.4) if sh_x0 < OB.BXR else (OB.BXR + FORK_DX - 10.4)
+        x_clear1 = (OB.BXR - FORK_DX + 10.4) if sh_x0 < OB.BXR else (OB.BXR + FORK_DX - 2.4)
+        tail_pocket = tail_pocket - box(x_clear0, x_clear1, REAR_CAP_Y0 + 3.0, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
+        comp = comp + tail_pocket
     comp = comp - OB._cyl_axis(4.6, WALL_Y0 - 1.0, WALL_Y1 + 1.0, "y", SCREW_X, SCREW_Z)
     comp = comp - OB._cyl_axis(6.8, WALL_Y0 - 0.5, WALL_Y0 + 1.0, "y", SCREW_X, SCREW_Z)
 
@@ -523,7 +546,7 @@ def build_forklift_mechanism():
         xc = OB.BXR + sgn * FORK_DX
         outer_x0 = (xc - 10.2) if sgn < 0 else (xc + 7.2)
         outer_x1 = (xc - 7.2) if sgn < 0 else (xc + 10.2)
-        # Base Rack sits at Z=183.9..187.9, bridged at Y=-237.2..-217.5 & Y=-80.5..-70.6 over R50's cross-bridge (Z=181.5..183.5)
+        # Base Rack sits at GEAR_Z0..GEAR_Z1 (183.5..187.2), bridged at Y=-237.2..-217.5 & Y=-80.5..-70.6 over R50 cross-bridge (181.3..183.1)
         x_pitch_base = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER - PIN_RP)  # 156.5 (L) / 203.5 (R)
         spine_x0 = (x_pitch_base + 1.25 * RP_MOD) if sgn < 0 else (x_pitch_base - 1.25 * RP_MOD - 4.5)
         spine_x1 = (spine_x0 + 4.5) if sgn < 0 else (x_pitch_base - 1.25 * RP_MOD)
@@ -531,25 +554,25 @@ def build_forklift_mechanism():
         floor_x1 = max(xc + 8.0, spine_x1)
         base_rack = _build_horizontal_rack(
             x_pitch_base, spine_x1 if sgn < 0 else spine_x0, -1 if sgn < 0 else 1,
-            -237.2, -70.6, FORK_Z0, FORK_Z1, y_phase=PIN_Y_HOME,
+            -237.2, -70.6, GEAR_Z0, GEAR_Z1, y_phase=PIN_Y_HOME,
         )
-        riser_rear = box(floor_x0, floor_x1, -237.2, -217.5, 180.70, 181.20) + box(
-            spine_x0, spine_x1, -237.2, -217.5, 181.00, FORK_Z1
+        riser_rear = box(floor_x0, floor_x1, -237.2, -217.5, 180.70, 181.10) + box(
+            spine_x0, spine_x1, -237.2, -217.5, 181.00, GEAR_Z1
         )
-        riser_front = box(floor_x0, floor_x1, -80.5, -70.6, 180.70, 181.20) + box(
-            spine_x0, spine_x1, -80.5, -70.6, 181.00, FORK_Z1
+        riser_front = box(floor_x0, floor_x1, -80.5, -70.6, 180.70, 181.10) + box(
+            spine_x0, spine_x1, -80.5, -70.6, 181.00, GEAR_Z1
         )
         rail = (
-            box(outer_x0, outer_x1, -237.2, -70.6, 180.70, 185.40)
-            + box(xc - 8.0, xc + 8.0, -237.2, -70.6, 180.70, 181.20)
+            box(outer_x0, outer_x1, -237.2, -70.6, 180.70, 185.00)
+            + box(xc - 8.0, xc + 8.0, -237.2, -70.6, 180.70, 181.10)
             + base_rack + riser_rear + riser_front
         )
         face_x = outer_x0 if sgn < 0 else outer_x1
         x_dir = (0, 1, 0) if sgn < 0 else (0, -1, 0)
         norm = (-1, 0, 0) if sgn < 0 else (1, 0, 0)
-        rails[key] = _engrave_verified(rail, key, (face_x, -154.0, 183.05), x_dir, norm, 2.2)
+        rails[key] = _engrave_verified(rail, key, (face_x, -154.0, 182.85), x_dir, norm, 2.2)
 
-    # R49: Front 688ZZ Arch Saddle with flattened 189.65 mm crown for clean ID mark "R49" (0.6 mm deep)
+    # R49: Front 688ZZ Arch Saddle with flattened 189.60 mm crown (still -0.70 mm below raised 190.30 mm orange forks)
     front_arch = (
         (
             box(SCREW_X - 16.0, SCREW_X + 16.0, -77.5, -70.5, 179.10, 182.20)
@@ -561,49 +584,49 @@ def build_forklift_mechanism():
         front_arch = front_arch - OB._cyl_axis(1.65, 178.5, 183.0, "z", fx, -74.0)
     r49_arch = _engrave_verified(front_arch, "front_688zz_arch", (SCREW_X, -74.0, 189.60), (1, 0, 0), (0, 0, 1), 2.3, id_only=True)
 
-    # R50: Stage-1 Bridged H-Carriage (flat cross-bridge Z=181.5..183.5 + vertical M3 pinion bosses at Y=-202)
+    # R50: Stage-1 Bridged H-Carriage (flat cross-bridge Z=181.30..183.10 + vertical M3 pinion bosses at Y=-202)
     r50_parts = []
     pinions = {}
     gear_pts = O.involute_gear_pts(RP_Z, RP_MOD, RP_PA, backlash=0.14)
     for pkey, sgn in (("pinion_left", -1), ("pinion_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
         x_pin = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER)  # 148.5 (L) / 211.5 (R)
-        r50_parts.append(box(xc - 6.6, xc + 6.6, -234.0, -71.5, 181.50, 183.50))
-        r50_parts.append(box(xc - 1.5, xc + 1.5, -234.0, -78.5, 183.30, 184.90))
+        r50_parts.append(box(xc - 6.6, xc + 6.6, -234.0, -71.5, 181.30, 183.10))
+        r50_parts.append(box(xc - 1.5, xc + 1.5, -234.0, -78.5, 182.90, 184.50))
 
-        # Boss pad rising from cross-bridge (Y=-215.5..-203.7) forward to Y_PIN=-202 with M3 threaded bore
+        # Boss pad rising from cross-bridge forward to Y_PIN=-202 with M3 threaded bore
         boss = (
-            OB._cyl_axis(5.2, 181.50, 183.75, "z", x_pin, PIN_Y_HOME)
-            + box(x_pin - 4.8, x_pin + 4.8, -210.0, PIN_Y_HOME, 181.50, 183.50)
-        ) - OB._cyl_axis(1.48, 181.20, 184.00, "z", x_pin, PIN_Y_HOME)
+            OB._cyl_axis(5.2, 181.30, 183.35, "z", x_pin, PIN_Y_HOME)
+            + box(x_pin - 4.8, x_pin + 4.8, -210.0, PIN_Y_HOME, 181.30, 183.10)
+        ) - OB._cyl_axis(1.48, 181.00, 183.60, "z", x_pin, PIN_Y_HOME)
         r50_parts.append(boss)
 
-        # Horizontal 16T Spur Pinion (R54 Left / R55 Right) with F683ZZ bore + top flange seat
+        # Horizontal 16T Spur Pinion (R54 Left / R55 Right) at GEAR_Z0..GEAR_Z1 (strictly lower than raised forks!)
         with bd.BuildPart() as gp:
-            with bd.BuildSketch(bd.Plane.XY.offset(FORK_Z0)):
+            with bd.BuildSketch(bd.Plane.XY.offset(GEAR_Z0)):
                 with bd.BuildLine():
                     bd.Polyline(*gear_pts, gear_pts[0])
                 bd.make_face()
-            bd.extrude(amount=FORK_Z1 - FORK_Z0)
+            bd.extrude(amount=GEAR_Z1 - GEAR_Z0)
         pin_raw = gp.part.moved(bd.Location((x_pin, PIN_Y_HOME, 0.0)))
-        pin_raw = pin_raw - OB._cyl_axis(3.55, FORK_Z0 - 0.5, FORK_Z1 + 0.5, "z", x_pin, PIN_Y_HOME)
-        pin_raw = pin_raw - OB._cyl_axis(4.10, FORK_Z1 - 0.90, FORK_Z1 + 0.5, "z", x_pin, PIN_Y_HOME)
-        pinions[pkey] = _engrave_verified(pin_raw, pkey, (x_pin, PIN_Y_HOME - 5.4, FORK_Z1), (1, 0, 0), (0, 0, 1), 1.6, id_only=True)
+        pin_raw = pin_raw - OB._cyl_axis(3.55, GEAR_Z0 - 0.5, GEAR_Z1 + 0.5, "z", x_pin, PIN_Y_HOME)
+        pin_raw = pin_raw - OB._cyl_axis(4.10, GEAR_Z1 - 0.90, GEAR_Z1 + 0.5, "z", x_pin, PIN_Y_HOME)
+        pinions[pkey] = _engrave_verified(pin_raw, pkey, (x_pin, PIN_Y_HOME - 5.4, GEAR_Z1), (1, 0, 0), (0, 0, 1), 1.6, id_only=True)
 
-        # Bought hardware: 1x F683ZZ flanged bearing + vertical M3 x 6.5 low-head screw into R50 boss
+        # Bought hardware: 1x F683ZZ flanged bearing (183.55..187.15) + low-profile M3 cap screw (top Z <= 188.35 < FORK_Z1=190.30!)
         f683 = (
-            OB._cyl_axis(3.48, FORK_Z0 + 0.05, FORK_Z1 - 0.85, "z", x_pin, PIN_Y_HOME)
-            + OB._cyl_axis(4.02, FORK_Z1 - 0.85, FORK_Z1 - 0.05, "z", x_pin, PIN_Y_HOME)
-        ) - OB._cyl_axis(1.55, FORK_Z0 - 0.2, FORK_Z1 + 0.2, "z", x_pin, PIN_Y_HOME)
+            OB._cyl_axis(3.48, GEAR_Z0 + 0.05, GEAR_Z1 - 0.85, "z", x_pin, PIN_Y_HOME)
+            + OB._cyl_axis(4.02, GEAR_Z1 - 0.85, GEAR_Z1 - 0.05, "z", x_pin, PIN_Y_HOME)
+        ) - OB._cyl_axis(1.55, GEAR_Z0 - 0.2, GEAR_Z1 + 0.2, "z", x_pin, PIN_Y_HOME)
         moving_hw.append(f683)
-        moving_hw.append(_socket_bolt(2.50, 1.50, 1.42, 6.2, "z", x_pin, PIN_Y_HOME, FORK_Z1 - 0.05, head_dir=1))
+        moving_hw.append(_socket_bolt(2.50, 1.20, 1.42, 6.2, "z", x_pin, PIN_Y_HOME, GEAR_Z1 - 0.05, head_dir=1))
 
-    # Flat horizontal cross-wings (Y=-215.5..-203.7, 11.8 mm deep, Z=181.5..183.5): clear copper flange via -215.5..-207.8 neck
-    r50_parts.append(box(OB.BXR - FORK_DX + 5.8, SCREW_X - 11.4, -215.5, -203.7, 181.50, 183.50))
-    r50_parts.append(box(SCREW_X + 11.4, OB.BXR + FORK_DX - 5.8, -215.5, -203.7, 181.50, 183.50))
-    r50_parts.append(box(SCREW_X - 11.5, SCREW_X - 10.8, -215.5, -207.8, 181.50, 183.50))
-    r50_parts.append(box(SCREW_X + 10.8, SCREW_X + 11.5, -215.5, -207.8, 181.50, 183.50))
-    nut_plate = box(SCREW_X - 11.2, SCREW_X + 11.2, -215.5, -207.7, 175.60, 187.20) - OB._cyl_axis(
+    # Flat horizontal cross-wings (Y=-215.5..-203.7, 11.8 mm deep, Z=181.30..183.10): clear copper flange via -215.5..-207.8 neck
+    r50_parts.append(box(OB.BXR - FORK_DX + 5.8, SCREW_X - 11.4, -215.5, -203.7, 181.30, 183.10))
+    r50_parts.append(box(SCREW_X + 11.4, OB.BXR + FORK_DX - 5.8, -215.5, -203.7, 181.30, 183.10))
+    r50_parts.append(box(SCREW_X - 11.5, SCREW_X - 10.8, -215.5, -207.8, 181.30, 183.10))
+    r50_parts.append(box(SCREW_X + 10.8, SCREW_X + 11.5, -215.5, -207.8, 181.30, 183.10))
+    nut_plate = box(SCREW_X - 11.2, SCREW_X + 11.2, -215.5, -207.7, 175.60, 187.00) - OB._cyl_axis(
         5.30, -216.0, -207.2, "y", SCREW_X, SCREW_Z
     )
     for hx in (SCREW_X - 8.0, SCREW_X + 8.0):
@@ -614,7 +637,7 @@ def build_forklift_mechanism():
     for p in r50_parts[1:]:
         r50_raw = r50_raw + p
     r50_carriage = _engrave_verified(
-        r50_raw, "stage1_carriage", (SCREW_X - 21.5, -212.8, 183.50), (1, 0, 0), (0, 0, 1), 2.5
+        r50_raw, "stage1_carriage", (SCREW_X - 21.5, -212.8, 183.10), (1, 0, 0), (0, 0, 1), 2.5
     )
 
     # Bought Copper T8 Nut + 2x M3 Flange Bolts & Hex Nuts
@@ -628,24 +651,24 @@ def build_forklift_mechanism():
         moving_hw.append(_socket_bolt(2.55, 2.5, 1.45, 11.5, "y", hx, -203.9, SCREW_Z, head_dir=1))
         moving_hw.append(_hex_nut(5.5, 2.4, "y", hx, -218.1, SCREW_Z, 1.50))
 
-    # R51 & R52: Twin Tapered Forklift Tines + Inboard MOD=1.0 Rack Tail (-335..-78 mm, +240 mm full reach!)
+    # R51 & R52: Twin Tapered Forklift Tines (top Z=190.30, higher than cogwheels/rails/arch) + Inboard MOD=1.0 Rack Tail (183.5..187.2)
     tines = {}
     for key, sgn in (("fork_tine_left", -1), ("fork_tine_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
         blade = box(xc - 6.6, xc + 6.6, -234.0, -78.0, FORK_Z0, FORK_Z1) - box(
-            xc - 1.9, xc + 1.9, -234.5, -77.5, FORK_Z0 - 0.1, 185.30
+            xc - 1.9, xc + 1.9, -234.5, -77.5, FORK_Z0 - 0.1, 185.00
         )
         x_pitch_tine = OB.BXR + sgn * (FORK_DX - PIN_DX_TINE)  # 140.5 (L) / 219.5 (R)
         tine_rack = _build_horizontal_rack(
             x_pitch_tine, xc - sgn * 3.0, 1 if sgn < 0 else -1,
-            -335.0, -78.0, FORK_Z0, FORK_Z1, y_phase=PIN_Y_HOME,
+            -335.0, -78.0, GEAR_Z0, GEAR_Z1, y_phase=PIN_Y_HOME,
         )
         with bd.BuildPart() as tn:
             with bd.BuildSketch(bd.Plane.YZ.offset(xc - 6.6)):
                 with bd.BuildLine():
                     bd.Polyline(
                         (-78.2, FORK_Z0), (-63.0, FORK_Z0),
-                        (-63.0, FORK_Z0 + 1.4), (-78.2, FORK_Z1), (-78.2, FORK_Z0)
+                        (-63.0, FORK_Z0 + 1.5), (-78.2, FORK_Z1), (-78.2, FORK_Z0)
                     )
                 bd.make_face()
             bd.extrude(amount=13.2)
@@ -779,6 +802,13 @@ def check_forklift_clearances(parts: dict) -> bool:
     v_rack = _overlap(f03_shelf, parts["ref_rack_bay"])
     if v_rack > 1e-3:
         bad.append(("extended_lifted_10mm", "f03_tines", "ref_rack_bay", v_rack))
+
+    # Verify orange fork blades (FORK_Z1 = 190.30 mm) sit strictly HIGHER than cogwheels, M3 pinion screws, fixed racks & R49 arch
+    z_fork_top = parts["fork_tines"].bounding_box().max.Z
+    for low_k in ("fork_base_rails", "fork_front_arch", "fork_pinion_left", "fork_pinion_right", "fork_mid_fasteners", "fork_t8_nut"):
+        z_low = parts[low_k].bounding_box().max.Z
+        if z_low >= z_fork_top - 0.4:
+            bad.append(("z_clearance", low_k, f"max.Z={z_low:.2f} >= fork_top={z_fork_top:.2f}", z_low - z_fork_top))
 
     if bad:
         for item in bad:
