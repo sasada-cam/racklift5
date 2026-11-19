@@ -99,6 +99,14 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#d97706"></span>CNC4759-A Copper T8 Nut</span><button class="active" onclick="toggleLayer('fork_t8_nut', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#80CBC4"></span>R49 Front 688ZZ Bearing Arch</span><button class="active" onclick="toggleLayer('fork_front_arch', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#00897B"></span>R47-R48 Base Rails &amp; CNC4759-A</span><button class="active" onclick="toggleForkFixed(this)">Shown</button></div>
+    <div class="row"><span><span class="dot" style="background:#6366F1"></span>Hold-Down Option (R57A / R57B)</span>
+      <div class="btn-group">
+        <button id="opt-off" onclick="setHoldOpt('off')">Off</button>
+        <button id="opt-a" class="active" onclick="setHoldOpt('a')">Opt A: T-Slot</button>
+        <button id="opt-b" onclick="setHoldOpt('b')">Opt B: Rollers</button>
+      </div>
+    </div>
+    <div class="row"><span><span class="dot" style="background:#EF4444"></span>2x Center Limit Switches (Home/Max)</span><button class="active" onclick="toggleLayer('fork_limit_switches', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#0E7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span><button onclick="cycleMode('fork_top_cover', this); syncCoverHw();" data-mode="solid" class="active">Solid</button></div>
     <div class="row"><span><span class="dot" style="background:#26A69A"></span>R46 Deck + Open-Top Motor/Tail Bays</span><button class="active" onclick="toggleLayer('compartment_deck', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#2E7D32"></span>R53 Removable Rear Under-Tray Tie</span><button class="active" onclick="toggleLayer('fork_under_tie', this)">Shown</button></div>
@@ -179,6 +187,11 @@ const mats = {
   compartment_deck:     mkMat(0x26a69a, { rough: 0.36 }),
   fork_top_cover:       mkMat(0x0e7490, { rough: 0.36 }),
   fork_cover_fasteners: mkMat(0x334155, { metal: 0.78, rough: 0.26 }),
+  fork_limit_switches:  mkMat(0xef4444, { rough: 0.35 }),
+  fork_opt_a_tslot:     mkMat(0x6366f1, { rough: 0.34 }),
+  fork_opt_a_hw:        mkMat(0x334155, { metal: 0.80, rough: 0.26 }),
+  fork_opt_b_rollers:   mkMat(0xec4899, { rough: 0.34 }),
+  fork_opt_b_hw:        mkMat(0xd1d5db, { metal: 0.86, rough: 0.22 }),
   fork_under_tie:       mkMat(0x2e7d32, { rough: 0.36 }),
   base_fasteners:   mkMat(0x334155, { metal: 0.75, rough: 0.28 }),
   fork_base_rails:  mkMat(0x00897b, { metal: 0.25, rough: 0.34 }),
@@ -208,9 +221,19 @@ function loadMesh(name, parent, recenter = null) {
 
 [
   'base_boom','load_cell','live_wishbone','tray_deck','compartment_deck','fork_top_cover','fork_cover_fasteners','fork_under_tie','base_fasteners',
-  'fork_base_rails','fork_front_arch','fork_mid_stage',
+  'fork_base_rails','fork_front_arch','fork_mid_stage','fork_limit_switches','fork_opt_a_tslot','fork_opt_a_hw','fork_opt_b_rollers','fork_opt_b_hw',
   'fork_t8_nut','fork_mid_fasteners','fork_tines','fork_drive'
 ].forEach((k) => loadMesh(k, robotLiftGroup));
+window.holdOpt = 'a';
+window.setHoldOpt = (opt) => {
+  window.holdOpt = opt;
+  ['off', 'a', 'b'].forEach(id => document.getElementById('opt-' + id).classList.toggle('active', id === opt));
+  if (meshes.fork_opt_a_tslot) meshes.fork_opt_a_tslot.visible = (opt === 'a');
+  if (meshes.fork_opt_a_hw)    meshes.fork_opt_a_hw.visible = (opt === 'a');
+  if (meshes.fork_opt_b_rollers) meshes.fork_opt_b_rollers.visible = (opt === 'b');
+  if (meshes.fork_opt_b_hw)      meshes.fork_opt_b_hw.visible = (opt === 'b');
+};
+window.setHoldOpt(window.holdOpt);
 loadMesh('fork_pinion_left', robotLiftGroup, [-148.5, 202.0, 0]);
 loadMesh('fork_pinion_right', robotLiftGroup, [-211.5, 202.0, 0]);
 ['ref_load','ref_rack_bay'].forEach((k) => loadMesh(k, worldRoot));
@@ -272,6 +295,11 @@ function applyTransforms() {
   if (meshes.fork_under_tie)       meshes.fork_under_tie.position.set(0, 0, 12 * explodeK);
 
   if (meshes.fork_base_rails)    meshes.fork_base_rails.position.set(0, 0, 114 * explodeK);
+  if (meshes.fork_opt_a_tslot)   meshes.fork_opt_a_tslot.position.set(0, 0, 156 * explodeK);
+  if (meshes.fork_opt_a_hw)      meshes.fork_opt_a_hw.position.set(0, 0, 180 * explodeK);
+  if (meshes.fork_opt_b_rollers) meshes.fork_opt_b_rollers.position.set(0, 0, 156 * explodeK);
+  if (meshes.fork_opt_b_hw)      meshes.fork_opt_b_hw.position.set(0, 0, 180 * explodeK);
+  if (meshes.fork_limit_switches) meshes.fork_limit_switches.position.set(0, 0, 72 * explodeK);
   if (meshes.fork_front_arch)    meshes.fork_front_arch.position.set(0, 0, 114 * explodeK);
   if (meshes.fork_drive)         meshes.fork_drive.position.set(0, 0, 118 * explodeK);
   if (meshes.fork_mid_stage)     meshes.fork_mid_stage.position.set(0, 0.5 * extMm, 142 * explodeK);

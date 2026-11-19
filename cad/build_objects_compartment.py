@@ -16,6 +16,8 @@ Every 3D-printed part obeys CLAUDE.md ID + batch + 0.6 mm engraving + distinct c
   - R54: Stage-2 Horizontal 1:2 Spur Pinion - Left  (16T MOD=1.0, mark: R54)
   - R55: Stage-2 Horizontal 1:2 Spur Pinion - Right (16T MOD=1.0, mark: R55)
   - R56: Removable Screwed Top Motor & Rack-Tail Enclosure Lid (mark: R56-B01)
+  - R57A / R57B: Hold-Down Option A (Screwed Side T-Slot Rails) vs Option B (MR63ZZ Roller Brackets)
+  - Center Trench End-Stops: 2x SS-5GL Microswitches + R47/R48 Plastic Hard-Stop Risers (±1.5 mm)
 
 Bought hardware:
   - CNC4759-A T8 Lead Screw (2 mm pitch, 8 mm lead, ~202 mm cut), trimmed Ø22 copper flange nut,
@@ -56,6 +58,10 @@ PART_IDS = {
     "pinion_left": "R54",
     "pinion_right": "R55",
     "fork_top_cover": "R56",
+    "opt_a_left": "R57A",
+    "opt_a_right": "R57A",
+    "opt_b_left": "R57B",
+    "opt_b_right": "R57B",
 }
 # Distinct non-adjacent hex shades (CLAUDE.md §4)
 PART_COLORS = {
@@ -70,6 +76,8 @@ PART_COLORS = {
     "R54": "#EAB308",  # golden amber (1:2 rack pinion left)
     "R55": "#CA8A04",  # deep gold (1:2 rack pinion right)
     "R56": "#0E7490",  # deep ocean cyan (screwed top motor & rack-tail enclosure lid)
+    "R57A": "#6366F1", # indigo-violet (Option A: screwed side T-slot hold-down rails)
+    "R57B": "#EC4899", # rose-magenta (Option B: screwed MR63ZZ roller hold-down brackets)
 }
 
 SLOPE_Z_BACK = 185.40
@@ -294,6 +302,12 @@ def build_forklift_deck(tray_clean: bd.Part):
     comp = comp - box(OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
     comp = comp - box(OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
     tray_clean = tray_clean - box(SCREW_X - 12.6, SCREW_X + 12.6, WALL_Y1, -77.5, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
+    # Recessed left-trench pockets + wire groove for 2x SS-5GL end-stop microswitches (Home Y=-229.5..-215.8 & Max Y=-92.5..-78.0)
+    for sw_y0, sw_y1 in ((-229.5, -215.8), (-92.5, -78.0)):
+        comp = comp - box(SCREW_X - 18.4, SCREW_X - 12.4, sw_y0, sw_y1, 173.8, BAY_FLOOR_Z + 0.5)
+        tray_clean = tray_clean - box(SCREW_X - 18.4, SCREW_X - 12.4, sw_y0, sw_y1, 173.8, OB.TRAY_TOP_Z + 0.5)
+    comp = comp - box(SCREW_X - 18.4, SCREW_X - 16.0, WALL_Y0 - 0.5, -78.0, 175.0, 178.1)
+    tray_clean = tray_clean - box(SCREW_X - 18.4, SCREW_X - 16.0, WALL_Y0 - 0.5, -78.0, 175.0, OB.TRAY_TOP_Z + 0.5)
     tray_clean = tray_clean - OB._cyl_axis(4.60, OB.TRAY_Y0 - 0.5, WALL_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(6.80, OB.TRAY_Y0 - 0.5, OB.TRAY_Y0 + 1.2, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(8.20, -77.8, OB.TRAY_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
@@ -560,13 +574,14 @@ def build_forklift_mechanism():
     f04 = []
     moving_hw = []
 
-    # R47 & R48: Left & Right Fixed Base Guide Tracks + Elevated MOD=1.0 Fixed Rack (1 solid each!)
+    # R47 & R48: Left & Right Fixed Base Guide Tracks + Elevated MOD=1.0 Fixed Rack + Dual Plastic Dead-Stops (1 solid each!)
     rails = {}
+    HOLD_Y_M3 = (-226.0, -117.5, -75.5)
     for key, sgn in (("rail_left", -1), ("rail_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
-        outer_x0 = (xc - 10.2) if sgn < 0 else (xc + 7.2)
-        outer_x1 = (xc - 7.2) if sgn < 0 else (xc + 10.2)
-        # Base Rack sits at GEAR_Z0..GEAR_Z1 (183.5..187.2), bridged at Y=-237.2..-217.5 & Y=-80.5..-70.6 over R50 cross-bridge (181.3..183.1)
+        outer_x0 = (xc - 11.0) if sgn < 0 else (xc + 5.6)  # 121.0..126.4 (L) / 233.6..239.0 (R) -> 5.4 mm solid for M3
+        outer_x1 = (xc - 5.6) if sgn < 0 else (xc + 11.0)
+        # Base Rack sits at GEAR_Z0..GEAR_Z1 (183.5..187.2); risers act as ±1.5 mm plastic hard-stops behind switches!
         x_pitch_base = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER - PIN_RP)  # 156.5 (L) / 203.5 (R)
         spine_x0 = (x_pitch_base + 1.25 * RP_MOD) if sgn < 0 else (x_pitch_base - 1.25 * RP_MOD - 4.5)
         spine_x1 = (spine_x0 + 4.5) if sgn < 0 else (x_pitch_base - 1.25 * RP_MOD)
@@ -576,17 +591,20 @@ def build_forklift_mechanism():
             x_pitch_base, spine_x1 if sgn < 0 else spine_x0, -1 if sgn < 0 else 1,
             -237.2, -70.6, GEAR_Z0, GEAR_Z1, y_phase=PIN_Y_HOME,
         )
-        riser_rear = box(floor_x0, floor_x1, -237.2, -217.5, 180.70, 181.10) + box(
-            spine_x0, spine_x1, -237.2, -217.5, 181.00, GEAR_Z1
+        riser_rear = box(floor_x0, floor_x1, -237.2, -217.0, 180.70, 181.10) + box(
+            spine_x0, spine_x1, -237.2, -217.0, 181.00, GEAR_Z1
         )
-        riser_front = box(floor_x0, floor_x1, -80.5, -70.6, 180.70, 181.10) + box(
-            spine_x0, spine_x1, -80.5, -70.6, 181.00, GEAR_Z1
+        riser_front = box(floor_x0, floor_x1, -82.2, -70.6, 180.70, 181.10) + box(
+            spine_x0, spine_x1, -82.2, -70.6, 181.00, GEAR_Z1
         )
         rail = (
             box(outer_x0, outer_x1, -237.2, -70.6, 180.70, 185.00)
             + box(xc - 8.0, xc + 8.0, -237.2, -70.6, 180.70, 181.10)
             + base_rack + riser_rear + riser_front
         )
+        mx_hole = 0.5 * (outer_x0 + outer_x1)  # 123.7 / 236.3
+        for my_h in HOLD_Y_M3:
+            rail = rail - OB._cyl_axis(1.45, 181.00, 185.40, "z", mx_hole, my_h)
         face_x = outer_x0 if sgn < 0 else outer_x1
         x_dir = (0, 1, 0) if sgn < 0 else (0, -1, 0)
         norm = (-1, 0, 0) if sgn < 0 else (1, 0, 0)
@@ -604,15 +622,26 @@ def build_forklift_mechanism():
         front_arch = front_arch - OB._cyl_axis(1.65, 178.5, 183.0, "z", fx, -74.0)
     r49_arch = _engrave_verified(front_arch, "front_688zz_arch", (SCREW_X, -74.0, 189.60), (1, 0, 0), (0, 0, 1), 2.3, id_only=True)
 
-    # R50: Stage-1 Bridged H-Carriage (flat cross-bridge Z=181.30..183.10 + vertical M3 pinion bosses at Y=-202)
+    # R50: Reinforced Stage-1 C-Channel H-Carriage + Side Glide Shelf + Dual R51 Hold-Down Hooks + Trench Switch Tab
     r50_parts = []
     pinions = {}
     gear_pts = O.involute_gear_pts(RP_Z, RP_MOD, RP_PA, backlash=0.14)
     for pkey, sgn in (("pinion_left", -1), ("pinion_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
         x_pin = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER)  # 148.5 (L) / 211.5 (R)
-        r50_parts.append(box(xc - 6.6, xc + 6.6, -234.0, -71.5, 181.30, 183.10))
-        r50_parts.append(box(xc - 1.5, xc + 1.5, -234.0, -78.5, 182.90, 184.50))
+        # Main rail plate (2.0 mm thick) + outboard low glide shelf for R57A / R57B (X=126.7..129.0 L / 231.0..233.3 R)
+        x_flat0 = (xc - 5.3) if sgn < 0 else (xc - 6.6)
+        x_flat1 = (xc + 6.6) if sgn < 0 else (xc + 5.3)
+        r50_parts.append(box(x_flat0, x_flat1, -234.0, -71.5, 181.30, 183.30))
+        # Alignment key (clear of R51 rack spine 135.0/225.0) engaging underside slot on R51/R52
+        x_key = xc - sgn * 1.5  # 133.5 (L) / 226.5 (R)
+        r50_parts.append(box(x_key - 0.7, x_key + 0.7, -234.0, -78.5, 183.10, 184.60))
+        # Rigid outer vertical C-wall (Z=181.30..189.90) + dual top L-hooks holding R51/R52 down along entire 0..+240 stroke
+        cw0, cw1 = ((xc - 2.8, xc - 1.2) if sgn < 0 else (xc + 1.2, xc + 2.8))  # 129.2..130.8 (L) / 229.2..230.8 (R)
+        r50_parts.append(box(cw0, cw1, -234.0, -71.5, 181.30, 189.90))
+        hk0, hk1 = ((cw0, xc + 0.2) if sgn < 0 else (xc - 0.2, cw1))  # 129.2..132.2 (L) / 227.8..230.8 (R)
+        for hy0, hy1 in ((-112.0, -98.0), (-84.0, -71.5)):
+            r50_parts.append(box(hk0, hk1, hy0, hy1, 186.90, 189.90))
 
         # Boss pad rising from cross-bridge forward to Y_PIN=-202 with M3 threaded bore
         boss = (
@@ -671,29 +700,91 @@ def build_forklift_mechanism():
         moving_hw.append(_socket_bolt(2.55, 2.5, 1.45, 11.5, "y", hx, -203.9, SCREW_Z, head_dir=1))
         moving_hw.append(_hex_nut(5.5, 2.4, "y", hx, -218.1, SCREW_Z, 1.50))
 
-    # R51 & R52: Twin Tapered Forklift Tines (top Z=190.30, higher than cogwheels/rails/arch) + Inboard MOD=1.0 Rack Tail (183.5..187.2)
+    # R51 & R52: Twin Tapered Forklift Tines with Outer Stepped L-Shoulder (captured by R50 L-hooks at Z=186.9..189.9)
     tines = {}
     for key, sgn in (("fork_tine_left", -1), ("fork_tine_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
-        blade = box(xc - 6.6, xc + 6.6, -234.0, -78.0, FORK_Z0, FORK_Z1) - box(
-            xc - 1.9, xc + 1.9, -234.5, -77.5, FORK_Z0 - 0.1, 185.00
-        )
+        # Lower L-shoulder (131.1..138.6 L / 221.4..228.9 R @ Z=183.5..186.5) + Upper tall beam (132.6..138.6 @ Z=186.4..190.3)
+        bl0_lo, bl1_lo = ((xc - 0.9, xc + 6.6) if sgn < 0 else (xc - 6.6, xc + 0.9))
+        bl0_hi, bl1_hi = ((xc + 0.6, xc + 6.6) if sgn < 0 else (xc - 6.6, xc - 0.6))
+        x_key = xc - sgn * 1.5
+        blade = (
+            box(bl0_lo, bl1_lo, -234.0, -78.0, FORK_Z0, 186.50)
+            + box(bl0_hi, bl1_hi, -234.0, -78.0, 186.40, FORK_Z1)
+        ) - box(x_key - 1.0, x_key + 1.0, -234.5, -77.5, FORK_Z0 - 0.1, 185.00)
         x_pitch_tine = OB.BXR + sgn * (FORK_DX - PIN_DX_TINE)  # 140.5 (L) / 219.5 (R)
         tine_rack = _build_horizontal_rack(
             x_pitch_tine, xc - sgn * 3.0, 1 if sgn < 0 else -1,
             -335.0, -78.0, GEAR_Z0, GEAR_Z1, y_phase=PIN_Y_HOME,
         )
         with bd.BuildPart() as tn:
-            with bd.BuildSketch(bd.Plane.YZ.offset(xc - 6.6)):
+            with bd.BuildSketch(bd.Plane.YZ.offset(bl0_hi)):
                 with bd.BuildLine():
                     bd.Polyline(
                         (-78.2, FORK_Z0), (-63.0, FORK_Z0),
                         (-63.0, FORK_Z0 + 1.5), (-78.2, FORK_Z1), (-78.2, FORK_Z0)
                     )
                 bd.make_face()
-            bd.extrude(amount=13.2)
+            bd.extrude(amount=bl1_hi - bl0_hi)
         tine_raw = blade + tine_rack + tn.part
-        tines[key] = _engrave_verified(tine_raw, key, (xc, -185.0, FORK_Z1), (0, 1, 0), (0, 0, 1), 3.2)
+        tines[key] = _engrave_verified(tine_raw, key, (xc - sgn * 3.6, -185.0, FORK_Z1), (0, 1, 0), (0, 0, 1), 2.4)
+
+    # Option A (R57A-B01): Screwed Full-Length Side T-Slot Hold-Down Rails (Z=185.05..190.10, clears 192.00 crate!)
+    opt_a_parts, opt_a_hw = {}, []
+    for key, sgn in (("opt_a_left", -1), ("opt_a_right", 1)):
+        xc = OB.BXR + sgn * FORK_DX
+        ox0, ox1 = ((xc - 11.0, xc - 5.6) if sgn < 0 else (xc + 5.6, xc + 11.0))  # 121.0..126.4 / 233.6..239.0 (5.4 mm solid!)
+        lx0, lx1 = ((xc - 5.5, xc - 3.2) if sgn < 0 else (xc + 3.2, xc + 5.5))    # inner lip ONLY 126.5..128.8 / 231.2..233.5 (clears R47!)
+        rail_a = (
+            box(ox0, ox1, -237.2, -70.6, 185.05, 190.10)
+            + box(min(ox0, lx0), max(ox1, lx1), -237.2, -70.6, 186.60, 190.10)  # top bridge tying mount + L-lip
+            + box(lx0, lx1, -237.2, -70.6, 183.60, 190.10)
+        )
+        mx_h = 0.5 * (ox0 + ox1)  # 123.7 / 236.3
+        for my_h in HOLD_Y_M3:
+            rail_a = rail_a - OB._cyl_axis(1.60, 184.8, 190.4, "z", mx_h, my_h)
+            rail_a = rail_a - OB._cyl_axis(2.55, 188.3, 190.4, "z", mx_h, my_h)
+            opt_a_hw.append(_socket_bolt(2.45, 1.60, 1.40, 6.2, "z", mx_h, my_h, 188.35, head_dir=1))
+        face_x = ox0 if sgn < 0 else ox1
+        x_dir = (0, 1, 0) if sgn < 0 else (0, -1, 0)
+        norm = (-1, 0, 0) if sgn < 0 else (1, 0, 0)
+        opt_a_parts[key] = _engrave_verified(rail_a, key, (face_x, -154.0, 187.6), x_dir, norm, 2.2)
+
+    # Option B (R57B-B01): Screwed Front+Mid Hold-Down Twin MR63ZZ Bearing Brackets (4x Ø6xØ3x2.5 mm bearings, Z<=190.10)
+    opt_b_parts, opt_b_hw = {}, []
+    ROLL_YS = (-111.0, -83.0)
+    for key, sgn in (("opt_b_left", -1), ("opt_b_right", 1)):
+        xc = OB.BXR + sgn * FORK_DX
+        ox0, ox1 = ((xc - 11.0, xc - 5.6) if sgn < 0 else (xc + 5.6, xc + 11.0))  # 121.0..126.4 / 233.6..239.0 (5.4 mm solid!)
+        bx0, bx1 = ((xc - 5.5, xc - 3.1) if sgn < 0 else (xc + 3.1, xc + 5.5))    # bearing pocket X=126.5..128.9 / 231.1..233.5
+        br_b = box(ox0, ox1, -122.0, -70.6, 185.05, 190.10)
+        mx_h = 0.5 * (ox0 + ox1)
+        for my_h in (-117.5, -75.5):
+            br_b = br_b - OB._cyl_axis(1.60, 184.8, 190.4, "z", mx_h, my_h)
+            br_b = br_b - OB._cyl_axis(2.55, 188.3, 190.4, "z", mx_h, my_h)
+            opt_b_hw.append(_socket_bolt(2.45, 1.60, 1.40, 6.2, "z", mx_h, my_h, 188.35, head_dir=1))
+        for ry in ROLL_YS:
+            br_b = br_b - OB._cyl_axis(1.60, ox0 - 0.5, ox1 + 0.5, "x", ry, 186.55)
+            # Outer race MR63ZZ (OD=6.0 mm, width=2.4 mm) riding at Z=183.55..189.55 (0.25 mm above R50 shelf 183.30)
+            mr63 = OB._cyl_axis(3.00, bx0, bx1, "x", ry, 186.55) - OB._cyl_axis(1.50, bx0 - 0.2, bx1 + 0.2, "x", ry, 186.55)
+            opt_b_hw.append(mr63)
+            pin_x0 = ox0 if sgn < 0 else ox1
+            opt_b_hw.append(_socket_bolt(2.20, 1.40, 1.42, 7.9, "x", pin_x0, ry, 186.55, head_dir=sgn))
+        face_x = ox0 if sgn < 0 else ox1
+        x_dir = (0, 1, 0) if sgn < 0 else (0, -1, 0)
+        norm = (-1, 0, 0) if sgn < 0 else (1, 0, 0)
+        txt_y = -104.5 if sgn < 0 else -89.5
+        opt_b_parts[key] = _engrave_verified(br_b, key, (face_x, txt_y, 187.0), x_dir, norm, 1.9)
+
+    # 2x Center-Trench End-Stop Limit Switches (Home @ Y=-225, Max-Extend @ Y=-83) recessed in left trench flank
+    sw_solids = []
+    for sw_y0, sw_y1, lvy0, lvy1 in (
+        (-228.5, -216.2, -217.5, -215.8),  # Home switch body + rear actuation plunger
+        (-87.3,  -78.3,  -87.9,  -87.4),   # Max-Extend detector switch body + front actuation plunger
+    ):
+        sw_solids.append(box(SCREW_X - 17.5, SCREW_X - 12.6, sw_y0, sw_y1, 174.0, 180.2))  # switch housing
+        sw_solids.append(box(SCREW_X - 13.0, SCREW_X - 11.7, lvy0, lvy1, 176.5, 179.4))    # roller / actuator tab
+    limit_switches = bd.Compound(children=sw_solids, label="Center_Trench_Limit_Switches_2x")
 
     # F04: Realistic CNC4759-A T8 Screw + KP08 + Slotted Coupler + 688ZZ + MT0382 17HS4401 NEMA 17
     f04.append(_build_t8_threaded_screw(-274.0, -72.0, SCREW_X, SCREW_Z))
@@ -732,6 +823,11 @@ def build_forklift_mechanism():
         "fork_mid_fasteners": bd.Compound(children=moving_hw, label="R50_Pinion_F683ZZ_And_Nut_HW"),
         "fork_tines": bd.Compound(children=[tines["fork_tine_left"], tines["fork_tine_right"]], label="R51_R52_Fork_Tines"),
         "fork_drive": bd.Compound(children=f04, label="CNC4759A_T8_KP08_MT0382_17HS4401"),
+        "fork_limit_switches": limit_switches,
+        "fork_opt_a_tslot": bd.Compound(children=[opt_a_parts["opt_a_left"], opt_a_parts["opt_a_right"]], label="R57A_Side_TSlot_Rails"),
+        "fork_opt_a_hw": bd.Compound(children=opt_a_hw, label="R57A_M3_Screws"),
+        "fork_opt_b_rollers": bd.Compound(children=[opt_b_parts["opt_b_left"], opt_b_parts["opt_b_right"]], label="R57B_MR63ZZ_Roller_Brackets"),
+        "fork_opt_b_hw": bd.Compound(children=opt_b_hw, label="R57B_MR63ZZ_Bearings_And_Screws"),
         "_print_solids": {
             "rail_left": rails["rail_left"],
             "rail_right": rails["rail_right"],
@@ -741,6 +837,10 @@ def build_forklift_mechanism():
             "fork_tine_right": tines["fork_tine_right"],
             "pinion_left": pinions["pinion_left"],
             "pinion_right": pinions["pinion_right"],
+            "opt_a_left": opt_a_parts["opt_a_left"],
+            "opt_a_right": opt_a_parts["opt_a_right"],
+            "opt_b_left": opt_b_parts["opt_b_left"],
+            "opt_b_right": opt_b_parts["opt_b_right"],
         },
     }
 
@@ -785,61 +885,71 @@ def build_objects_base_and_forklift():
 
 
 def check_forklift_clearances(parts: dict) -> bool:
-    """Verify 0 solid collisions across base + R46..R56 + hardware at Home (0 mm) & +240 mm."""
-    keys = (
+    """Verify 0 solid collisions across base + R46..R57 + switches at Home (0 mm) & +240 mm for Option A and Option B."""
+    base_keys = (
         "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
         "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
-        "fork_base_rails", "fork_front_arch", "fork_mid_stage",
+        "fork_base_rails", "fork_front_arch", "fork_mid_stage", "fork_limit_switches",
         "fork_pinion_left", "fork_pinion_right", "fork_t8_nut", "fork_mid_fasteners", "fork_tines", "fork_drive",
     )
     bad = []
-    for i, k1 in enumerate(keys):
-        for k2 in keys[i + 1:]:
-            v = _overlap(parts[k1], parts[k2])
+    for opt_lbl, opt_keys in (
+        ("optA_tslot", ("fork_opt_a_tslot", "fork_opt_a_hw")),
+        ("optB_rollers", ("fork_opt_b_rollers", "fork_opt_b_hw")),
+    ):
+        keys = (*base_keys, *opt_keys)
+        for i, k1 in enumerate(keys):
+            for k2 in keys[i + 1:]:
+                v = _overlap(parts[k1], parts[k2])
+                if v > 1e-3:
+                    bad.append((f"home_{opt_lbl}", k1, k2, v))
+
+        fixed_plus_f04 = bd.Compound(children=[parts[k] for k in (
+            "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
+            "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
+            "fork_base_rails", "fork_front_arch", "fork_drive", "fork_limit_switches", *opt_keys,
+        )])
+        mid_ext = {k: parts[k].moved(bd.Location((0.0, MID_STROKE_MAX, 0.0)))
+                   for k in ("fork_mid_stage", "fork_t8_nut", "fork_mid_fasteners")}
+        rot_deg = math.degrees(MID_STROKE_MAX / PIN_RP)
+        for pk, sgn, ang in (("fork_pinion_left", -1, -rot_deg), ("fork_pinion_right", 1, rot_deg)):
+            xp = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER)
+            p_rot = parts[pk].moved(bd.Location((-xp, -PIN_Y_HOME, 0.0)))
+            p_rot = p_rot.moved(bd.Location((0.0, 0.0, 0.0), (0.0, 0.0, ang)))
+            mid_ext[pk] = p_rot.moved(bd.Location((xp, PIN_Y_HOME + MID_STROKE_MAX, 0.0)))
+        f03_ext = parts["fork_tines"].moved(bd.Location((0.0, 2.0 * MID_STROKE_MAX, 0.0)))
+
+        for name, sh in (*mid_ext.items(), ("f03_ext", f03_ext)):
+            v = _overlap(sh, fixed_plus_f04)
             if v > 1e-3:
-                bad.append(("home", k1, k2, v))
-
-    fixed_plus_f04 = bd.Compound(children=[parts[k] for k in (
-        "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
-        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
-        "fork_base_rails", "fork_front_arch", "fork_drive",
-    )])
-    mid_ext = {k: parts[k].moved(bd.Location((0.0, MID_STROKE_MAX, 0.0)))
-               for k in ("fork_mid_stage", "fork_t8_nut", "fork_mid_fasteners")}
-    rot_deg = math.degrees(MID_STROKE_MAX / PIN_RP)
-    for pk, sgn, ang in (("fork_pinion_left", -1, -rot_deg), ("fork_pinion_right", 1, rot_deg)):
-        xp = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER)
-        p_rot = parts[pk].moved(bd.Location((-xp, -PIN_Y_HOME, 0.0)))
-        p_rot = p_rot.moved(bd.Location((0.0, 0.0, 0.0), (0.0, 0.0, ang)))
-        mid_ext[pk] = p_rot.moved(bd.Location((xp, PIN_Y_HOME + MID_STROKE_MAX, 0.0)))
-    f03_ext = parts["fork_tines"].moved(bd.Location((0.0, 2.0 * MID_STROKE_MAX, 0.0)))
-
-    for name, sh in (*mid_ext.items(), ("f03_ext", f03_ext)):
-        v = _overlap(sh, fixed_plus_f04)
-        if v > 1e-3:
-            bad.append(("extended_240mm", name, "fixed_base", v))
-    for k_ext, sh_ext in mid_ext.items():
-        v_23 = _overlap(sh_ext, f03_ext)
-        if v_23 > 1e-3:
-            bad.append(("extended_240mm", k_ext, "f03_ext", v_23))
+                bad.append((f"ext240_{opt_lbl}", name, "fixed_base", v))
+        if opt_lbl == "optA_tslot":
+            for k_ext, sh_ext in mid_ext.items():
+                v_23 = _overlap(sh_ext, f03_ext)
+                if v_23 > 1e-3:
+                    bad.append(("extended_240mm", k_ext, "f03_ext", v_23))
 
     f03_shelf = f03_ext.moved(bd.Location((0.0, 0.0, 10.0)))
     v_rack = _overlap(f03_shelf, parts["ref_rack_bay"])
     if v_rack > 1e-3:
         bad.append(("extended_lifted_10mm", "f03_tines", "ref_rack_bay", v_rack))
 
-    # Verify orange fork blades (FORK_Z1 = 190.30 mm) sit strictly HIGHER than cogwheels, M3 pinion screws, fixed racks & R49 arch
+    # Verify orange fork blades (FORK_Z1 = 190.30 mm) stay clear of cogwheels, screws, arch, AND hold-down options <= 190.10 mm
     z_fork_top = parts["fork_tines"].bounding_box().max.Z
     for low_k in ("fork_base_rails", "fork_front_arch", "fork_pinion_left", "fork_pinion_right", "fork_mid_fasteners", "fork_t8_nut"):
         z_low = parts[low_k].bounding_box().max.Z
         if z_low >= z_fork_top - 0.4:
             bad.append(("z_clearance", low_k, f"max.Z={z_low:.2f} >= fork_top={z_fork_top:.2f}", z_low - z_fork_top))
+    for opt_k in ("fork_opt_a_tslot", "fork_opt_b_rollers", "fork_opt_b_hw"):
+        z_opt = parts[opt_k].bounding_box().max.Z
+        if z_opt >= 190.25:
+            bad.append(("crate_clearance", opt_k, f"max.Z={z_opt:.2f} >= 190.25", z_opt - 190.25))
 
     if bad:
         for item in bad:
             print("  COLLISION:", item)
     else:
-        print("RESULT: OK - 0 collisions at Home (0 mm) AND Full Shelf Reach (+240 mm, +10 mm Z-lift)")
+        print("RESULT: OK - 0 collisions at Home & +240 mm across BOTH Option A (Side T-Slot) & Option B (MR63ZZ Rollers) + Limit Switches")
     return len(bad) == 0
 
 
