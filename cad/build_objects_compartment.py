@@ -325,7 +325,7 @@ def build_forklift_deck(tray_clean: bd.Part):
     # AND solid 5.15 mm thick blue R44-FK switch-cradle blocks (X=141.5..166.2, Z=168.0..178.0) under BOTH Home & Max limit switches!
     tray_clean = tray_clean + box(SCREW_X - 38.0, SCREW_X + 38.5, -217.5, -89.2, 170.80, NUT_TRENCH_Z)
     tray_clean = tray_clean + box(SCREW_X - 15.5, SCREW_X + 38.5, -89.4, -85.5, 170.80, NUT_TRENCH_Z)
-    tray_clean = tray_clean + box(SCREW_X - 33.0, SCREW_X + 33.0, OB.TRAY_Y0, -208.5, OB.TRAY_RIB_Z0, 172.90)
+    tray_clean = tray_clean + box(SCREW_X - 36.0, SCREW_X + 36.0, OB.TRAY_Y0, -210.0, OB.TRAY_RIB_Z0, 172.90)
     tray_clean = tray_clean + box(SCREW_X - 38.5, SCREW_X - 13.8, OB.TRAY_Y0, -216.8, OB.TRAY_RIB_Z0, OB.TRAY_TOP_Z)
     tray_clean = tray_clean + box(SCREW_X - 38.5, SCREW_X - 13.8, -91.2, OB.TRAY_Y1, OB.TRAY_RIB_Z0, OB.TRAY_TOP_Z)
     for lx, ly in ((208.5, -174.0), (208.5, -142.0)):  # re-open R45 right-wing captive M4 hex sockets & bores cleanly
@@ -347,7 +347,9 @@ def build_forklift_deck(tray_clean: bd.Part):
     # Sewer plunger entry notches at Home (-218.2..-215.5) & Max (-91.4..-88.2) for KW4-3Z-3 plungers (R46 ceiling intact overhead!)
     for pl_n0, pl_n1 in ((-218.2, -215.5), (-91.4, -88.2)):
         tray_clean = tray_clean - box(SCREW_X - 22.2, SCREW_X - 17.4, pl_n0, pl_n1, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.2)
-    # Recessed KW4-3Z-3 pockets seated on solid 5.15 mm R44-FK floor (Z=168.00..173.15) + 4x M2x12 screws & captive M2 hex nuts
+    # Recessed KW4-3Z-3 pockets seated on solid 5.15 mm R44-FK floor (Z=168.00..173.15):
+    # - Rear (Home, Y=-225.4): 2x M2x17 through R44-FK into counterbored green R53-B01 shoulder (Z=164.2..167.85) w/ captive M2 hex nuts
+    # - Front (Max, Y=-81.1):  2x M2x11 through R44-FK floor (Z=168.0..173.15) w/ captive M2 hex nuts in underside counterbores
     for sw_y0, sw_y1, t_y0, t_y1, pin_y in (
         (-229.0, -217.4, -233.6, -228.5, -225.4),
         (-89.1,  -77.7,  -78.2,  -73.4,  -81.1),
@@ -355,9 +357,10 @@ def build_forklift_deck(tray_clean: bd.Part):
         comp = comp - box(SCREW_X - 36.8, SCREW_X - 15.6, sw_y0, sw_y1, 173.15, BAY_FLOOR_Z + 0.5)
         tray_clean = tray_clean - box(SCREW_X - 36.4, SCREW_X - 15.6, sw_y0, sw_y1, 173.15, OB.TRAY_TOP_Z + 0.5)
         tray_clean = tray_clean - box(SCREW_X - 36.2, SCREW_X - 16.0, t_y0, t_y1, 173.15, OB.TRAY_TOP_Z + 0.5)
-        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # exact 9.5 mm KW4-3Z-3 mounting hole pitch (149.25 & 158.75)
+        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # exact 9.5 mm KW4-3Z-3 pitch @ X=149.25 & 158.75 (5.25 mm inside R53 X=144!)
             tray_clean = tray_clean - OB._cyl_axis(1.12, OB.TRAY_RIB_Z0 - 0.5, 173.40, "z", pin_x, pin_y)
-            tray_clean = tray_clean - OB._cyl_axis(2.50, OB.TRAY_RIB_Z0 - 0.5, 170.00, "z", pin_x, pin_y)
+            if pin_y > -200.0:
+                tray_clean = tray_clean - OB._cyl_axis(2.50, OB.TRAY_RIB_Z0 - 0.5, 170.00, "z", pin_x, pin_y)
     comp = comp - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, 178.1)
     tray_clean = tray_clean - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, OB.TRAY_TOP_Z + 0.5)
     tray_clean = tray_clean - OB._cyl_axis(4.60, OB.TRAY_Y0 - 0.5, WALL_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
@@ -456,6 +459,13 @@ def build_forklift_deck(tray_clean: bd.Part):
             x_clear0, x_clear1, REAR_CAP_Y0 + 3.0, SEAM_Y + 0.5, GEAR_Z0 - 0.5, WALL_TOP_Z + 0.5
         )
         rear_cradle = rear_cradle + tail_box
+    # 45-degree triangular side-overhang gussets under R46B rack-tail wings (eliminates 90° overhang ledge & prints support-free!)
+    for sgn_g in (-1, 1):
+        x_in = SCREW_X + sgn_g * 33.0
+        x_out = OB.BXR + sgn_g * (FORK_DX + REAR_OUT_PAD)
+        rear_cradle = rear_cradle + OB._extrude_xz_poly(
+            [(x_in, TIE_SPLIT_Z), (x_out, 179.05), (x_in, 179.05)], REAR_CAP_Y0, SEAM_Y
+        )
     # Reinforced upper front boss pillars on R46B (X=145.0..153.5 & 206.5..215.0, Z=188.0..200.0) + 2x interlocking shear
     # alignment tenons (X=147.6..151.6 & 208.4..212.4, Z=181.5..187.5, Y=-245.05..-242.05) plugging into R46A stop wall!
     for tx0, tx1, bx0, bx1 in ((147.6, 151.6, 145.0, 153.5), (208.4, 212.4, 206.5, 215.0)):
@@ -512,21 +522,21 @@ def build_forklift_deck(tray_clean: bd.Part):
             comp = comp - OB._cyl_axis(0.95, 178.40, BAY_FLOOR_Z + 0.5, "z", mx_flg, my_f)
 
     # 5) Removable Under-Tray Rear Cantilever Tie Plate (R53-B01): docks cleanly beneath R46B (Y=-287.85..-245, Z=155.7..160.15)
-    #    & extends 36.5 mm forward under R44 blue tray deck (Y=-245..-208.5, Z=155.7..167.85) with 4x identical collinear M3x14 screws!
-    under_tie = box(SCREW_X - 33.0, SCREW_X + 33.0, TIE_Y0 + 0.15, WALL_Y0, CRADLE_Z0, TIE_SPLIT_Z - 0.05)
+    #    & extends 35.0 mm forward under R44 blue tray deck (X=144..216, Y=-245..-210.0) with a smooth triangular front wedge (-221.5..-210.0)!
+    under_tie = box(SCREW_X - 33.0, SCREW_X + 33.0, TIE_Y0 + 0.15, WALL_Y0 + 0.2, CRADLE_Z0, TIE_SPLIT_Z - 0.05)
     with bd.BuildPart() as gus_bp:
-        with bd.BuildSketch(bd.Plane.YZ.offset(SCREW_X - 33.0)):
+        with bd.BuildSketch(bd.Plane.YZ.offset(SCREW_X - 36.0)):
             with bd.BuildLine():
                 bd.Polyline(
                     (WALL_Y0, CRADLE_Z0),
-                    (-210.5, CRADLE_Z0),
-                    (-208.5, 164.80),
-                    (-208.5, 167.85),
+                    (-221.5, CRADLE_Z0),
+                    (-210.0, 167.25),
+                    (-210.0, 167.85),
                     (WALL_Y0, 167.85),
                     (WALL_Y0, CRADLE_Z0),
                 )
             bd.make_face()
-        bd.extrude(amount=66.0)
+        bd.extrude(amount=72.0)
     under_tie = under_tie + gus_bp.part
 
     hw_solids = []
@@ -578,14 +588,14 @@ def build_forklift_deck(tray_clean: bd.Part):
             hw_solids.append(_socket_bolt(2.70, 2.4, 1.40, 10.0, "y", sx, sy, sz, head_dir=odir))
 
     # 4x Identical Collinear M3 x 14 mm underside bolts on R53-B01 aligned at X = SCREW_X ± 21.0 (159.0 & 201.0, matching M5 KP08):
-    # - 2x Front at Y = -215.5 mm (29.5 mm deep inside blue R44 tray deck pad, Z = 158.25..172.25 mm)
+    # - 2x Front at Y = -234.5 mm (10.5 mm inside blue R44 tray deck pad, 9.1 mm behind Home limit switch, 7.4 mm clear of step wall!)
     # - 2x Rear  at Y = -275.0 mm (30.0 mm behind seam into solid R46B coupler side bosses, Z = 158.25..172.25 mm)
     for ux in (SCREW_X - 21.0, SCREW_X + 21.0):
-        # Front pair (Y = -215.5 into R44-FK blue tray pad)
-        under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, 168.2, "z", ux, -215.5)
-        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.30, "z", ux, -215.5)
-        tray_clean = tray_clean - OB._cyl_axis(1.45, OB.TRAY_RIB_Z0 - 0.5, 172.60, "z", ux, -215.5)
-        hw_solids.append(_socket_bolt(2.70, 2.40, 1.40, 14.0, "z", ux, -215.5, 158.25, head_dir=-1))
+        # Front pair (Y = -234.5 into R44-FK blue tray pad)
+        under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, 168.2, "z", ux, -234.5)
+        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.30, "z", ux, -234.5)
+        tray_clean = tray_clean - OB._cyl_axis(1.45, OB.TRAY_RIB_Z0 - 0.5, 172.60, "z", ux, -234.5)
+        hw_solids.append(_socket_bolt(2.70, 2.40, 1.40, 14.0, "z", ux, -234.5, 158.25, head_dir=-1))
         # Rear pair (Y = -275.0 into R46B-B01 coupler side bosses)
         under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, TIE_SPLIT_Z + 0.5, "z", ux, -275.0)
         under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.30, "z", ux, -275.0)
@@ -620,13 +630,20 @@ def build_forklift_deck(tray_clean: bd.Part):
         hw_solids.append(_socket_bolt(2.70, 2.8, 1.45, 14.5, "z", fx, -74.0, 182.25, head_dir=1))
         hw_solids.append(_hex_nut(5.5, 2.4, "z", fx, -74.0, 163.40, 1.50))
 
-    # 4x M2 x 11 mm mounting screws + 4x captive M2 hex nuts clamping both KW4-3Z-3 limit switches onto R44-FK floor
+    # 4x M2 mounting screws + 4x captive M2 hex nuts clamping both KW4-3Z-3 limit switches (X=149.25 & 158.75):
+    # - Rear (Home, Y=-225.4): counterbore stops at Z=164.20 inside R53-B01 (leaving 3.65 mm solid green shoulder Z=164.20..167.85
+    #   and 2.95 mm solid green side wall to X=144.0 -> ZERO edge cut & ZERO blue crescent!), w/ M2x17 screw & hex nut @ Z=162.50
+    # - Front (Max, Y=-81.1):  M2x11 screw & captive hex nut @ Z=168.25 in R44-FK underside counterbore
     for pin_y in (-225.4, -81.1):
-        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # 149.25 & 158.75 (exact 9.50 mm pitch)
+        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # 149.25 & 158.75 (exact 9.50 mm pitch, 5.25 mm inside R53 X=144!)
             if pin_y < -200.0:
-                under_tie = under_tie - OB._cyl_axis(2.40, CRADLE_Z0 - 0.5, 168.2, "z", pin_x, pin_y)
-            hw_solids.append(_socket_bolt(1.75, 1.15, 0.95, 11.0, "z", pin_x, pin_y, 179.25, head_dir=1))
-            hw_solids.append(_hex_nut(4.0, 1.60, "z", pin_x, pin_y, 168.25, 1.05))
+                under_tie = under_tie - OB._cyl_axis(1.12, CRADLE_Z0 - 0.5, 168.20, "z", pin_x, pin_y)
+                under_tie = under_tie - OB._cyl_axis(2.42, CRADLE_Z0 - 0.5, 164.20, "z", pin_x, pin_y)
+                hw_solids.append(_socket_bolt(1.75, 1.15, 0.95, 17.0, "z", pin_x, pin_y, 179.25, head_dir=1))
+                hw_solids.append(_hex_nut(4.0, 1.60, "z", pin_x, pin_y, 162.50, 1.05))
+            else:
+                hw_solids.append(_socket_bolt(1.75, 1.15, 0.95, 11.0, "z", pin_x, pin_y, 179.25, head_dir=1))
+                hw_solids.append(_hex_nut(4.0, 1.60, "z", pin_x, pin_y, 168.25, 1.05))
 
     # 6) Removable Screwed Top Motor + Fork-Blade Tail Enclosure Lid (R56-B01):
     #    Extended 7.0 mm forward over the R46A stop wall (Y=-338.9..-238.0, 104.8 x 100.9 mm) so R56-B01 bolts into BOTH
@@ -921,7 +938,7 @@ def build_forklift_mechanism():
     # 2x Accurate Donghai KW4-3Z-3 Sub-Miniature Limit Switches (Duino.lk SW0160: 20.0x10.6x6.8 mm body + 9.5 mm M2 bores
     # + off-center black push-button plunger at X=158.5..161.5 + 3x pierced SPDT C/NO/NC spade terminals, 20x16x7 mm overall)
     sw_solids = []
-    SW_X0, SW_X1 = SCREW_X - 36.0, SCREW_X - 16.0  # 144.0 .. 164.0 (20.0 mm long)
+    SW_X0, SW_X1 = SCREW_X - 36.0, SCREW_X - 16.0  # 144.0 .. 164.0 (20.0 mm long -> M2 bores @ 149.25 & 158.75, 5.25 mm inside R53 X=144!)
     for sw_y0, sw_y1, pl_y0, pl_y1, term_y0, term_y1 in (
         (-228.5, -217.9, -217.9, -215.8, -232.9, -228.5),  # Home KW4-3Z-3: plunger +Y (-215.8), 3 lugs -Y
         (-88.6,  -78.0,  -90.5,  -88.6,  -78.0,  -73.6),   # Max  KW4-3Z-3: plunger -Y (-90.5), 3 lugs +Y (clears R49!)

@@ -216,11 +216,12 @@ const mats = {
 
 const meshes = {};
 const loader = new STLLoader();
+const CACHE_BUST = '?v=' + Date.now();
 function loadMesh(name, parent, recenter = null) {
   const holder = new THREE.Group();
   parent.add(holder);
   meshes[name] = holder;
-  loader.load('/meshes/' + name + '.stl', (geom) => {
+  loader.load('/meshes/' + name + '.stl' + CACHE_BUST, (geom) => {
     if (recenter) geom.translate(recenter[0], recenter[1], recenter[2]);
     holder.add(new THREE.Mesh(geom, mats[name]));
   });

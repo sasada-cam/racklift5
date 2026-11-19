@@ -241,11 +241,13 @@ const mats = {
 };
 
 const geomCache = {};
+const CACHE_BUST = '?v=' + Date.now();
 function addMesh(url, parent, material) {
   const h = new THREE.Group();
   parent.add(h);
-  if (geomCache[url]) { h.add(new THREE.Mesh(geomCache[url], material)); return h; }
-  loader.load(url, (g) => { geomCache[url] = g; h.add(new THREE.Mesh(g, material)); });
+  const bUrl = url + CACHE_BUST;
+  if (geomCache[bUrl]) { h.add(new THREE.Mesh(geomCache[bUrl], material)); return h; }
+  loader.load(bUrl, (g) => { geomCache[bUrl] = g; h.add(new THREE.Mesh(g, material)); });
   return h;
 }
 
