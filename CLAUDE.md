@@ -35,15 +35,22 @@ builder (`cad/*.py`, `generator/*.py`). A new or changed printed part is not don
 One colour family per function, and a different shade for each separately printed part within a family. Parts that
 come apart from each other (base vs. removable cap or cover) must never share a shade, so every split shows in the viewer.
 
-| Family | Use | Shades in use |
+| Family | Use | Shades |
 |---|---|---|
-| Blue | parts that turn with the swivel carriage | `#2E8EE6` P01 pod base, `#1B4A99` P02 motor cap, `#8FD0FF` P03 pinion cover (next: `#3F5FD6`, `#5B7FA6`) |
-| Green | fixed robot-body parts | `#33B873` P04 body mount (next: `#1F7A4D`, `#7FD8A6`) |
-| Amber / orange | gears, pinions, racks | `#F59E0B` P05 20T gear, `#EB7A24` P06 climb pinion, `#C2410C` / `#F59E0B` rail racks |
+| Blue | swivel pod parts that turn with the carriage (P) | `#2E8EE6` P01, `#1B4A99` P02, `#8FD0FF` P03 |
+| Green | fixed robot-body parts (P04 body mount `#33B873`) and robot body / tray / picker parts (R01-R14) | see `part_ids_v3.FAMILY["green"]` |
+| Amber / orange | gears, pulleys, pinions, racks: any letter (P05, P06, R20-R30, X10.., X30, X31, C10) | `part_ids_v3.FAMILY["amber"]` |
+| Teal | rail / crossing printed parts (X01 rail bridge, X02 cart lock socket) | `part_ids_v3.FAMILY["teal"]` |
+| Pink | transfer cart parts (C01) | `part_ids_v3.FAMILY["pink"]` |
+| Purple | docks and jacks (D01-D07) | `part_ids_v3.FAMILY["purple"]` |
+| Light grey | covers (K01-K03) | `part_ids_v3.FAMILY["light"]` |
 | Grey metallic | steel fasteners and hardware | `#9AA5B4` |
-| Light grey | aluminium extrusion, plates and brackets | `#94A3B8`, `#7C8A9C` |
+| Light grey (aluminium) | aluminium extrusion, plates and brackets | `#94A3B8`, `#7C8A9C` |
 | Real colours | bought motors, servos, bearings | servo red `#C41E24`, motor grey `#B4BCC8`, bearing `#D8DEE6` |
 
+- The v3 parts (R, X, C, D, K) take their ID, family and shade from `generator/part_ids_v3.py`: add a new printed part
+  there (`ENTRIES`). Shades are handed out in order, so every part gets its own. `pixi run export-components` engraves
+  them automatically (`cad/engrave_auto.py`); check the "engraved mark" column of `BOM_v3.csv` for any "unmarked".
 - The same colour must be set in all three places: `part.color` in the builder, the RGB in `generator/pod_v3.py` /
   `assembly_v3.py`, and the THREE.js material in the viewer.
 

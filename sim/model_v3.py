@@ -12,6 +12,7 @@ sys.path.insert(0, HERE)
 import model as MD                       # mesh writer + helpers (also puts generator/ on sys.path)
 import params_v3 as P3                   # noqa: E402
 import assembly_v3 as A3                 # noqa: E402
+import part_ids_v3 as PID                # noqa: E402  printed-part colours (CLAUDE.md)
 
 MM = MD.MM
 v3 = MD.v3
@@ -35,12 +36,12 @@ def build(out=None):
         M.assets[-1] = M.assets[-1].replace('file="meshes/', 'file="meshes_v3/')
         return name
     M.add = add
-    vis = lambda items, off=(0, 0, 0): MD.vis(M, items, off)
+    vis = lambda items, off=(0, 0, 0): MD.vis(M, [(n, sl, PID.colour(n, c)) for n, sl, c in items], off)   # printed parts: registry colours
 
     def cover_geoms(items, prefix):
         """named geoms so the viewer / web page can show, hide or fade them (alpha is set at run time)"""
         return "\n".join(f'<geom name="{prefix}_{i}" type="mesh" mesh="{M.add(s)}" rgba="{MD.rgba(c, 0.3)}" contype="0" conaffinity="0" '
-                         f'group="1" density="0"/>' for i, (n, s, c) in enumerate(items))
+                         f'group="1" density="0"/>' for i, (n, s, c) in enumerate((n, s, PID.colour(n, c)) for n, s, c in items))
 
     world = [vis(A3.static_items()),
              '<geom type="plane" size="3 3 0.1" rgba="0.92 0.92 0.94 1" contype="0" conaffinity="0"/>']

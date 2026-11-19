@@ -1,139 +1,173 @@
-ID,category,part,qty,size mm (x y z),volume cm3,suggested process / source,CAD file
-BAS01,Baskets,basket (stand-in for the real basket),55,260 x 180 x 110,420.3,Buy (basket),Baskets/BAS01_basket_stand_in_for_the_real_basket.step
-COV01,Covers,cover: front drive (servo 1 + belt),1,58 x 55 x 58,24.6,"3D print (PETG), 2.4 mm walls, closed face down",Covers/COV01_cover_front_drive_servo_1_belt.step
-COV02,Covers,cover: jack motor,3,71 x 66 x 56,33.2,"3D print (PETG), 2.4 mm walls, closed face down",Covers/COV02_cover_jack_motor.step
-COV03,Covers,cover: turn-drive cap,1,47 x 36 x 46,20.2,"3D print (PETG), 2.4 mm walls, closed face down",Covers/COV03_cover_turn_drive_cap.step
-DOC01,Dock (jack + raised floor),jack: NEMA17 stepper + 3:1 planetary gearhead,3,73 x 42 x 42,120.5,Buy (actuator),Dock_jack_raised_floor/DOC01_jack_NEMA17_stepper_3_1_planetary_gearhead.step
-DOC02,Dock (jack + raised floor),jack: TR8x2 lead screw,3,170 x 10 x 10,9.1,Buy (TR8x2 lead screw),Dock_jack_raised_floor/DOC02_jack_TR8x2_lead_screw.step
-DOC03,Dock (jack + raised floor),jack: base plate (aluminium),3,270 x 214 x 6,346.7,"Aluminium plate / bar (laser cut, drill)",Dock_jack_raised_floor/DOC03_jack_base_plate_aluminium.step
-DOC04,Dock (jack + raised floor),jack: bottom pivot lug,6,16 x 8 x 16,2.0,3D print (PETG),Dock_jack_raised_floor/DOC04_jack_bottom_pivot_lug.step
-DOC05,Dock (jack + raised floor),jack: bottom pivot shaft (fixed),3,6 x 167 x 6,4.7,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC05_jack_bottom_pivot_shaft_fixed.step
-DOC06,Dock (jack + raised floor),jack: centre pin shaft,3,6 x 168 x 6,4.8,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC06_jack_centre_pin_shaft.step
-DOC07,Dock (jack + raised floor),jack: lead nut block (printed),3,16 x 16 x 21,5.4,3D print (PETG),Dock_jack_raised_floor/DOC07_jack_lead_nut_block_printed.step
-DOC08,Dock (jack + raised floor),jack: limit switch (platform down),3,8 x 10 x 14,1.1,Buy (sensor / switch),Dock_jack_raised_floor/DOC08_jack_limit_switch_platform_down.step
-DOC09,Dock (jack + raised floor),jack: limit switch (platform up),3,8 x 10 x 14,1.1,Buy (sensor / switch),Dock_jack_raised_floor/DOC09_jack_limit_switch_platform_up.step
-DOC10,Dock (jack + raised floor),jack: motor bracket (printed),3,6 x 66 x 56,21.7,3D print (PETG),Dock_jack_raised_floor/DOC10_jack_motor_bracket_printed.step
-DOC11,Dock (jack + raised floor),jack: platform plate (8 mm aluminium),3,290 x 236 x 17,558.0,"Aluminium plate / bar (laser cut, drill)",Dock_jack_raised_floor/DOC11_jack_platform_plate_8_mm_aluminium.step
-DOC12,Dock (jack + raised floor),jack: roller,6,12 x 3 x 12,0.3,Buy (wheel / roller),Dock_jack_raised_floor/DOC12_jack_roller.step
-DOC13,Dock (jack + raised floor),jack: roller axle,3,4 x 165 x 4,2.1,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC13_jack_roller_axle.step
-DOC14,Dock (jack + raised floor),jack: roller guide bar,6,104 x 4 x 16,6.7,"Steel / aluminium flat bar (cut, drill)",Dock_jack_raised_floor/DOC14_jack_roller_guide_bar.step
-DOC15,Dock (jack + raised floor),jack: scissor arm (inner),6,184 x 8 x 14,20.3,"Aluminium flat bar 14 x 8 (cut, drill)",Dock_jack_raised_floor/DOC15_jack_scissor_arm_inner.step
-DOC16,Dock (jack + raised floor),jack: scissor arm (outer),6,184 x 8 x 14,20.3,"Aluminium flat bar 14 x 8 (cut, drill)",Dock_jack_raised_floor/DOC16_jack_scissor_arm_outer.step
-DOC17,Dock (jack + raised floor),jack: screw bearing block (printed),3,8 x 24 x 28,5.4,3D print (PETG),Dock_jack_raised_floor/DOC17_jack_screw_bearing_block_printed.step
-DOC18,Dock (jack + raised floor),jack: shaft coupling + index flag,3,10 x 16 x 34,3.1,"Print, or buy a GT2 pulley / gear / coupling",Dock_jack_raised_floor/DOC18_jack_shaft_coupling_index_flag.step
-DOC19,Dock (jack + raised floor),jack: slider cross tube,3,8 x 165 x 8,8.3,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC19_jack_slider_cross_tube.step
-DOC20,Dock (jack + raised floor),jack: slider guide rail,6,118 x 6 x 4,2.8,"Steel / aluminium flat bar (cut, drill)",Dock_jack_raised_floor/DOC20_jack_slider_guide_rail.step
-DOC21,Dock (jack + raised floor),jack: slider shoe (printed),6,24 x 6 x 11,1.6,3D print (PETG),Dock_jack_raised_floor/DOC21_jack_slider_shoe_printed.step
-DOC22,Dock (jack + raised floor),jack: top pivot lug,6,16 x 6 x 16,1.5,3D print (PETG),Dock_jack_raised_floor/DOC22_jack_top_pivot_lug.step
-DOC23,Dock (jack + raised floor),jack: top pivot shaft,3,6 x 163 x 6,4.6,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC23_jack_top_pivot_shaft.step
-DOC24,Dock (jack + raised floor),raised floor: battens,3,399 x 424 x 20,431.5,Timber battens (cut),Dock_jack_raised_floor/DOC24_raised_floor_battens.step
-DOC25,Dock (jack + raised floor),raised floor: top plate (18 mm plywood),3,399 x 424 x 18,1444.4,Plywood (cut to size),Dock_jack_raised_floor/DOC25_raised_floor_top_plate_18_mm_plywood.step
-LCK01,Locks (robot + cart),"cart docking bar (printed, with the bolt socket)",1,116 x 28 x 28,87.3,3D print (PETG),Locks_robot_cart/LCK01_cart_docking_bar_printed_with_the_bolt_socket.step
-LCK02,Locks (robot + cart),cart lock pin + release tab (spring),1,40 x 74 x 40,13.7,"Steel rod / tube (cut, turn)",Locks_robot_cart/LCK02_cart_lock_pin_release_tab_spring.step
-LCK03,Locks (robot + cart),"cart lock socket (printed, funnel lead-in, on the lower rail-end arm)",3,30 x 26 x 65,46.0,3D print (PETG),Locks_robot_cart/LCK03_cart_lock_socket_printed_funnel_lead_in_on_the_lower.step
-LCK04,Locks (robot + cart),"lock solenoid (docking bolt, push type)",1,18 x 28 x 16,8.1,Buy (actuator),Locks_robot_cart/LCK04_lock_solenoid_docking_bolt_push_type.step
-LCK05,Locks (robot + cart),"lock solenoid (release plunger, push type)",1,28 x 21 x 16,9.4,Buy (actuator),Locks_robot_cart/LCK05_lock_solenoid_release_plunger_push_type.step
-LCK06,Locks (robot + cart),"lock solenoid bolt (docking, bullet nose)",1,9 x 14 x 9,0.7,"Steel rod / tube (cut, turn)",Locks_robot_cart/LCK06_lock_solenoid_bolt_docking_bullet_nose.step
-LCK07,Locks (robot + cart),lock solenoid bracket (docking bolt),1,24 x 6 x 24,3.5,3D print (PETG),Locks_robot_cart/LCK07_lock_solenoid_bracket_docking_bolt.step
-LCK08,Locks (robot + cart),lock solenoid bracket (release plunger),1,36 x 6 x 24,5.2,3D print (PETG),Locks_robot_cart/LCK08_lock_solenoid_bracket_release_plunger.step
-LCK09,Locks (robot + cart),lock solenoid plunger (cart release),1,48 x 4 x 4,0.8,"Steel rod / tube (cut, turn)",Locks_robot_cart/LCK09_lock_solenoid_plunger_cart_release.step
-RAC01,Rack,slotted angle rack (bay),12,382 x 234 x 1000,1073.2,Buy (slotted-angle rack),Rack/RAC01_slotted_angle_rack_bay.step
-RAI01,Rails + crossings,50 mm turntable bearing,24,50 x 8 x 50,15.7,Buy (bearing),Rails_crossings/RAI01_50_mm_turntable_bearing.step
-RAI02,Rails + crossings,V-slot rail (horizontal),18,324 x 20 x 20,81.4,Aluminium extrusion (cut to length),Rails_crossings/RAI02_V_slot_rail_horizontal.step
-RAI03,Rails + crossings,V-slot rail (horizontal),6,489 x 20 x 20,122.9,Aluminium extrusion (cut to length),Rails_crossings/RAI03_V_slot_rail_horizontal.step
-RAI04,Rails + crossings,V-slot rail (vertical),12,20 x 20 x 694,174.3,Aluminium extrusion (cut to length),Rails_crossings/RAI04_V_slot_rail_vertical.step
-RAI05,Rails + crossings,"V-slot rail (vertical, between crossings)",12,20 x 20 x 145,36.4,Aluminium extrusion (cut to length),Rails_crossings/RAI05_V_slot_rail_vertical_between_crossings.step
-RAI06,Rails + crossings,aluminium crossing bracket,6,57 x 40 x 40,37.5,"Aluminium plate / bar (laser cut, drill)",Rails_crossings/RAI06_aluminium_crossing_bracket.step
-RAI07,Rails + crossings,aluminium crossing bracket,18,182 x 40 x 40,83.5,"Aluminium plate / bar (laser cut, drill)",Rails_crossings/RAI07_aluminium_crossing_bracket.step
-RAI08,Rails + crossings,aluminium rail support (last stretch),6,38 x 40 x 40,11.4,"Aluminium plate / bar (laser cut, drill)",Rails_crossings/RAI08_aluminium_rail_support_last_stretch.step
-RAI09,Rails + crossings,printed in-slot rack,36,10 x 4 x 188,3.9,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI09_printed_in_slot_rack.step
-RAI10,Rails + crossings,printed in-slot rack,30,10 x 4 x 188,3.9,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI10_printed_in_slot_rack.step
-RAI11,Rails + crossings,printed in-slot rack,12,10 x 4 x 129,2.7,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI11_printed_in_slot_rack.step
-RAI12,Rails + crossings,printed in-slot rack,12,10 x 4 x 145,3.0,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI12_printed_in_slot_rack.step
-RAI13,Rails + crossings,printed in-slot rack,18,136 x 4 x 10,2.8,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI13_printed_in_slot_rack.step
-RAI14,Rails + crossings,printed in-slot rack,6,113 x 4 x 10,2.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI14_printed_in_slot_rack.step
-RAI15,Rails + crossings,printed in-slot rack (cart),2,112 x 4 x 10,2.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI15_printed_in_slot_rack_cart.step
-RAI16,Rails + crossings,printed in-slot rack (turntable),24,10 x 4 x 112,2.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/RAI16_printed_in_slot_rack_turntable.step
-RAI17,Rails + crossings,printed rail bridge,36,122 x 40 x 40,42.1,3D print (PETG),Rails_crossings/RAI17_printed_rail_bridge.step
-RAI18,Rails + crossings,rail end arm (from the rack end post),6,125 x 30 x 24,90.1,Aluminium extrusion (cut to length),Rails_crossings/RAI18_rail_end_arm_from_the_rack_end_post.step
-RAI19,Rails + crossings,rail piece on cart,2,112 x 20 x 20,28.2,Aluminium extrusion (cut to length),Rails_crossings/RAI19_rail_piece_on_cart.step
-RAI20,Rails + crossings,rail piece on turntable,24,20 x 20 x 112,28.2,Aluminium extrusion (cut to length),Rails_crossings/RAI20_rail_piece_on_turntable.step
-ROB01,Robot body + hubs,JGY-370 climb motor,2,22 x 36 x 32,25.9,Buy (actuator),Robot_body_hubs/ROB01_JGY_370_climb_motor.step
-ROB02,Robot body + hubs,JGY-370 climb motor can,2,24 x 24 x 30,14.0,Buy (actuator),Robot_body_hubs/ROB02_JGY_370_climb_motor_can.step
-ROB03,Robot body + hubs,JGY-370 swivel motor,2,22 x 22 x 46,23.3,Buy (actuator),Robot_body_hubs/ROB03_JGY_370_swivel_motor.step
-ROB04,Robot body + hubs,JGY-370 swivel motor can,2,33 x 24 x 24,15.4,Buy (actuator),Robot_body_hubs/ROB04_JGY_370_swivel_motor_can.step
-ROB05,Robot body + hubs,PTFE slide pad,8,2 x 180 x 4,1.4,Buy (PTFE pad),Robot_body_hubs/ROB05_PTFE_slide_pad.step
-ROB06,Robot body + hubs,V wheel,8,24 x 10 x 24,4.8,Buy (wheel / roller),Robot_body_hubs/ROB06_V_wheel.step
-ROB07,Robot body + hubs,aluminium column bar 28 x 24 (replaces the printed column),1,28 x 24 x 299,201.0,"Aluminium bar 28 x 24 (cut to length, drill)",Robot_body_hubs/ROB07_aluminium_column_bar_28_x_24_replaces_the_printed_co.step
-ROB08,Robot body + hubs,battery + electronics box (fixed counterweight),1,100 x 60 x 90,540.0,Buy (battery + electronics box),Robot_body_hubs/ROB08_battery_electronics_box_fixed_counterweight.step
-ROB09,Robot body + hubs,battery bracket,1,56 x 24 x 30,40.3,"Aluminium plate / bar (laser cut, drill)",Robot_body_hubs/ROB09_battery_bracket.step
-ROB10,Robot body + hubs,climber shaft,2,13 x 6 x 6,0.4,"Steel rod / tube (cut, turn)",Robot_body_hubs/ROB10_climber_shaft.step
-ROB11,Robot body + hubs,hub plate (6 mm aluminium),2,65 x 6 x 90,35.1,"Aluminium plate / bar (laser cut, drill)",Robot_body_hubs/ROB11_hub_plate_6_mm_aluminium.step
-ROB12,Robot body + hubs,printed climber pinion,2,11 x 24 x 24,2.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Robot_body_hubs/ROB12_printed_climber_pinion.step
-ROB13,Robot body + hubs,printed hub cover,2,94 x 12 x 94,10.3,3D print (PETG),Robot_body_hubs/ROB13_printed_hub_cover.step
-ROB14,Robot body + hubs,spacer,8,10 x 6 x 10,0.5,"Steel rod / tube (cut, turn)",Robot_body_hubs/ROB14_spacer.step
-ROB15,Robot body + hubs,swivel axle,2,16 x 29 x 16,5.8,"Steel rod / tube (cut, turn)",Robot_body_hubs/ROB15_swivel_axle.step
-CRT01,Transfer cart + beam,cart frame (20x20 V-slot),1,126 x 280 x 408,658.0,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT01_cart_frame_20x20_V_slot.step
-CRT02,Transfer cart + beam,cart trolley plate,2,8 x 44 x 88,29.0,"Aluminium plate / bar (laser cut, drill)",Transfer_cart_beam/CRT02_cart_trolley_plate.step
-CRT03,Transfer cart + beam,"floor guide rail (guides only, no load)",1,20 x 2040 x 20,816.0,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT03_floor_guide_rail_guides_only_no_load.step
-CRT04,Transfer cart + beam,floor guide rollers (sideways only),2,36 x 16 x 20,4.5,Buy (wheel / roller),Transfer_cart_beam/CRT04_floor_guide_rollers_sideways_only.step
-CRT05,Transfer cart + beam,printed transfer rack segment (module 1.5),10,7 x 188 x 8,8.6,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Transfer_cart_beam/CRT05_printed_transfer_rack_segment_module_1_5.step
-CRT06,Transfer cart + beam,printed transfer rack segment (module 1.5),1,7 x 151 x 8,6.9,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Transfer_cart_beam/CRT06_printed_transfer_rack_segment_module_1_5.step
-CRT07,Transfer cart + beam,"transfer beam (20x40 V-slot, carries the cart)",1,20 x 2040 x 40,1632.0,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT07_transfer_beam_20x40_V_slot_carries_the_cart.step
-CRT08,Transfer cart + beam,transfer beam arm,5,422 x 20 x 24,202.6,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT08_transfer_beam_arm.step
-CRT09,Transfer cart + beam,transfer beam post (levelling foot),5,100 x 60 x 398,192.8,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT09_transfer_beam_post_levelling_foot.step
-CRT10,Transfer cart + beam,trolley V-wheels (above + below the beam),2,28 x 44 x 80,23.8,Buy (wheel / roller),Transfer_cart_beam/CRT10_trolley_V_wheels_above_below_the_beam.step
-PIC01,Tray + picker + drives,GT2 25T pulley (servo 1),1,5 x 40 x 40,5.3,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC01_GT2_25T_pulley_servo_1.step
-PIC02,Tray + picker + drives,GT2 33T pulley (stage-1 drive),2,4 x 24 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC02_GT2_33T_pulley_stage_1_drive.step
-PIC03,Tray + picker + drives,"GT2 8T pulley (step-up, cross shaft)",1,5 x 15 x 15,0.4,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC03_GT2_8T_pulley_step_up_cross_shaft.step
-PIC04,Tray + picker + drives,GT2 belt (servo 2 -> right rod),1,269 x 4 x 11,2.6,"Buy (GT2 belt, cut to length)",Tray_picker_drives/PIC04_GT2_belt_servo_2_right_rod.step
-PIC05,Tray + picker + drives,GT2 belt (step-up 25T -> 8T),1,5 x 41 x 50,0.8,"Buy (GT2 belt, cut to length)",Tray_picker_drives/PIC05_GT2_belt_step_up_25T_8T.step
-PIC06,Tray + picker + drives,GT2 belt loop (stage 1),2,4 x 236 x 11,2.3,"Buy (GT2 belt, cut to length)",Tray_picker_drives/PIC06_GT2_belt_loop_stage_1.step
-PIC07,Tray + picker + drives,GT2 idler (stage-1 belt),2,4 x 24 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC07_GT2_idler_stage_1_belt.step
-PIC08,Tray + picker + drives,GT2 pulley (right rod),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC08_GT2_pulley_right_rod.step
-PIC09,Tray + picker + drives,GT2 pulley (servo 2),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC09_GT2_pulley_servo_2.step
-PIC10,Tray + picker + drives,"N20 gear motor (turn drive, on the lift carriage)",1,12 x 12 x 27,3.3,Buy (actuator),Tray_picker_drives/PIC10_N20_gear_motor_turn_drive_on_the_lift_carriage.step
-PIC11,Tray + picker + drives,SG90 micro servo (turn pinion lift),1,12 x 23 x 22,6.1,Buy (actuator),Tray_picker_drives/PIC11_SG90_micro_servo_turn_pinion_lift.step
-PIC12,Tray + picker + drives,arm drive cross shaft (both arms locked together),1,304 x 6 x 6,8.6,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC12_arm_drive_cross_shaft_both_arms_locked_together.step
-PIC13,Tray + picker + drives,bar load cell 5 kg + HX711,1,36 x 20 x 13,9.4,Buy (sensor / switch),Tray_picker_drives/PIC13_bar_load_cell_5_kg_HX711.step
-PIC14,Tray + picker + drives,belt anchor (inner bar),4,4 x 4 x 2,0.0,3D print (PETG),Tray_picker_drives/PIC14_belt_anchor_inner_bar.step
-PIC15,Tray + picker + drives,belt anchor (outer bar),4,4 x 4 x 2,0.0,3D print (PETG),Tray_picker_drives/PIC15_belt_anchor_outer_bar.step
-PIC16,Tray + picker + drives,finger drive gear (left rod),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC16_finger_drive_gear_left_rod.step
-PIC17,Tray + picker + drives,finger drive gear (servo 2),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC17_finger_drive_gear_servo_2.step
-PIC18,Tray + picker + drives,finger shaft bearing (inner bar),4,13 x 6 x 20,1.6,3D print (PETG),Tray_picker_drives/PIC18_finger_shaft_bearing_inner_bar.step
-PIC19,Tray + picker + drives,finger shaft: fixed square rod,2,5 x 221 x 5,5.5,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC19_finger_shaft_fixed_square_rod.step
-PIC20,Tray + picker + drives,finger shaft: inner square tube,2,11 x 192 x 11,23.2,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC20_finger_shaft_inner_square_tube.step
-PIC21,Tray + picker + drives,finger shaft: middle square tube,2,8 x 198 x 8,12.7,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC21_finger_shaft_middle_square_tube.step
-PIC22,Tray + picker + drives,idler axle,2,6 x 4 x 4,0.1,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC22_idler_axle.step
-PIC23,Tray + picker + drives,limit switch (basket on tray),1,20 x 6 x 10,1.3,Buy (sensor / switch),Tray_picker_drives/PIC23_limit_switch_basket_on_tray.step
-PIC24,Tray + picker + drives,plywood tray 12 mm,1,292 x 224 x 12,784.7,Plywood (cut to size),Tray_picker_drives/PIC24_plywood_tray_12_mm.step
-PIC25,Tray + picker + drives,printed arm post,2,13 x 15 x 35,6.8,3D print (PETG),Tray_picker_drives/PIC25_printed_arm_post.step
-PIC26,Tray + picker + drives,"printed arm post (rear, idler axle)",2,13 x 12 x 35,5.5,3D print (PETG),Tray_picker_drives/PIC26_printed_arm_post_rear_idler_axle.step
-PIC27,Tray + picker + drives,printed basket stop,2,40 x 24 x 26,10.4,3D print (PETG),Tray_picker_drives/PIC27_printed_basket_stop.step
-PIC28,Tray + picker + drives,printed flip finger (front),2,19 x 4 x 42,1.4,3D print (PETG),Tray_picker_drives/PIC28_printed_flip_finger_front.step
-PIC29,Tray + picker + drives,printed flip finger (rear),2,19 x 4 x 42,1.4,3D print (PETG),Tray_picker_drives/PIC29_printed_flip_finger_rear.step
-PIC30,Tray + picker + drives,printed front post (rod + cross-shaft bearings),2,13 x 21 x 87,10.3,3D print (PETG),Tray_picker_drives/PIC30_printed_front_post_rod_cross_shaft_bearings.step
-PIC31,Tray + picker + drives,printed lift carriage,1,4 x 16 x 27,1.7,3D print (PETG),Tray_picker_drives/PIC31_printed_lift_carriage.step
-PIC32,Tray + picker + drives,printed stage-1 belt clamp (middle bar),2,5 x 10 x 30,0.7,3D print (PETG),Tray_picker_drives/PIC32_printed_stage_1_belt_clamp_middle_bar.step
-PIC33,Tray + picker + drives,printed turn-drive mast,1,79 x 24 x 98,45.0,3D print (PETG),Tray_picker_drives/PIC33_printed_turn_drive_mast.step
-PIC34,Tray + picker + drives,servo 1 bracket,1,20 x 20 x 24,9.6,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC34_servo_1_bracket.step
-PIC35,Tray + picker + drives,servo 1: DS3218 270 deg (arm stroke),1,20 x 40 x 34,27.2,Buy (actuator),Tray_picker_drives/PIC35_servo_1_DS3218_270_deg_arm_stroke.step
-PIC36,Tray + picker + drives,servo 2 bracket,1,8 x 8 x 12,0.8,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC36_servo_2_bracket.step
-PIC37,Tray + picker + drives,servo 2 output shaft,1,5 x 13 x 5,0.3,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC37_servo_2_output_shaft.step
-PIC38,Tray + picker + drives,servo 2: MG90S (all four fingers),1,23 x 28 x 12,7.7,Buy (actuator),Tray_picker_drives/PIC38_servo_2_MG90S_all_four_fingers.step
-PIC39,Tray + picker + drives,stage-2 pulley (extend),2,4 x 16 x 16,0.4,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC39_stage_2_pulley_extend.step
-PIC40,Tray + picker + drives,stage-2 pulley (retract),2,4 x 16 x 16,0.4,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/PIC40_stage_2_pulley_retract.step
-PIC41,Tray + picker + drives,"telescopic arm, inner bar",2,13 x 180 x 8,18.7,Aluminium flat bar 13 x 8 (cut to length),Tray_picker_drives/PIC41_telescopic_arm_inner_bar.step
-PIC42,Tray + picker + drives,"telescopic arm, middle bar",2,13 x 180 x 8,18.7,Aluminium flat bar 13 x 8 (cut to length),Tray_picker_drives/PIC42_telescopic_arm_middle_bar.step
-PIC43,Tray + picker + drives,"telescopic arm, outer bar (fixed)",2,13 x 180 x 8,18.7,Aluminium flat bar 13 x 8 (cut to length),Tray_picker_drives/PIC43_telescopic_arm_outer_bar_fixed.step
-PIC44,Tray + picker + drives,tray bracket,1,68 x 24 x 12,19.6,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC44_tray_bracket.step
-PIC45,Tray + picker + drives,turn drive pinion 16T (robot),1,27 x 27 x 8,3.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Tray_picker_drives/PIC45_turn_drive_pinion_16T_robot.step
--,Tray + picker + drives,"GT2 belt, stage 2 (6 mm), cut to the loop length",4,-,-,"Buy (GT2 belt, cut to length)",-
--,Covers,"Cover screws: M3 x 16 chipboard (wood) screw, pan head - front drive cover into the plywood",2,-,-,Buy (hardware),-
--,Covers,"Cover screws: M3 x 12 machine screw, pan head - turn-drive cap (2) and the 3 jack motor covers (12)",14,-,-,Buy (hardware),-
--,Covers,"Cover nuts: M3 hex nut, standard or nylon-insert - caught in the printed slots / pockets",14,-,-,Buy (hardware),-
--,Covers,Cover washers: M3 flat washer,14,-,-,Buy (hardware),-
--,Rails + crossings,"Rack fixing: in-slot racks slide into the rail's front slot from the free end in order (press fit), one drop of cyanoacrylate per piece; end caps stop them at the free ends",as needed,-,-,Buy (hardware),-
--,Rails + crossings,Rail / bracket fixing: M5 x 10 button screw + M5 slot T-nut (V-slot) - rail to bracket support plates and bridges,as needed,-,-,Buy (hardware),-
--,Rails + crossings,Crossing bracket fixing: M5 x 12 screw + washer through the rack post flange (2 per post) + 4 x M4 x 12 bolts for the turntable bearing's fixed ring,as needed,-,-,Buy (hardware),-
--,Hardware,"Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins",as needed,-,-,Buy (assorted; count from the drawings),-
+ID,category,part,qty,size mm (x y z),volume cm3,suggested process / source,CAD file,print ID,engraved mark
+BAS01,Baskets,basket (stand-in for the real basket),55,260 x 180 x 110,420.3,Buy (basket),Baskets/BAS01_basket_stand_in_for_the_real_basket.step,-,-
+COV01,Covers,cover: front drive (servo 1 + belt),1,58 x 55 x 58,24.6,"3D print (PETG), 2.4 mm walls, closed face down",Covers/K01_COV01_cover_front_drive_servo_1_belt.step,K01,K01-B01 (5 mm)
+COV02,Covers,cover: jack motor,3,71 x 66 x 56,33.2,"3D print (PETG), 2.4 mm walls, closed face down",Covers/K02_COV02_cover_jack_motor.step,K02,K02-B01 (5 mm)
+COV03,Covers,cover: turn-drive cap,1,47 x 36 x 46,20.2,"3D print (PETG), 2.4 mm walls, closed face down",Covers/K03_COV03_cover_turn_drive_cap.step,K03,K03-B01 (5 mm)
+DOC01,Dock (jack + raised floor),jack: NEMA17 stepper + 3:1 planetary gearhead,3,73 x 42 x 42,120.5,Buy (actuator),Dock_jack_raised_floor/DOC01_jack_NEMA17_stepper_3_1_planetary_gearhead.step,-,-
+DOC02,Dock (jack + raised floor),jack: TR8x2 lead screw,3,170 x 10 x 10,9.1,Buy (TR8x2 lead screw),Dock_jack_raised_floor/DOC02_jack_TR8x2_lead_screw.step,-,-
+DOC03,Dock (jack + raised floor),jack: base plate (aluminium),3,270 x 214 x 6,346.7,"Aluminium plate / bar (laser cut, drill)",Dock_jack_raised_floor/DOC03_jack_base_plate_aluminium.step,-,-
+DOC04,Dock (jack + raised floor),jack: bottom pivot lug,6,16 x 8 x 16,2.0,3D print (PETG),Dock_jack_raised_floor/D05_DOC04_jack_bottom_pivot_lug.step,D05,D05-B01 (3 mm)
+DOC05,Dock (jack + raised floor),jack: bottom pivot shaft (fixed),3,6 x 167 x 6,4.7,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC05_jack_bottom_pivot_shaft_fixed.step,-,-
+DOC06,Dock (jack + raised floor),jack: centre pin shaft,3,6 x 168 x 6,4.8,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC06_jack_centre_pin_shaft.step,-,-
+DOC07,Dock (jack + raised floor),jack: lead nut block (printed),3,16 x 16 x 21,5.4,3D print (PETG),Dock_jack_raised_floor/D03_DOC07_jack_lead_nut_block_printed.step,D03,D03-B01 (5 mm)
+DOC08,Dock (jack + raised floor),jack: limit switch (platform down),3,8 x 10 x 14,1.1,Buy (sensor / switch),Dock_jack_raised_floor/DOC08_jack_limit_switch_platform_down.step,-,-
+DOC09,Dock (jack + raised floor),jack: limit switch (platform up),3,8 x 10 x 14,1.1,Buy (sensor / switch),Dock_jack_raised_floor/DOC09_jack_limit_switch_platform_up.step,-,-
+DOC10,Dock (jack + raised floor),jack: motor bracket (printed),3,6 x 66 x 56,21.7,3D print (PETG),Dock_jack_raised_floor/D01_DOC10_jack_motor_bracket_printed.step,D01,D01-B01 (5 mm)
+DOC11,Dock (jack + raised floor),jack: platform plate (8 mm aluminium),3,290 x 236 x 17,558.0,"Aluminium plate / bar (laser cut, drill)",Dock_jack_raised_floor/DOC11_jack_platform_plate_8_mm_aluminium.step,-,-
+DOC12,Dock (jack + raised floor),jack: roller,6,12 x 3 x 12,0.3,Buy (wheel / roller),Dock_jack_raised_floor/DOC12_jack_roller.step,-,-
+DOC13,Dock (jack + raised floor),jack: roller axle,3,4 x 165 x 4,2.1,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC13_jack_roller_axle.step,-,-
+DOC14,Dock (jack + raised floor),jack: roller guide bar,6,104 x 4 x 16,6.7,"Steel / aluminium flat bar (cut, drill)",Dock_jack_raised_floor/DOC14_jack_roller_guide_bar.step,-,-
+DOC15,Dock (jack + raised floor),jack: scissor arm (inner),6,184 x 8 x 14,20.3,"Aluminium flat bar 14 x 8 (cut, drill)",Dock_jack_raised_floor/DOC15_jack_scissor_arm_inner.step,-,-
+DOC16,Dock (jack + raised floor),jack: scissor arm (outer),6,184 x 8 x 14,20.3,"Aluminium flat bar 14 x 8 (cut, drill)",Dock_jack_raised_floor/DOC16_jack_scissor_arm_outer.step,-,-
+DOC17,Dock (jack + raised floor),jack: screw bearing block (printed),3,8 x 24 x 28,5.4,3D print (PETG),Dock_jack_raised_floor/D02_DOC17_jack_screw_bearing_block_printed.step,D02,D02-B01 (5 mm)
+DOC18,Dock (jack + raised floor),jack: shaft coupling + index flag,3,10 x 16 x 34,3.1,"Print, or buy a GT2 pulley / gear / coupling",Dock_jack_raised_floor/D07_DOC18_jack_shaft_coupling_index_flag.step,D07,D07-B01 (5 mm)
+DOC19,Dock (jack + raised floor),jack: slider cross tube,3,8 x 165 x 8,8.3,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC19_jack_slider_cross_tube.step,-,-
+DOC20,Dock (jack + raised floor),jack: slider guide rail,6,118 x 6 x 4,2.8,"Steel / aluminium flat bar (cut, drill)",Dock_jack_raised_floor/DOC20_jack_slider_guide_rail.step,-,-
+DOC21,Dock (jack + raised floor),jack: slider shoe (printed),6,24 x 6 x 11,1.6,3D print (PETG),Dock_jack_raised_floor/D04_DOC21_jack_slider_shoe_printed.step,D04,D04-B01 (5 mm)
+DOC22,Dock (jack + raised floor),jack: top pivot lug,6,16 x 6 x 16,1.5,3D print (PETG),Dock_jack_raised_floor/D06_DOC22_jack_top_pivot_lug.step,D06,D06-B01 (3 mm)
+DOC23,Dock (jack + raised floor),jack: top pivot shaft,3,6 x 163 x 6,4.6,"Steel rod / tube (cut, turn)",Dock_jack_raised_floor/DOC23_jack_top_pivot_shaft.step,-,-
+DOC24,Dock (jack + raised floor),raised floor: battens,3,399 x 424 x 20,431.5,Timber battens (cut),Dock_jack_raised_floor/DOC24_raised_floor_battens.step,-,-
+DOC25,Dock (jack + raised floor),raised floor: top plate (18 mm plywood),3,399 x 424 x 18,1444.4,Plywood (cut to size),Dock_jack_raised_floor/DOC25_raised_floor_top_plate_18_mm_plywood.step,-,-
+LCK01,Locks (robot + cart),"cart docking bar (printed, with the bolt socket)",1,116 x 28 x 28,87.3,3D print (PETG),Locks_robot_cart/C01_LCK01_cart_docking_bar_printed_with_the_bolt_socket.step,C01,C01-B01 (5 mm)
+LCK02,Locks (robot + cart),cart lock pin + release tab (spring),1,44 x 71 x 37,11.7,"Steel rod / tube (cut, turn)",Locks_robot_cart/LCK02_cart_lock_pin_release_tab_spring.step,-,-
+LCK03,Locks (robot + cart),"cart lock socket (printed, funnel lead-in, on the lower rail-end arm)",3,30 x 26 x 45,30.4,3D print (PETG),Locks_robot_cart/X02_LCK03_cart_lock_socket_printed_funnel_lead_in_on_the_lower.step,X02,X02-B01 (5 mm)
+LCK04,Locks (robot + cart),"lock solenoid (docking bolt, push type)",1,18 x 28 x 16,8.1,Buy (actuator),Locks_robot_cart/LCK04_lock_solenoid_docking_bolt_push_type.step,-,-
+LCK05,Locks (robot + cart),"lock solenoid (release plunger, push type)",1,28 x 21 x 16,9.4,Buy (actuator),Locks_robot_cart/LCK05_lock_solenoid_release_plunger_push_type.step,-,-
+LCK06,Locks (robot + cart),"lock solenoid bolt (docking, bullet nose)",1,9 x 14 x 9,0.7,"Steel rod / tube (cut, turn)",Locks_robot_cart/LCK06_lock_solenoid_bolt_docking_bullet_nose.step,-,-
+LCK07,Locks (robot + cart),lock solenoid bracket (docking bolt),1,24 x 52 x 24,10.2,3D print (PETG),Locks_robot_cart/R13_LCK07_lock_solenoid_bracket_docking_bolt.step,R13,R13-B01 (5 mm)
+LCK08,Locks (robot + cart),lock solenoid bracket (release plunger),1,36 x 6 x 24,5.2,3D print (PETG),Locks_robot_cart/R14_LCK08_lock_solenoid_bracket_release_plunger.step,R14,R14-B01 (5 mm)
+LCK09,Locks (robot + cart),lock solenoid plunger (cart release),1,43 x 4 x 4,0.7,"Steel rod / tube (cut, turn)",Locks_robot_cart/LCK09_lock_solenoid_plunger_cart_release.step,-,-
+RAC01,Rack,slotted angle rack (bay),12,382 x 234 x 1000,1073.2,Buy (slotted-angle rack),Rack/RAC01_slotted_angle_rack_bay.step,-,-
+RAI01,Rails + crossings,V-slot rail (horizontal),18,268 x 20 x 20,45.1,Aluminium extrusion (cut to length),Rails_crossings/RAI01_V_slot_rail_horizontal.step,-,-
+RAI02,Rails + crossings,V-slot rail (horizontal),6,451 x 20 x 20,76.1,Aluminium extrusion (cut to length),Rails_crossings/RAI02_V_slot_rail_horizontal.step,-,-
+RAI03,Rails + crossings,V-slot rail (vertical),12,20 x 20 x 664,112.0,Aluminium extrusion (cut to length),Rails_crossings/RAI03_V_slot_rail_vertical.step,-,-
+RAI04,Rails + crossings,"V-slot rail (vertical, between crossings)",12,20 x 20 x 70,11.7,Aluminium extrusion (cut to length),Rails_crossings/RAI04_V_slot_rail_vertical_between_crossings.step,-,-
+RAI05,Rails + crossings,aluminium crossing bracket,6,149 x 40 x 64,61.2,"Aluminium plate / bar (laser cut, drill)",Rails_crossings/RAI05_aluminium_crossing_bracket.step,-,-
+RAI06,Rails + crossings,aluminium crossing bracket,18,239 x 40 x 64,91.1,"Aluminium plate / bar (laser cut, drill)",Rails_crossings/RAI06_aluminium_crossing_bracket.step,-,-
+RAI07,Rails + crossings,aluminium rail support (last stretch),6,38 x 40 x 40,11.4,"Aluminium plate / bar (laser cut, drill)",Rails_crossings/RAI07_aluminium_rail_support_last_stretch.step,-,-
+RAI08,Rails + crossings,printed in-slot rack,36,10 x 4 x 188,3.9,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X11_RAI08_printed_in_slot_rack.step,X11,X11-B01 (5 mm)
+RAI09,Rails + crossings,printed in-slot rack,30,10 x 4 x 188,3.9,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X10_RAI09_printed_in_slot_rack.step,X10,X10-B01 (5 mm)
+RAI10,Rails + crossings,printed in-slot rack,12,10 x 4 x 99,2.1,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X12_RAI10_printed_in_slot_rack.step,X12,X12-B01 (5 mm)
+RAI11,Rails + crossings,printed in-slot rack,12,10 x 4 x 70,1.4,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X15_RAI11_printed_in_slot_rack.step,X15,X15-B01 (5 mm)
+RAI12,Rails + crossings,printed in-slot rack,18,80 x 4 x 10,1.7,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X13_RAI12_printed_in_slot_rack.step,X13,X13-B01 (5 mm)
+RAI13,Rails + crossings,printed in-slot rack,6,75 x 4 x 10,1.6,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X14_RAI13_printed_in_slot_rack.step,X14,X14-B01 (5 mm)
+RAI14,Rails + crossings,printed in-slot rack (cart),2,131 x 4 x 10,2.7,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X31_RAI14_printed_in_slot_rack_cart.step,X31,X31-B01 (5 mm)
+RAI15,Rails + crossings,printed in-slot rack (turntable),24,10 x 4 x 169,3.5,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Rails_crossings/X30_RAI15_printed_in_slot_rack_turntable.step,X30,X30-B01 (5 mm)
+RAI16,Rails + crossings,printed rail bridge,36,122 x 40 x 40,42.1,3D print (PETG),Rails_crossings/X01_RAI16_printed_rail_bridge.step,X01,X01-B01 (5 mm)
+RAI17,Rails + crossings,rail end arm (from the rack end post),6,116 x 30 x 24,83.3,Aluminium extrusion (cut to length),Rails_crossings/RAI17_rail_end_arm_from_the_rack_end_post.step,-,-
+RAI18,Rails + crossings,rail piece on cart,2,131 x 20 x 20,22.1,Aluminium extrusion (cut to length),Rails_crossings/RAI18_rail_piece_on_cart.step,-,-
+RAI19,Rails + crossings,rail piece on turntable,24,20 x 20 x 169,28.4,Aluminium extrusion (cut to length),Rails_crossings/RAI19_rail_piece_on_turntable.step,-,-
+RAI20,Rails + crossings,turntable 608ZZ bearing (front),24,22 x 7 x 22,2.3,Buy (608ZZ bearing - tronic.lk / bearing shops),Rails_crossings/RAI20_turntable_608ZZ_bearing_front.step,-,-
+RAI21,Rails + crossings,turntable 608ZZ bearing (rear),24,22 x 7 x 22,2.3,Buy (608ZZ bearing - tronic.lk / bearing shops),Rails_crossings/RAI21_turntable_608ZZ_bearing_rear.step,-,-
+RAI22,Rails + crossings,turntable M8 disc spring (DIN 6796),24,18 x 2 x 18,0.4,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI22_turntable_M8_disc_spring_DIN_6796.step,-,-
+RAI23,Rails + crossings,turntable M8 nyloc nut (DIN 985),24,15 x 8 x 13,0.8,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI23_turntable_M8_nyloc_nut_DIN_985.step,-,-
+RAI24,Rails + crossings,turntable M8 washer (DIN 125),24,16 x 2 x 16,0.2,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI24_turntable_M8_washer_DIN_125.step,-,-
+RAI25,Rails + crossings,"turntable M8 x 40 hex bolt (DIN 933, 8.8) - head in the rotor's hex pocket",24,15 x 45 x 13,2.8,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI25_turntable_M8_x_40_hex_bolt_DIN_933_8_8_head_in_the_r.step,-,-
+RAI26,Rails + crossings,"turntable T-nuts (3 x M5 drop-in, 2020 slot: rotor screws + stop pin)",24,10 x 3 x 60,0.6,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI26_turntable_T_nuts_3_x_M5_drop_in_2020_slot_rotor_scre.step,-,-
+RAI27,Rails + crossings,"turntable front spacer (steel, 12 x 8.2 x 2.5)",24,12 x 2 x 12,0.2,Steel tube 12 x 8.2 (cut + face; inner-race spacer 0.05 mm under the housing shoulder),Rails_crossings/RAI27_turntable_front_spacer_steel_12_x_8_2_x_2_5.step,-,-
+RAI28,Rails + crossings,"turntable housing screws (4 x M4 x 12 socket cap DIN 912, tapped bracket)",24,32 x 16 x 32,1.2,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI28_turntable_housing_screws_4_x_M4_x_12_socket_cap_DIN_.step,-,-
+RAI29,Rails + crossings,"turntable inner-race spacer (steel, 12 x 8.2 x 7.95: 0.05 short = preload)",24,12 x 8 x 12,0.5,Steel tube 12 x 8.2 (cut + face; inner-race spacer 0.05 mm under the housing shoulder),Rails_crossings/RAI29_turntable_inner_race_spacer_steel_12_x_8_2_x_7_95_0_.step,-,-
+RAI30,Rails + crossings,"turntable pivot housing (turned aluminium, 2 x 608ZZ seats + shoulder, 27 mm spigot)",24,45 x 24 x 45,10.5,"Turned aluminium (lathe): 2 x 22 mm H7 seats, 27 mm g6 spigot, 4 x M4 clearance",Rails_crossings/RAI30_turntable_pivot_housing_turned_aluminium_2_x_608ZZ_s.step,-,-
+RAI31,Rails + crossings,"turntable preload collar (steel, 12 x 8.2 x 2)",24,12 x 2 x 12,0.1,Steel tube 12 x 8.2 (cut + face; inner-race spacer 0.05 mm under the housing shoulder),Rails_crossings/RAI31_turntable_preload_collar_steel_12_x_8_2_x_2.step,-,-
+RAI32,Rails + crossings,"turntable rotor disc (6 mm aluminium, M8 hex pocket)",24,42 x 6 x 42,6.8,"6 mm aluminium plate (laser / waterjet cut, M8 hex pocket milled or filed)",Rails_crossings/RAI32_turntable_rotor_disc_6_mm_aluminium_M8_hex_pocket.step,-,-
+RAI33,Rails + crossings,turntable rotor screws (2 x M5 x 10 button head ISO 7380 + V-slot T-nut),24,10 x 10 x 38,0.7,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI33_turntable_rotor_screws_2_x_M5_x_10_button_head_ISO_7.step,-,-
+RAI34,Rails + crossings,"turntable stop pin (M5 x 25 + 10 mm steel sleeve + washer, T-nut)",24,12 x 28 x 12,1.9,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Rails_crossings/RAI34_turntable_stop_pin_M5_x_25_10_mm_steel_sleeve_washer.step,-,-
+ROB01,Robot body + hubs,PTFE slide pad,8,2 x 180 x 4,1.4,Buy (PTFE pad),Robot_body_hubs/ROB01_PTFE_slide_pad.step,-,-
+ROB02,Robot body + hubs,aluminium column bar 28 x 24 (replaces the printed column),1,28 x 24 x 280,188.4,"Aluminium bar 28 x 24 (cut to length, drill)",Robot_body_hubs/ROB02_aluminium_column_bar_28_x_24_replaces_the_printed_co.step,-,-
+ROB03,Robot body + hubs,battery + electronics box (fixed counterweight),1,100 x 60 x 90,540.0,Buy (battery + electronics box),Robot_body_hubs/ROB03_battery_electronics_box_fixed_counterweight.step,-,-
+ROB04,Robot body + hubs,battery bracket,1,56 x 24 x 30,40.3,"Aluminium plate / bar (laser cut, drill)",Robot_body_hubs/ROB04_battery_bracket.step,-,-
+ROB05,Robot body + hubs,pod: 25T aluminium servo horn,2,20 x 4 x 20,0.9,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB05_pod_25T_aluminium_servo_horn.step,-,-
+ROB06,Robot body + hubs,pod: 4632-370 climb motor,2,26 x 80 x 32,48.0,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB06_pod_4632_370_climb_motor.step,-,-
+ROB07,Robot body + hubs,pod: 4632-370 output shaft,2,16 x 6 x 6,0.4,"Steel rod / tube (cut, turn)",Robot_body_hubs/ROB07_pod_4632_370_output_shaft.step,-,-
+ROB08,Robot body + hubs,pod: 608ZZ bearing (lower) (lower hub),1,22 x 7 x 22,2.3,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB08_pod_608ZZ_bearing_lower_lower_hub.step,-,-
+ROB09,Robot body + hubs,pod: 608ZZ bearing (lower) (upper hub),1,22 x 7 x 22,2.3,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB09_pod_608ZZ_bearing_lower_upper_hub.step,-,-
+ROB10,Robot body + hubs,pod: 608ZZ bearing (upper) (lower hub),1,22 x 7 x 22,2.3,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB10_pod_608ZZ_bearing_upper_lower_hub.step,-,-
+ROB11,Robot body + hubs,pod: 608ZZ bearing (upper) (upper hub),1,22 x 7 x 22,2.3,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB11_pod_608ZZ_bearing_upper_upper_hub.step,-,-
+ROB12,Robot body + hubs,pod: 623ZZ pinion outboard bearing (3 x 10 x 4),2,4 x 10 x 10,0.3,Buy (bearing),Robot_body_hubs/ROB12_pod_623ZZ_pinion_outboard_bearing_3_x_10_x_4.step,-,-
+ROB13,Robot body + hubs,"pod: 8 mm common swivel axle (69 mm rod, M4-tapped ends) + spacers (lower hub)",1,12 x 79 x 12,5.1,"Steel rod / tube (cut, turn)",Robot_body_hubs/ROB13_pod_8_mm_common_swivel_axle_69_mm_rod_M4_tapped_ends.step,-,-
+ROB14,Robot body + hubs,"pod: 8 mm common swivel axle (69 mm rod, M4-tapped ends) + spacers (upper hub)",1,12 x 79 x 12,5.1,"Steel rod / tube (cut, turn)",Robot_body_hubs/ROB14_pod_8_mm_common_swivel_axle_69_mm_rod_M4_tapped_ends.step,-,-
+ROB15,Robot body + hubs,pod: MT0134 gantry plate (hub plate),2,66 x 3 x 66,10.9,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB15_pod_MT0134_gantry_plate_hub_plate.step,-,-
+ROB16,Robot body + hubs,pod: TD-8125MG output spline,2,6 x 4 x 6,0.1,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB16_pod_TD_8125MG_output_spline.step,-,-
+ROB17,Robot body + hubs,pod: TD-8125MG swivel servo (lower hub),1,21 x 42 x 55,33.6,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB17_pod_TD_8125MG_swivel_servo_lower_hub.step,-,-
+ROB18,Robot body + hubs,pod: TD-8125MG swivel servo (upper hub),1,21 x 42 x 55,33.6,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB18_pod_TD_8125MG_swivel_servo_upper_hub.step,-,-
+ROB19,Robot body + hubs,"pod: V wheel stacks (4 x Delrin, spacers, M5)",2,64 x 28 x 64,20.3,Buy (pod hardware: see cad/build_t_slot_option1.py),Robot_body_hubs/ROB19_pod_V_wheel_stacks_4_x_Delrin_spacers_M5.step,-,-
+ROB20,Robot body + hubs,pod: motor cap screws (4 x M3 x 12 PT),2,24 x 50 x 48,0.6,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Robot_body_hubs/ROB20_pod_motor_cap_screws_4_x_M3_x_12_PT.step,-,-
+ROB21,Robot body + hubs,pod: pinion cover screws (3 x M3 PT),2,19 x 18 x 46,0.4,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Robot_body_hubs/ROB21_pod_pinion_cover_screws_3_x_M3_PT.step,-,-
+ROB22,Robot body + hubs,"pod: pinion outboard screw (M3 x 12, 623ZZ -> shaft tip)",2,15 x 6 x 6,0.2,Print fine or order nylon (SLS),Robot_body_hubs/ROB22_pod_pinion_outboard_screw_M3_x_12_623ZZ_shaft_tip.step,-,-
+ROB23,Robot body + hubs,pod: printed 20T swivel gear,2,27 x 8 x 27,3.4,3D print (PETG),Robot_body_hubs/ROB23_pod_printed_20T_swivel_gear.step,-,-
+ROB24,Robot body + hubs,pod: printed body mount (bolts to the column) (lower hub),1,38 x 55 x 89,76.9,3D print (PETG),Robot_body_hubs/ROB24_pod_printed_body_mount_bolts_to_the_column_lower_hub.step,-,-
+ROB25,Robot body + hubs,pod: printed body mount (bolts to the column) (upper hub),1,38 x 55 x 89,76.9,3D print (PETG),Robot_body_hubs/ROB25_pod_printed_body_mount_bolts_to_the_column_upper_hub.step,-,-
+ROB26,Robot body + hubs,pod: printed carriage pod + 40T swivel gear,2,65 x 86 x 105,61.0,3D print (PETG),Robot_body_hubs/ROB26_pod_printed_carriage_pod_40T_swivel_gear.step,-,-
+ROB27,Robot body + hubs,pod: printed motor cap (removable lid + can sleeve),2,26 x 86 x 49,13.7,3D print (PETG),Robot_body_hubs/ROB27_pod_printed_motor_cap_removable_lid_can_sleeve.step,-,-
+ROB28,Robot body + hubs,pod: printed pinion cover (removable),2,21 x 33 x 49,7.7,3D print (PETG),Robot_body_hubs/ROB28_pod_printed_pinion_cover_removable.step,-,-
+ROB29,Robot body + hubs,pod: printed stepped shaft retainer collar,2,3 x 10 x 10,0.1,3D print (PETG),Robot_body_hubs/ROB29_pod_printed_stepped_shaft_retainer_collar.step,-,-
+ROB30,Robot body + hubs,pod: screws on the 20T gear (4 x M3 x 12 socket cap + M3 spline screw),2,16 x 15 x 16,0.8,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Robot_body_hubs/ROB30_pod_screws_on_the_20T_gear_4_x_M3_x_12_socket_cap_M3.step,-,-
+ROB31,Robot body + hubs,"pod: screws on the body mount (4 x M3 x 14 PT servo ears, 4 x M4 x 12 socket cap to the column) (lower hub)",1,33 x 73 x 78,4.1,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Robot_body_hubs/ROB31_pod_screws_on_the_body_mount_4_x_M3_x_14_PT_servo_ea.step,-,-
+ROB32,Robot body + hubs,"pod: screws on the body mount (4 x M3 x 14 PT servo ears, 4 x M4 x 12 socket cap to the column) (upper hub)",1,33 x 73 x 78,4.1,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Robot_body_hubs/ROB32_pod_screws_on_the_body_mount_4_x_M3_x_14_PT_servo_ea.step,-,-
+ROB33,Robot body + hubs,"pod: screws on the carriage pod (4 x M5 x 12 button head + nyloc, 4 x M3 x 6 button head)",2,55 x 83 x 89,3.8,Buy (fasteners: see the fastener list in README - Pettah fastener shops),Robot_body_hubs/ROB33_pod_screws_on_the_carriage_pod_4_x_M5_x_12_button_he.step,-,-
+ROB34,Robot body + hubs,printed climber pinion,2,10 x 24 x 24,2.1,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Robot_body_hubs/ROB34_printed_climber_pinion.step,-,-
+CRT01,Transfer cart + beam,cart frame (20x20 V-slot),1,135 x 280 x 408,667.1,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT01_cart_frame_20x20_V_slot.step,-,-
+CRT02,Transfer cart + beam,cart trolley plate,2,8 x 44 x 88,29.0,"Aluminium plate / bar (laser cut, drill)",Transfer_cart_beam/CRT02_cart_trolley_plate.step,-,-
+CRT03,Transfer cart + beam,"floor guide rail (guides only, no load)",1,20 x 2040 x 20,816.0,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT03_floor_guide_rail_guides_only_no_load.step,-,-
+CRT04,Transfer cart + beam,floor guide rollers (sideways only),2,36 x 16 x 20,4.5,Buy (wheel / roller),Transfer_cart_beam/CRT04_floor_guide_rollers_sideways_only.step,-,-
+CRT05,Transfer cart + beam,printed transfer rack segment (module 1.5),10,7 x 188 x 8,8.6,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Transfer_cart_beam/C10_CRT05_printed_transfer_rack_segment_module_1_5.step,C10,C10-B01 (5 mm)
+CRT06,Transfer cart + beam,printed transfer rack segment (module 1.5),1,7 x 151 x 8,6.9,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Transfer_cart_beam/C11_CRT06_printed_transfer_rack_segment_module_1_5.step,C11,C11-B01 (5 mm)
+CRT07,Transfer cart + beam,"transfer beam (20x40 V-slot, carries the cart)",1,20 x 2040 x 40,1632.0,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT07_transfer_beam_20x40_V_slot_carries_the_cart.step,-,-
+CRT08,Transfer cart + beam,transfer beam arm,5,422 x 20 x 24,202.6,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT08_transfer_beam_arm.step,-,-
+CRT09,Transfer cart + beam,transfer beam post (levelling foot),5,100 x 60 x 398,192.8,Aluminium extrusion (cut to length),Transfer_cart_beam/CRT09_transfer_beam_post_levelling_foot.step,-,-
+CRT10,Transfer cart + beam,trolley V-wheels (above + below the beam),2,28 x 44 x 80,23.8,Buy (wheel / roller),Transfer_cart_beam/CRT10_trolley_V_wheels_above_below_the_beam.step,-,-
+PIC01,Tray + picker + drives,GT2 25T pulley (servo 1),1,5 x 40 x 40,5.3,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R20_PIC01_GT2_25T_pulley_servo_1.step,R20,R20-B01 (5 mm)
+PIC02,Tray + picker + drives,GT2 33T pulley (stage-1 drive),2,4 x 24 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R21_PIC02_GT2_33T_pulley_stage_1_drive.step,R21,R21-B01 (2 mm)
+PIC03,Tray + picker + drives,"GT2 8T pulley (step-up, cross shaft)",1,5 x 15 x 15,0.4,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R22_PIC03_GT2_8T_pulley_step_up_cross_shaft.step,R22,unmarked (no face fits)
+PIC04,Tray + picker + drives,GT2 belt (servo 2 -> right rod),1,269 x 4 x 11,2.6,"Buy (GT2 belt, cut to length)",Tray_picker_drives/PIC04_GT2_belt_servo_2_right_rod.step,-,-
+PIC05,Tray + picker + drives,GT2 belt (step-up 25T -> 8T),1,5 x 41 x 50,0.8,"Buy (GT2 belt, cut to length)",Tray_picker_drives/PIC05_GT2_belt_step_up_25T_8T.step,-,-
+PIC06,Tray + picker + drives,GT2 belt loop (stage 1),2,4 x 236 x 11,2.3,"Buy (GT2 belt, cut to length)",Tray_picker_drives/PIC06_GT2_belt_loop_stage_1.step,-,-
+PIC07,Tray + picker + drives,GT2 idler (stage-1 belt),2,4 x 24 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R23_PIC07_GT2_idler_stage_1_belt.step,R23,R23-B01 (2 mm)
+PIC08,Tray + picker + drives,GT2 pulley (right rod),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R24_PIC08_GT2_pulley_right_rod.step,R24,R24-B01 (2 mm)
+PIC09,Tray + picker + drives,GT2 pulley (servo 2),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R25_PIC09_GT2_pulley_servo_2.step,R25,R25-B01 (2 mm)
+PIC10,Tray + picker + drives,"N20 gear motor (turn drive, on the lift carriage)",1,12 x 12 x 27,3.3,Buy (actuator),Tray_picker_drives/PIC10_N20_gear_motor_turn_drive_on_the_lift_carriage.step,-,-
+PIC11,Tray + picker + drives,SG90 micro servo (turn pinion lift),1,12 x 23 x 22,6.1,Buy (actuator),Tray_picker_drives/PIC11_SG90_micro_servo_turn_pinion_lift.step,-,-
+PIC12,Tray + picker + drives,arm drive cross shaft (both arms locked together),1,304 x 6 x 6,8.6,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC12_arm_drive_cross_shaft_both_arms_locked_together.step,-,-
+PIC13,Tray + picker + drives,bar load cell 5 kg + HX711,1,36 x 20 x 13,9.4,Buy (sensor / switch),Tray_picker_drives/PIC13_bar_load_cell_5_kg_HX711.step,-,-
+PIC14,Tray + picker + drives,belt anchor (inner bar),4,4 x 4 x 2,0.0,3D print (PETG),Tray_picker_drives/R10_PIC14_belt_anchor_inner_bar.step,R10,unmarked (no face fits)
+PIC15,Tray + picker + drives,belt anchor (outer bar),4,4 x 4 x 2,0.0,3D print (PETG),Tray_picker_drives/R11_PIC15_belt_anchor_outer_bar.step,R11,unmarked (no face fits)
+PIC16,Tray + picker + drives,finger drive gear (left rod),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R26_PIC16_finger_drive_gear_left_rod.step,R26,R26-B01 (2 mm)
+PIC17,Tray + picker + drives,finger drive gear (servo 2),1,24 x 4 x 24,1.2,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R27_PIC17_finger_drive_gear_servo_2.step,R27,R27-B01 (2 mm)
+PIC18,Tray + picker + drives,finger shaft bearing (inner bar),4,13 x 6 x 20,1.6,3D print (PETG),Tray_picker_drives/R12_PIC18_finger_shaft_bearing_inner_bar.step,R12,R12-B01 (4 mm)
+PIC19,Tray + picker + drives,finger shaft: fixed square rod,2,5 x 221 x 5,5.5,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC19_finger_shaft_fixed_square_rod.step,-,-
+PIC20,Tray + picker + drives,finger shaft: inner square tube,2,11 x 192 x 11,23.2,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC20_finger_shaft_inner_square_tube.step,-,-
+PIC21,Tray + picker + drives,finger shaft: middle square tube,2,8 x 198 x 8,12.7,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC21_finger_shaft_middle_square_tube.step,-,-
+PIC22,Tray + picker + drives,idler axle,2,6 x 4 x 4,0.1,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC22_idler_axle.step,-,-
+PIC23,Tray + picker + drives,limit switch (basket on tray),1,20 x 6 x 10,1.3,Buy (sensor / switch),Tray_picker_drives/PIC23_limit_switch_basket_on_tray.step,-,-
+PIC24,Tray + picker + drives,plywood tray 12 mm,1,292 x 224 x 12,784.7,Plywood (cut to size),Tray_picker_drives/PIC24_plywood_tray_12_mm.step,-,-
+PIC25,Tray + picker + drives,printed arm post,2,13 x 15 x 35,6.8,3D print (PETG),Tray_picker_drives/R04_PIC25_printed_arm_post.step,R04,R04-B01 (5 mm)
+PIC26,Tray + picker + drives,"printed arm post (rear, idler axle)",2,13 x 12 x 35,5.5,3D print (PETG),Tray_picker_drives/R05_PIC26_printed_arm_post_rear_idler_axle.step,R05,R05-B01 (5 mm)
+PIC27,Tray + picker + drives,printed basket stop,2,40 x 24 x 26,10.4,3D print (PETG),Tray_picker_drives/R06_PIC27_printed_basket_stop.step,R06,R06-B01 (5 mm)
+PIC28,Tray + picker + drives,printed flip finger (front),2,19 x 4 x 42,1.4,3D print (PETG),Tray_picker_drives/R07_PIC28_printed_flip_finger_front.step,R07,R07-B01 (5 mm)
+PIC29,Tray + picker + drives,printed flip finger (rear),2,19 x 4 x 42,1.4,3D print (PETG),Tray_picker_drives/R08_PIC29_printed_flip_finger_rear.step,R08,R08-B01 (5 mm)
+PIC30,Tray + picker + drives,printed front post (rod + cross-shaft bearings),2,13 x 21 x 87,10.3,3D print (PETG),Tray_picker_drives/R03_PIC30_printed_front_post_rod_cross_shaft_bearings.step,R03,R03-B01 (5 mm)
+PIC31,Tray + picker + drives,printed lift carriage,1,4 x 16 x 27,1.7,3D print (PETG),Tray_picker_drives/R01_PIC31_printed_lift_carriage.step,R01,R01-B01 (5 mm)
+PIC32,Tray + picker + drives,printed stage-1 belt clamp (middle bar),2,5 x 10 x 30,0.7,3D print (PETG),Tray_picker_drives/R09_PIC32_printed_stage_1_belt_clamp_middle_bar.step,R09,R09-B01 (5 mm)
+PIC33,Tray + picker + drives,printed turn-drive mast,1,79 x 24 x 108,48.7,3D print (PETG),Tray_picker_drives/R02_PIC33_printed_turn_drive_mast.step,R02,R02-B01 (5 mm)
+PIC34,Tray + picker + drives,servo 1 bracket,1,20 x 20 x 24,9.6,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC34_servo_1_bracket.step,-,-
+PIC35,Tray + picker + drives,servo 1: DS3218 270 deg (arm stroke),1,20 x 40 x 34,27.2,Buy (actuator),Tray_picker_drives/PIC35_servo_1_DS3218_270_deg_arm_stroke.step,-,-
+PIC36,Tray + picker + drives,servo 2 bracket,1,8 x 8 x 12,0.8,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC36_servo_2_bracket.step,-,-
+PIC37,Tray + picker + drives,servo 2 output shaft,1,5 x 13 x 5,0.3,"Steel rod / tube (cut, turn)",Tray_picker_drives/PIC37_servo_2_output_shaft.step,-,-
+PIC38,Tray + picker + drives,servo 2: MG90S (all four fingers),1,23 x 28 x 12,7.7,Buy (actuator),Tray_picker_drives/PIC38_servo_2_MG90S_all_four_fingers.step,-,-
+PIC39,Tray + picker + drives,stage-2 pulley (extend),2,4 x 16 x 16,0.4,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R28_PIC39_stage_2_pulley_extend.step,R28,unmarked (no face fits)
+PIC40,Tray + picker + drives,stage-2 pulley (retract),2,4 x 16 x 16,0.4,"Print, or buy a GT2 pulley / gear / coupling",Tray_picker_drives/R29_PIC40_stage_2_pulley_retract.step,R29,unmarked (no face fits)
+PIC41,Tray + picker + drives,"telescopic arm, inner bar",2,13 x 180 x 8,18.7,Aluminium flat bar 13 x 8 (cut to length),Tray_picker_drives/PIC41_telescopic_arm_inner_bar.step,-,-
+PIC42,Tray + picker + drives,"telescopic arm, middle bar",2,13 x 180 x 8,18.7,Aluminium flat bar 13 x 8 (cut to length),Tray_picker_drives/PIC42_telescopic_arm_middle_bar.step,-,-
+PIC43,Tray + picker + drives,"telescopic arm, outer bar (fixed)",2,13 x 180 x 8,18.7,Aluminium flat bar 13 x 8 (cut to length),Tray_picker_drives/PIC43_telescopic_arm_outer_bar_fixed.step,-,-
+PIC44,Tray + picker + drives,tray bracket,1,68 x 24 x 12,19.6,"Aluminium plate / bar (laser cut, drill)",Tray_picker_drives/PIC44_tray_bracket.step,-,-
+PIC45,Tray + picker + drives,turn drive pinion 16T (robot),1,27 x 27 x 8,3.3,"Print fine (0.12 mm, 100 % infill) or order nylon (SLS)",Tray_picker_drives/R30_PIC45_turn_drive_pinion_16T_robot.step,R30,R30-B01 (2.5 mm)
+-,Tray + picker + drives,"GT2 belt, stage 2 (6 mm), cut to the loop length",4,-,-,"Buy (GT2 belt, cut to length)",-,-,-
+-,Covers,"Cover screws: M3 x 16 chipboard (wood) screw, pan head - front drive cover into the plywood",2,-,-,Buy (hardware),-,-,-
+-,Covers,"Cover screws: M3 x 12 machine screw, pan head - turn-drive cap (2) and the 3 jack motor covers (12)",14,-,-,Buy (hardware),-,-,-
+-,Covers,"Cover nuts: M3 hex nut, standard or nylon-insert - caught in the printed slots / pockets",14,-,-,Buy (hardware),-,-,-
+-,Covers,Cover washers: M3 flat washer,14,-,-,Buy (hardware),-,-,-
+-,Rails + crossings,"Rack fixing: in-slot racks slide into the rail's front slot from the free end in order (press fit), one drop of cyanoacrylate per piece; end caps stop them at the free ends",as needed,-,-,Buy (hardware),-,-,-
+-,Rails + crossings,Rail / bracket fixing: M5 x 10 button screw + M5 slot T-nut (V-slot) - rail to bracket support plates and bridges,as needed,-,-,Buy (hardware),-,-,-
+-,Rails + crossings,Crossing bracket fixing: M5 x 12 socket cap (DIN 912) + M5 washer through the rack post flange (2 per post); bracket bored 27 H7 + 4 x M4 tapped for the pivot housing,as needed,-,-,Buy (hardware),-,-,-
+-,Rails + crossings,Turntable stop pin per crossing: M5 x 25 socket cap + 10 x 5.2 x 20 mm steel sleeve + M5 washer + V-slot T-nut,as needed,-,-,Buy (hardware),-,-,-
+-,Hardware,"Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins",as needed,-,-,Buy (assorted; count from the drawings),-,-,-

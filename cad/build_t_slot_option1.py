@@ -623,6 +623,9 @@ def build_body_mount_option1() -> bd.Part:
                 bd.Box(74.0, 6.5, 18.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
             with bd.Locations((0, sy * 10.0, 28.0)):
                 bd.Box(16.0, 11.0, 5.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+            # M3 through-hole in cheek exterior zone (perpendicular Y-axis tie for outside-nut P10-UP / P10-LO ears)
+            with bd.Locations(bd.Location((-55.0, sy * 15.75, 32.0), (90, 0, 0))):
+                bd.Cylinder(radius=1.65, height=9.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.CENTER), mode=bd.Mode.SUBTRACT)
 
         # Top-bearing boss under the top plate (inner race of the top 608ZZ is clamped to its face, Z = BOSS_Z0)
         with bd.Locations((0, 0, BOSS_Z0)):
@@ -636,12 +639,20 @@ def build_body_mount_option1() -> bd.Part:
         with bd.Locations((-32.0, 0, top_plate_z1)):
             bd.Box(88.0, 36.0, 4.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
         for sx in (-1, 1):
+            cx = -32.0 + sx * 30.0
             for sy in (-1, 1):
-                with bd.Locations((-32.0 + sx * 30.0, sy * 12.0, top_plate_z1 + 5.0)):
+                cy = sy * 12.0
+                with bd.Locations((cx, cy, top_plate_z1 + 5.0)):
                     bd.Hole(radius=2.25, depth=6.0)
-                # head pocket under the plate for the M4 x 12 socket cap (fitted from below, before the servo goes in)
-                with bd.Locations((-32.0 + sx * 30.0, sy * 12.0, BOSS_Z0 - 0.5)):     # (open below the top-bearing boss too)
-                    bd.Cylinder(3.8, top_plate_z1 - BOSS_Z0 + 0.6, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+                # Option B: side-entry captive M4 hex nut slot (7.3 mm AF x 4.5 mm tall, Z 74.0..78.5, open on Y = +-18.0 side face)
+                # so M4 x 35 bolts drive cleanly from the open front of the 30 x 25 x 2 mm hollow column without removing the servo
+                y_in = cy - sy * 4.4
+                y_out = sy * (mount_w / 2.0 + 0.5)
+                y0_s, y1_s = min(y_in, y_out), max(y_in, y_out)
+                with bd.Locations((cx, (y0_s + y1_s) / 2.0, 74.0)):
+                    bd.Box(7.3, y1_s - y0_s, top_plate_z1 - 74.0 + 0.05, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
+                with bd.Locations((cx, cy, 73.6)):     # M4 bolt tip clearance pocket (above SERVO_TOP_Z = 73.5)
+                    bd.Cylinder(2.5, top_plate_z1 - 73.5, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN), mode=bd.Mode.SUBTRACT)
 
         # Common axle: 8 mm bore (close fit) through the boss, counterbore in the plate top for the top end screw + washer
         with bd.Locations((0, 0, BOSS_Z0 - 0.5)):
@@ -691,7 +702,7 @@ FASTENERS = [   # (part with SHOPPING_LIST ID, qty per pod, where, buy as)
     ("[H21] M3 x 10 socket cap (DIN 912) + [H22] M3 hex nut (DIN 934, 5.5 AF x 2.4)", 3, "motor can clamp: P01's front half-shell <-> the cap's half (flanges)", "use M3 x 12 if substituting 4 mm thick DIN 985 nyloc"),
     ("[H17] M3 x 12 socket cap (DIN 912)", 5, "20T gear -> 25T aluminium horn (4) + 623ZZ pinion outboard bearing -> motor shaft (1)", ""),
     ("M3 x 8 servo spline screw", 1, "horn -> servo spline", "supplied with the servo"),
-    ("[H13] M4 x 12 socket cap (DIN 912)", 4, "body mount -> column bar (tapped M4); fit before the servo", "+ 4 x [H12] M4 washer (DIN 125)"),
+    ("[H13] M4 x 35 socket cap (DIN 912) + [H25] M4 hex nut (DIN 934, 7.0 AF)", 4, "40 x 25 x 2 hollow column front -> P04 side-entry nut traps (fit with servo installed!)", "+ 4 x [H12] M4 steel washer + 4 x [H26] M4 EPDM rubber washer (9 x 1.2) + P07 anti-crush plug"),
     ("[M01] 8 mm steel rod (bright mild / silver steel), 69 mm, both ends drilled + tapped M4 x 10", 1, "common swivel axle through both 608ZZ", "+ [M02..M04] 12 x 8.2 steel spacers: 12, 4.5 (trim), 1.5 mm"),
     ("[H10] M4 x 10 socket cap (DIN 912) + M4 washer: 1 x [H11] DIN 9021 (12 mm, bottom), 1 x [H12] DIN 125 (top)", 2, "axle end screws", "bottom pushes the stack up to the cap, top locks the rod to the plate"),
     ("[H04] 608ZZ (8 x 22 x 7)", 2, "swivel: one in the tower, one in the top arm (55 mm apart)", "tronic.lk / bearing shops (608-2RS for dust)"),
@@ -704,11 +715,11 @@ def _cz(r, z0, z1, x, y, seg=None):
     return c.moved(bd.Location((x, y, z0)))
 
 
-def _hexz(r, z0, z1, x, y):
+def _hexz(r, z0, z1, x, y, rot=0.0):
     with bd.BuildPart() as h:
         with bd.Locations((x, y, z0)):
             with bd.BuildSketch():
-                bd.RegularPolygon(r, 6)
+                bd.RegularPolygon(r, 6, rotation=rot)
             bd.extrude(amount=z1 - z0)
     return h.part
 
@@ -716,6 +727,7 @@ def _hexz(r, z0, z1, x, y):
 def build_fasteners():
     """screws of the pod in the pod frame: turning with the carriage / on the body mount / turning with the 20T gear"""
     turn, fixed, gear = [], [], []
+    pcover, cap, pinion = [], [], []             # own meshes: they come off with their part (viewer exploded view)
     for x, y in DECK_SCREWS:                     # button head on the deck, nyloc under the MT0134 plate
         turn += [_cz(4.75, DECK_TOP_Z, DECK_TOP_Z + 2.75, x, y), _cz(2.5, -3.5, DECK_TOP_Z, x, y), _hexz(4.6, -5.0, 0.0, x, y)]
     for x, z in MOTOR_SCREWS:                    # button head on the pod wall's outer face, into the gearbox bosses
@@ -724,7 +736,7 @@ def build_fasteners():
         turn += [cyl(2.85, -1.65, 0.0).moved(rot), cyl(1.5, 0.0, 6.0).moved(rot)]
     for x, z, yf in PC_SCREWS:                   # pinion cover -> base: pan head in the cover's counterbore, along +Y
         yh = yf - 0.2 - 3.0
-        turn += [_ycyl(2.75, yh - 2.4, yh, x, z), _ycyl(1.5, yh, yh + (10.0 if yf == CAP_BASE_Y0 else 12.0), x, z)]
+        pcover += [_ycyl(2.75, yh - 2.4, yh, x, z), _ycyl(1.5, yh, yh + (10.0 if yf == CAP_BASE_Y0 else 12.0), x, z)]
     cmx, cmy, _, _ = _clamp_geom()
     for x, z in CLAMP_BOLTS:                     # H21 M3 x 10 socket cap (head on cap's flange) + H22 M3 DIN 934 hex nut (5.5 AF x 2.4, on P01 front flange)
         ny1 = cmy - 0.1 - CLAMP_FL_T
@@ -733,19 +745,25 @@ def build_fasteners():
                  _hexz(3.175, 0.0, 2.4, 0.0, 0.0).moved(bd.Location((x, ny1 - 2.4, z), (-90, 0, 0)))]
     for x, z, yj in CAP_SCREWS:                  # motor cap -> base: pan head on the cap's tab, along -Y into the base's boss
         yh = CAP_TAB_Y1 if yj == CAP_Y0 else yj + 3.4
-        turn += [_ycyl(2.75, yh, yh + 2.4, x, z), _ycyl(1.5, yh - 12.0, yh, x, z)]
+        cap += [_ycyl(2.75, yh, yh + 2.4, x, z), _ycyl(1.5, yh - 12.0, yh, x, z)]
     # H17 M3 x 12 socket cap clamping 623ZZ inner race + stepped retainer into E01 shaft tip (Y -3.0..+3.0)
-    turn += [_ycyl(2.75, PC_FRONT[0] - 3.0, PC_FRONT[0], T.PINION_X, T.PINION_Z),
-             _ycyl(1.5, PC_FRONT[0], PC_FRONT[0] + 12.0, T.PINION_X, T.PINION_Z)]
+    pinion += [_ycyl(2.75, PC_FRONT[0] - 3.0, PC_FRONT[0], T.PINION_X, T.PINION_Z),
+               _ycyl(1.5, PC_FRONT[0], PC_FRONT[0] + 12.0, T.PINION_X, T.PINION_Z)]
     for x, y in EAR_SCREWS:                      # pan head under the ears, up into the body mount
         fixed += [_cz(2.75, EAR_BOT_Z - 2.4, EAR_BOT_Z, x, y), _cz(1.5, EAR_BOT_Z, EAR_BOT_Z + 14.0, x, y)]
-    for x, y in COLUMN_SCREWS:                   # socket cap from below, up into the tapped column bar
-        fixed += [_cz(3.5, TOP_PLATE_Z0 - 4.0, TOP_PLATE_Z0, x, y), _cz(2.0, TOP_PLATE_Z0, TOP_PLATE_Z0 + 12.0, x, y)]
+    for x, y in COLUMN_SCREWS:                   # Option B: M4 x 35 + DIN 125 steel washer + EPDM rubber washer (1.2 mm, thermal expansion) -> captive M4 nut
+        z_tube_front = TOP_PLATE_Z0 + 4.5 + 25.0
+        fixed += [_cz(4.5, z_tube_front, z_tube_front + 1.2, x, y),
+                  _cz(4.5, z_tube_front + 1.2, z_tube_front + 2.0, x, y),
+                  _cz(3.5, z_tube_front + 2.0, z_tube_front + 6.0, x, y),
+                  _cz(2.0, z_tube_front + 2.0 - 35.0, z_tube_front + 2.0, x, y),
+                  _hexz(4.04, TOP_PLATE_Z0 - 3.2, TOP_PLATE_Z0, x, y, rot=30.0)]
     for x, y in HORN_SCREWS:                     # socket cap under the 20T gear, up into the horn
         gear += [_cz(2.75, GEAR_Z0 - 3.0, GEAR_Z0, x, y), _cz(1.5, GEAR_Z0, GEAR_Z0 + 12.0, x, y)]
     gear += [_cz(2.75, GEAR_Z0 - 2.0, GEAR_Z0, SERVO_PIVOT_X, 0), _cz(1.5, GEAR_Z0, SPLINE_TIP_Z + 3.0, SERVO_PIVOT_X, 0)]
     out = {}
-    for k, lst in (("fasteners_turn", turn), ("fasteners_fixed", fixed), ("fasteners_gear", gear)):
+    for k, lst in (("fasteners_turn", turn), ("fasteners_fixed", fixed), ("fasteners_gear", gear),
+                   ("screws_pcover", pcover), ("screws_cap", cap), ("screw_pinion", pinion)):
         out[k] = bd.Compound(children=lst, label=k)
     return out
 
@@ -831,7 +849,7 @@ def main():
     pinion_origin = bd.Location((-T.PINION_X, 0, -T.PINION_Z))
     servo_origin = bd.Location((-SERVO_PIVOT_X, 0, 0))
     for k, v in parts.items():
-        if k in ("motor_shaft", "pinion", "retainer"):
+        if k in ("motor_shaft", "pinion", "retainer", "screw_pinion"):
             m = v.moved(pinion_origin)
         elif k in ("gear_20t", "alum_horn", "servo_spline", "fasteners_gear"):
             m = v.moved(servo_origin)

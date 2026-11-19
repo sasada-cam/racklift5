@@ -241,11 +241,38 @@ def function_checks():
             ("pulled-back tab x <= %.1f clear of the pod gear (x >= -%.1f)" % (TAB_X[1] + LOCK_STROKE, gear_x),
              TAB_X[1] + LOCK_STROKE <= -gear_x),
             ("plunger tip at rest x %.1f, 2 mm short of the tab x %.1f" % (PLUNGER_REST_X, TAB_X[0]), PLUNGER_REST_X <= TAB_X[0] - 1.5)]
+    rows += pinion_stagger_rows()
     ok = True
     for txt, good in rows:
         print(f"function: {txt}: {'ok' if good else 'FAIL'}")
         ok &= good
     return ok
+
+
+def pinion_stagger_rows():
+    """the two climb pinions must never be at a 1 mm crossing cut at the same time (lower pod mirrored, HUB_BASE): sweep the
+    robot along the climb and the travel range, pinion positions from the model's own transforms (hub_fixed_M, PINION_AT)"""
+    gh = SEG_V3 + GAP_V3 / 2                                   # cut centre, from the crossing centre
+    near = 1.5 * P                                           # a pinion 'at a cut' = within 1.5 pitches of it
+    out = []
+    for tag, h, axis, cuts, cs in (
+            ("climb", 0.0, 2, [z + s_ * gh for z in CROSS_Z for s_ in (-1, 1)], np.arange(CZ_HOME - 5, CZ_HOME + 700, 0.25)),
+            ("travel", -90.0, 0, [x + s_ * gh for x in [A3.bay_rail_x(b) for b in range(ROW_BAYS)] for s_ in (-1, 1)],
+             np.arange(-60, A3.bay_rail_x(ROW_BAYS - 1) + 60, 0.25))):
+        cuts = np.array(cuts)
+        # pinion positions along the rail relative to the robot (z when climbing, x when travelling)
+        off = [(A3.hub_fixed_M(i) @ A3.rot('y', h) @ np.array([*A3.PINION_AT, 1.0]))[axis] for i in (1, 2)]
+        if tag == "climb":
+            off = [o + CZ_HOME for o in off]                 # robot centre at CZ_HOME + c (c = cs - CZ_HOME)
+            pos = [[o + (c - CZ_HOME) for c in cs] for o in off]
+        else:
+            pos = [[o + c for c in cs] for o in off]
+        d = [np.min(np.abs(np.array(p_)[:, None] - cuts[None, :]), axis=1) for p_ in pos]
+        both = int(np.sum((d[0] < near) & (d[1] < near)))
+        worst = float(np.min(np.maximum(d[0], d[1])))       # at every position, how far the better-placed pinion is
+        out.append((f"pinion stagger ({tag}): both pinions at a cut at {both} of {len(cs)} positions; worst case the other is "
+                    f"{worst:.1f} mm from any cut", both == 0 and worst >= 3 * P))
+    return out
 
 
 if __name__ == "__main__":

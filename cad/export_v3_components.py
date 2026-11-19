@@ -20,6 +20,8 @@ import racklift_brep as R          # noqa: E402  loads the B-rep csg backend + v
 import assembly_v3 as A3           # noqa: E402
 import export_brep as E            # noqa: E402
 import build123d as bd             # noqa: E402
+import part_ids_v3 as PID          # noqa: E402  printed-part IDs + batch + colours (CLAUDE.md)
+import engrave_auto as EA          # noqa: E402
 
 OUT = os.path.abspath(os.path.join(HERE, "..", "models", "v3", "components"))
 
@@ -151,6 +153,25 @@ def main():
               ("Turntable stop pin per crossing: M5 x 25 socket cap + 10 x 5.2 x 20 mm steel sleeve + M5 washer + V-slot T-nut", "Rails + crossings", 0, "Buy (hardware)"),
               ("Fasteners: M3 / M4 / M5 screws, nuts, heat-set inserts, 4 mm dowel pins", "Hardware", 0, "Buy (assorted; count from the drawings)")]
 
+    # printed-part IDs from the registry.  A part that comes in several lengths (in-slot racks, transfer rack segments) gets
+    # one ID per length, numbered on from its registry ID, longest first (racks slide into the slot in that order)
+    variants = collections.defaultdict(list)
+    for name, s_, q in rows:
+        hit = PID.lookup(name)
+        if hit:
+            variants[(base_name(name), hit[0])].append(round(s_.volume, 3))
+    vid = {}
+    for (bn, base_id), vols in variants.items():
+        for i, v in enumerate(sorted(set(vols), reverse=True)):
+            vid[(bn, v)] = f"{base_id[0]}{int(base_id[1:]) + i:02d}"
+    used = [i for _, i, _ in PID.ENTRIES]
+    clash = [(k, i) for k, i in vid.items() if i in used and i != PID.lookup(k[0])[0]]
+    assert not clash, f"length-variant IDs collide with registry IDs: {clash}"
+    assert len(set(vid.values())) == len(vid), "duplicate printed-part IDs"
+
+    def print_id(name, s):
+        return vid.get((base_name(name), round(s.volume, 3)))     # (pod parts carry their P-number from the pod builder)
+
     # number + export, grouped by category
     cats = collections.defaultdict(list)
     PREFIX = {}
@@ -167,21 +188,28 @@ def main():
             lo, hi = s.bbox()
             part = s.translate(-lo[0], -lo[1], -lo[2])
             sh = part.shape
-            sh.label = name
             fn = f"{cid}_{slug(name)}"
             printed = bool(re.search(r"printed|pinion|in-slot rack|pulley", name))
+            pid, mark = print_id(name, s), "-"
+            if pid:                                     # engrave ID-BATCH (or the ID alone) on the best open flat face
+                sh, info = EA.auto_engrave(sh, PID.mark(pid), PID.mark(pid, True))
+                mark = f"{info['text']} ({info['size']:g} mm)" if info else "unmarked (no face fits)"
+                print(f"    {pid} {name[:60]:60s} -> {mark}")
+                fn = f"{pid}_{fn}"
+            sh.label = name
             bd.export_step(sh, os.path.join(cdir, fn + ".step"))
             bd.export_stl(sh, os.path.join(cdir, fn + ".stl"), tolerance=0.005 if printed else 0.05,
                           angular_tolerance=0.1 if printed else 0.4)
             n_files += 1
             size = hi - lo
             bom.append([cid, cat, name, q, f"{size[0]:.0f} x {size[1]:.0f} x {size[2]:.0f}", f"{s.volume / 1000:.1f}",
-                        classify(name, PROCESS, "Buy / specify"), f"{slug(cat)}/{fn}.step"])
+                        classify(name, PROCESS, "Buy / specify"), f"{slug(cat)}/{fn}.step", pid or "-", mark])
     for name, cat, q, proc in extras:
-        bom.append(["-", cat, name, q if q else "as needed", "-", "-", proc, "-"])
+        bom.append(["-", cat, name, q if q else "as needed", "-", "-", proc, "-", "-", "-"])
     with open(os.path.join(OUT, "BOM_v3.csv"), "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["ID", "category", "part", "qty", "size mm (x y z)", "volume cm3", "suggested process / source", "CAD file"])
+        w.writerow(["ID", "category", "part", "qty", "size mm (x y z)", "volume cm3", "suggested process / source", "CAD file",
+                    "print ID", "engraved mark"])
         w.writerows(bom)
     with open(os.path.join(OUT, "README.md"), "w") as f:
         f.write("# RackLift5 v3 - component list\n\n"
@@ -191,9 +219,9 @@ def main():
         last = None
         for r in bom:
             if r[1] != last:
-                f.write(f"\n## {r[1]}\n\n| ID | part | qty | size mm | process / source |\n|---|---|---|---|---|\n")
+                f.write(f"\n## {r[1]}\n\n| ID | print ID | part | qty | size mm | process / source | engraved |\n|---|---|---|---|---|---|---|\n")
                 last = r[1]
-            f.write(f"| {r[0]} | {r[2]} | {r[3]} | {r[4]} | {r[6]} |\n")
+            f.write(f"| {r[0]} | {r[8]} | {r[2]} | {r[3]} | {r[4]} | {r[6]} | {r[9]} |\n")
     print(f"{n_files} unique components -> {OUT}  ({time.time() - t0:.0f}s)")
     for cat in sorted(cats):
         print(f"  {cat:34s} {len(cats[cat]):3d} parts, {sum(q for _, _, q in cats[cat]):4d} pieces")
