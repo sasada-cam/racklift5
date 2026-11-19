@@ -8,9 +8,9 @@
       272.15,
       46.1
     ],
-    "volume_cm3": 283.9,
+    "volume_cm3": 284.6,
     "holes": [
-      "\u00d82.85 mm (\u00d722)",
+      "\u00d81.90 mm (\u00d724)",
       "\u00d83.30 mm (\u00d718)",
       "\u00d82.90 mm (\u00d78)",
       "\u00d83.40 mm (\u00d74)",
@@ -26,15 +26,14 @@
     "mark": "R47-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      46.0,
-      166.6,
+      46.8,
+      167.2,
       6.65
     ],
-    "volume_cm3": 13.11,
+    "volume_cm3": 13.54,
     "holes": [
-      "\u00d83.20 mm (\u00d710)",
-      "\u00d84.90 mm (\u00d76)",
-      "\u00d85.00 mm (\u00d72)"
+      "\u00d82.20 mm (\u00d711)",
+      "\u00d83.80 mm (\u00d72)"
     ],
     "svg_rel": "docs/drawings/R47.svg",
     "dxf_rel": "docs/drawings/dxf/R47.dxf",
@@ -45,15 +44,14 @@
     "mark": "R48-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      46.0,
-      166.6,
+      46.8,
+      167.2,
       6.65
     ],
-    "volume_cm3": 13.11,
+    "volume_cm3": 13.54,
     "holes": [
-      "\u00d83.20 mm (\u00d710)",
-      "\u00d84.90 mm (\u00d76)",
-      "\u00d85.00 mm (\u00d72)"
+      "\u00d82.20 mm (\u00d711)",
+      "\u00d83.80 mm (\u00d72)"
     ],
     "svg_rel": "docs/drawings/R48.svg",
     "dxf_rel": "docs/drawings/dxf/R48.dxf",
@@ -85,9 +83,9 @@
     "bbox_mm": [
       106.6,
       162.5,
-      12.75
+      15.35
     ],
-    "volume_cm3": 16.1,
+    "volume_cm3": 19.53,
     "holes": [
       "\u00d810.40 mm (\u00d74)",
       "\u00d82.95 mm (\u00d72)",
@@ -211,10 +209,10 @@
       166.6,
       5.75
     ],
-    "volume_cm3": 6.68,
+    "volume_cm3": 6.83,
     "holes": [
-      "\u00d85.10 mm (\u00d77)",
-      "\u00d83.20 mm (\u00d75)"
+      "\u00d82.20 mm (\u00d75)",
+      "\u00d83.80 mm (\u00d75)"
     ],
     "svg_rel": "docs/drawings/R57.svg",
     "dxf_rel": "docs/drawings/dxf/R57.dxf",
@@ -229,11 +227,11 @@
       175.0,
       10.0
     ],
-    "volume_cm3": 169.16,
+    "volume_cm3": 165.68,
     "holes": [
       "\u00d82.90 mm (\u00d729)",
-      "\u00d82.85 mm (\u00d714)",
-      "\u00d816.00 mm (\u00d712)",
+      "\u00d81.90 mm (\u00d714)",
+      "\u00d816.00 mm (\u00d713)",
       "\u00d84.40 mm (\u00d76)",
       "\u00d83.30 mm (\u00d72)",
       "\u00d816.40 mm (\u00d72)"
