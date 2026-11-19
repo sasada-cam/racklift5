@@ -70,7 +70,7 @@ def check_full_forklift_clearances(
     static_fk = (
         "compartment_deck", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
         "tray_deck", "fork_base_rails", "fork_front_arch", "fork_drive", "fork_limit_switches",
-        "fork_opt_a_tslot", "fork_opt_a_hw", "fork_opt_b_rollers", "fork_opt_b_hw",
+        "fork_hold_rails", "fork_hold_fasteners",
         "base_boom", "load_cell", "live_wishbone",
     )
     move_body_keys = ("body_collar", "battery_pod", "battery_lid", "battery_pack", "body_fasteners")
@@ -128,9 +128,9 @@ def check_full_forklift_clearances(
                     turn_cross_solids.append(turning_tpl[tk].moved(loc_c))
         turn_cross_cmp = bd.Compound(children=turn_cross_solids)
 
-        # Check all Forklift + Body parts vs Hoods, Column, H1/H2 Pods, Magnets, Rails & Racks (both Option A & Option B)
+        # Check all Forklift + Body parts vs Hoods, Column, H1/H2 Pods, Magnets, Rails & Racks
         check_keys = ("compartment_deck", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "tray_deck", "fork_base_rails",
-                      "fork_front_arch", "fork_limit_switches", "fork_opt_a_tslot", "fork_opt_a_hw", "fork_opt_b_rollers", "fork_opt_b_hw",
+                      "fork_front_arch", "fork_limit_switches", "fork_hold_rails", "fork_hold_fasteners",
                       "fork_mid_stage", "fork_pinion_left", "fork_pinion_right", "fork_t8_nut", "fork_mid_fasteners", "fork_tines",
                       "fork_drive", "base_boom", "live_wishbone", "load_cell", "body_collar", "battery_pod")
         for bk in check_keys:
@@ -223,10 +223,8 @@ def main():
         "fork_top_cover": forklift_parts["fork_top_cover"],
         "fork_cover_fasteners": forklift_parts["fork_cover_fasteners"],
         "fork_limit_switches": forklift_parts["fork_limit_switches"],
-        "fork_opt_a_tslot": forklift_parts["fork_opt_a_tslot"],
-        "fork_opt_a_hw": forklift_parts["fork_opt_a_hw"],
-        "fork_opt_b_rollers": forklift_parts["fork_opt_b_rollers"],
-        "fork_opt_b_hw": forklift_parts["fork_opt_b_hw"],
+        "fork_hold_rails": forklift_parts["fork_hold_rails"],
+        "fork_hold_fasteners": forklift_parts["fork_hold_fasteners"],
         "fork_base_rails": forklift_parts["fork_base_rails"],
         "fork_front_arch": forklift_parts["fork_front_arch"],
         "fork_mid_stage": forklift_parts["fork_mid_stage"],

@@ -120,14 +120,14 @@ HTML = r"""<!doctype html>
 
   <div class="sec">
     <div class="sec-title">3. Layers</div>
-    <div class="row"><span><span class="dot" style="background:#f97316"></span>R46–R56 Forklift + CNC4759-A + 1:2 Rack-Pinion</span>
+    <div class="row"><span><span class="dot" style="background:#f97316"></span>R46–R57 Forklift + MGN Rails + 1:2 Rack-Pinion</span>
       <div class="btn-group"><button id="v-fork-solid" class="active" onclick="setVis('fork','solid')">Show</button><button id="v-fork-off" onclick="setVis('fork','off')">Hide</button></div>
     </div>
     <div class="row"><span><span class="dot" style="background:#0e7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span>
       <div class="btn-group"><button id="v-cover-solid" class="active" onclick="setVis('cover','solid')">Solid</button><button id="v-cover-xray" onclick="setVis('cover','xray')">Ghost</button><button id="v-cover-off" onclick="setVis('cover','off')">Hide</button></div>
     </div>
-    <div class="row"><span><span class="dot" style="background:#6366f1"></span>Hold-Down Option (R57A / R57B)</span>
-      <div class="btn-group"><button id="v-opt-off" onclick="setHoldOpt('off')">Off</button><button id="v-opt-a" class="active" onclick="setHoldOpt('a')">Opt A: T-Slot</button><button id="v-opt-b" onclick="setHoldOpt('b')">Opt B: Rollers</button></div>
+    <div class="row"><span><span class="dot" style="background:#6366f1"></span>R57 Screwed MGN/T-Slot Hold-Down Rails</span>
+      <div class="btn-group"><button id="v-hold-solid" class="active" onclick="setVis('hold','solid')">Solid</button><button id="v-hold-xray" onclick="setVis('hold','xray')">Ghost</button><button id="v-hold-off" onclick="setVis('hold','off')">Hide</button></div>
     </div>
     <div class="row"><span><span class="dot" style="background:#ef4444"></span>2x Center Limit Switches</span>
       <div class="btn-group"><button id="v-sw-solid" class="active" onclick="setVis('sw','solid')">Show</button><button id="v-sw-off" onclick="setVis('sw','off')">Hide</button></div>
@@ -227,8 +227,7 @@ const mats = {
   tray_deck: mat(0x0ea5e9), battery_pod: mat(0x66bb6a), battery_lid: mat(0x388e3c), battery_pack: mat(0x334155),
   compartment_deck: mat(0x26a69a), fork_under_tie: mat(0x2e7d32), fork_top_cover: mat(0x0e7490),
   fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0xef4444),
-  fork_opt_a_tslot: mat(0x6366f1), fork_opt_a_hw: mat(0x334155, { metalness: 0.80 }),
-  fork_opt_b_rollers: mat(0xec4899), fork_opt_b_hw: mat(0xd1d5db, { metalness: 0.86 }),
+  fork_hold_rails: mat(0x6366f1), fork_hold_fasteners: mat(0x334155, { metalness: 0.80 }),
   fork_base_rails: mat(0x00897b, { metalness: 0.25 }),
   fork_front_arch: mat(0x80cbc4), fork_mid_stage: mat(0x43a047, { metalness: 0.25 }),
   fork_pinion_left: mat(0xeab308, { metalness: 0.25 }), fork_pinion_right: mat(0xca8a04, { metalness: 0.25 }),
@@ -327,10 +326,8 @@ const fTieMesh = regBody('fork_under_tie', forkGroup, mats.fork_under_tie);
 const fCoverMesh = regBody('fork_top_cover', forkGroup, mats.fork_top_cover);
 const fCoverHwMesh = regBody('fork_cover_fasteners', forkGroup, mats.fork_cover_fasteners);
 const fSwMesh = regBody('fork_limit_switches', forkGroup, mats.fork_limit_switches);
-const fOptAMesh = regBody('fork_opt_a_tslot', forkGroup, mats.fork_opt_a_tslot);
-const fOptAHwMesh = regBody('fork_opt_a_hw', forkGroup, mats.fork_opt_a_hw);
-const fOptBMesh = regBody('fork_opt_b_rollers', forkGroup, mats.fork_opt_b_rollers);
-const fOptBHwMesh = regBody('fork_opt_b_hw', forkGroup, mats.fork_opt_b_hw);
+const fHoldMesh = regBody('fork_hold_rails', forkGroup, mats.fork_hold_rails);
+const fHoldHwMesh = regBody('fork_hold_fasteners', forkGroup, mats.fork_hold_fasteners);
 regBody('fork_base_rails', forkGroup, mats.fork_base_rails);
 regBody('fork_front_arch', forkGroup, mats.fork_front_arch);
 regBody('fork_drive', forkGroup, mats.fork_drive);
@@ -491,16 +488,15 @@ window.setExplode = (pct) => {
   bodyMeshes.battery_lid.position.set(-60 * k, 0, 102 * k);
 };
 
-window.setHoldOpt = (opt) => {
-  ['off', 'a', 'b'].forEach(id => { const el = document.getElementById('v-opt-' + id); if (el) el.classList.toggle('active', id === opt); });
-  fOptAMesh.visible = (opt === 'a'); fOptAHwMesh.visible = (opt === 'a');
-  fOptBMesh.visible = (opt === 'b'); fOptBHwMesh.visible = (opt === 'b');
-};
-window.setHoldOpt('a');
-
 window.setVis = (name, state) => {
   if (name === 'fork') forkGroup.visible = (state !== 'off');
   else if (name === 'sw') { fSwMesh.visible = (state !== 'off'); }
+  else if (name === 'hold') {
+    fHoldMesh.visible = (state !== 'off'); fHoldHwMesh.visible = (state !== 'off');
+    mats.fork_hold_rails.transparent = (state === 'xray');
+    mats.fork_hold_rails.opacity = (state === 'xray') ? 0.28 : 1.0;
+    mats.fork_hold_rails.depthWrite = (state !== 'xray');
+  }
   else if (name === 'cover') {
     fCoverMesh.visible = (state !== 'off');
     fCoverHwMesh.visible = (state !== 'off');
@@ -579,10 +575,8 @@ function animate() {
   fTieMesh.position.set(0, 0, -48 * k);
   fCoverMesh.position.set(0, 0, 86 * k);
   fCoverHwMesh.position.set(0, 0, 114 * k);
-  fOptAMesh.position.set(0, 0, 44 * k);
-  fOptAHwMesh.position.set(0, 0, 72 * k);
-  fOptBMesh.position.set(0, 0, 44 * k);
-  fOptBHwMesh.position.set(0, 0, 72 * k);
+  fHoldMesh.position.set(0, 0, 44 * k);
+  fHoldHwMesh.position.set(0, 0, 72 * k);
   fMidMesh.position.set(0, 0.5 * forkMm, 26 * k);
   fPinLMesh.position.set(148.5, -202.0 + 0.5 * forkMm, 36 * k);
   fPinLMesh.rotation.z = -(0.5 * forkMm) / 8.0;

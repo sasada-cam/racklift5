@@ -1150,6 +1150,11 @@ PRINT_PARTS_CATALOG = [
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
      "notes": "Bolts to R46 via 6x M3x10 screws; covers 17HS4401 + JST plug & L/R rack-tail channels.",
      "rel_path": "models/components/objects_compartment/R56_fork_top_cover_B01.stl"},
+    {"id": "R57", "mark": "R57-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "2 (L+R)", "color": "#6366F1",
+     "name": "Screwed MGN/T-Slot Linear Hold-Down Guide Rails",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "100% printable linear rail cap (Left + Right); bolts to R47/R48 locking R50 below 192 mm crate.",
+     "rel_path": "models/components/objects_compartment/R57_hold_rail_left_B01.stl"},
 
     # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs
     {"id": "R44-FK", "mark": "R44 (Forklift)", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0EA5E9",

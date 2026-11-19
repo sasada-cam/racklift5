@@ -432,6 +432,10 @@ def build_all_specs() -> list[dict]:
          "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Bolts to R46 via 6x M3x10 socket cap screws; encloses 17HS4401 + JST plug & L/R rack tails.",
          "rel_path": "models/components/objects_compartment/R56_fork_top_cover_B01.stl", "shape": fork["fork_top_cover"],
          "key_dims": ["Span: 104.8 x 93.9 mm (Z=200.05..209.0)", "Mount: 6x M3 counterbored bores", "JST wire pocket: 13.6 x 9.9 x 5.3 mm"]},
+        {"id": "R57", "mark": "R57-B01", "short_title": "MGN Hold-Down Linear Rails", "name": "Screwed 3D-Printed MGN/T-Slot Hold-Down Linear Guide Rails (L/R)",
+         "process": "3D PRINT (FDM)", "qty": 2, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Print 1x Left + 1x Right; bolts to R47/R48 via 6x M3 to lock R50 MGN wings below 192 mm crate.",
+         "rel_path": "models/components/objects_compartment/R57_hold_rail_left_B01.stl", "shape": fork["fork_hold_rails"].solids()[0],
+         "key_dims": ["Length: 166.6 mm (-237.2..-70.6)", "Top height: Z=190.10 (< 192 mm crate)", "Mount: 3x M3 countersunk bores/side"]},
 
         # --- Robot Body & Load Base (R40..R45, P07) ---
         {"id": "R44-FK", "mark": "R44 (Forklift)", "short_title": "Forklift Tray Base", "name": "Printed Tray Base (With T8 Trench & R46 Bores)",

@@ -8,7 +8,7 @@
       272.15,
       46.1
     ],
-    "volume_cm3": 292.29,
+    "volume_cm3": 291.9,
     "holes": [
       "\u00d83.30 mm (\u00d718)",
       "\u00d82.90 mm (\u00d78)",
@@ -26,12 +26,14 @@
     "mark": "R47-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      40.45,
+      41.25,
       166.6,
       6.5
     ],
-    "volume_cm3": 7.1,
-    "holes": [],
+    "volume_cm3": 8.67,
+    "holes": [
+      "\u00d82.90 mm (\u00d73)"
+    ],
     "svg_rel": "docs/drawings/R47.svg",
     "dxf_rel": "docs/drawings/dxf/R47.dxf",
     "scale": "1:2"
@@ -41,12 +43,14 @@
     "mark": "R48-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      40.45,
+      41.25,
       166.6,
       6.5
     ],
-    "volume_cm3": 7.1,
-    "holes": [],
+    "volume_cm3": 8.67,
+    "holes": [
+      "\u00d82.90 mm (\u00d73)"
+    ],
     "svg_rel": "docs/drawings/R48.svg",
     "dxf_rel": "docs/drawings/dxf/R48.dxf",
     "scale": "1:2"
@@ -75,11 +79,11 @@
     "mark": "R50-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      109.2,
+      106.6,
       162.5,
-      11.4
+      11.55
     ],
-    "volume_cm3": 11.71,
+    "volume_cm3": 15.63,
     "holes": [
       "\u00d810.40 mm (\u00d74)",
       "\u00d82.95 mm (\u00d72)",
@@ -95,11 +99,11 @@
     "mark": "R51-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      15.95,
+      11.75,
       272.0,
       6.8
     ],
-    "volume_cm3": 16.79,
+    "volume_cm3": 9.27,
     "holes": [],
     "svg_rel": "docs/drawings/R51.svg",
     "dxf_rel": "docs/drawings/dxf/R51.dxf",
@@ -110,11 +114,11 @@
     "mark": "R52-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
-      15.95,
+      11.75,
       272.0,
       6.8
     ],
-    "volume_cm3": 16.79,
+    "volume_cm3": 9.27,
     "holes": [],
     "svg_rel": "docs/drawings/R52.svg",
     "dxf_rel": "docs/drawings/dxf/R52.dxf",
@@ -195,6 +199,24 @@
     "scale": "0.75:1"
   },
   {
+    "id": "R57",
+    "mark": "R57-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      8.0,
+      166.6,
+      5.95
+    ],
+    "volume_cm3": 6.89,
+    "holes": [
+      "\u00d83.20 mm (\u00d73)",
+      "\u00d85.10 mm (\u00d73)"
+    ],
+    "svg_rel": "docs/drawings/R57.svg",
+    "dxf_rel": "docs/drawings/dxf/R57.dxf",
+    "scale": "1:2"
+  },
+  {
     "id": "R44-FK",
     "mark": "R44 (Forklift)",
     "process": "3D PRINT (FDM)",
@@ -203,7 +225,7 @@
       175.0,
       10.0
     ],
-    "volume_cm3": 180.99,
+    "volume_cm3": 179.33,
     "holes": [
       "\u00d82.90 mm (\u00d729)",
       "\u00d816.00 mm (\u00d710)",
