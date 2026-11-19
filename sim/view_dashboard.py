@@ -1494,16 +1494,7 @@ def collect_print_parts() -> tuple[list, dict, dict, dict]:
         item["bbox_mm"] = bbox
         item["scale"] = m.get("scale", "")
         item["holes"] = m.get("holes", [])
-        if "bed_cfg" not in item:
-            if "PRINT" in item.get("process", "") and bbox and len(bbox) == 3:
-                dx, dy, dz = bbox
-                if max(dx, dy) <= 220.0:
-                    item["bed_cfg"] = f"Flat 0° on 220×220 Bed ({dx:.1f}×{dy:.1f} mm · fits straight)"
-                else:
-                    diag = (dx + dy) / 1.41421356
-                    item["bed_cfg"] = f"★ Rotate 45° Diagonal on 220×220 Bed ({diag:.1f}×{diag:.1f} mm · 1-Piece!)"
-            else:
-                item["bed_cfg"] = ""
+        item["bed_cfg"] = item.get("bed_cfg", "")
         items.append(item)
     return items, by_rel, svg_by_name, dxf_by_name
 
@@ -1546,11 +1537,9 @@ PRINT_PARTS_HTML = r"""<!doctype html>
   .proc-lathe{background:#4c1d95;color:#ddd6fe;border:1px solid #8b5cf6}
   .proc-cut{background:#1e293b;color:#cbd5e1;border:1px solid #64748b}
   .dim-badge{font-size:10px;color:#fbbf24;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  .bed-pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;margin-bottom:4px;font-weight:700;background:rgba(14,165,233,.14);color:#7dd3fc;border:1px solid rgba(56,189,248,.32)}
+  .bed-pill{display:none;font-size:10px;padding:2px 7px;border-radius:4px;margin-bottom:4px;font-weight:700;background:rgba(14,165,233,.14);color:#7dd3fc;border:1px solid rgba(56,189,248,.32)}
+  .pcard.active .bed-pill{display:inline-block}
   .bed-pill.diag{background:rgba(249,115,22,.18);color:#fdba74;border-color:#f97316}
-  .bed-guide{background:#0b1324;border:1px solid #1e3a5f;border-radius:7px;padding:7px 9px;font-size:10.5px;color:#cbd5e1;line-height:1.38}
-  .bed-guide b{color:#38bdf8}
-  .bed-guide .warn{color:#fdba74;font-weight:700}
   .pname{font-size:12.5px;font-weight:600;color:#f8fafc;margin-bottom:2px}
   .pmeta{font-size:10.5px;color:var(--muted);margin-bottom:5px}
   .path-box{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#0b1222;border:1px solid #1e2d47;border-radius:5px;padding:4px 7px}
@@ -1594,11 +1583,6 @@ PRINT_PARTS_HTML = r"""<!doctype html>
         <span id="cntPill" class="count-pill">0 Parts</span>
       </div>
       <input id="q" class="search" type="search" placeholder="Search ID (R46A, R51, M01), 45° diagonal, PETG, or file..."/>
-      <div class="bed-guide">
-        <b>220 × 220 mm 3D Printer Bed Configuration (100% Fit):</b><br/>
-        • <span class="warn">R51-B01 &amp; R52-B01 (272×11.75 mm):</span> Place <b>45° Diagonal</b> in slicer → <b>200.6 × 200.6 mm</b> box (1-piece unbroken, 19.4 mm spare; print both side-by-side in 1 job!).<br/>
-        • <b>R46A-B01 (186.5×181.5) &amp; R46B-B01 (104.8×96.9):</b> Split at <code>Y = -245.0 mm</code> stop wall → both print <b>Flat 0°</b> &amp; lock via 2× tenons + 2× M3 wall bolts + R56 top lid + R53 bottom tie.
-      </div>
       <div class="chips">
         <button class="chip active" data-g="all">All</button>
         <button class="chip" data-g="forklift">Forklift (R46A–R58)</button>
