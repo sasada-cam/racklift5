@@ -1289,6 +1289,78 @@ PRINT_PARTS_CATALOG = [
      "material": "6063-T5 / 6061 Aluminum 40x25x2 mm",
      "notes": "Cut square 276.0 mm; drill M4/M5 patterns for H1/H2 pods & R40 collar.",
      "rel_path": "docs/SHOPPING_LIST.md"},
+
+    # 6. Fixed 2020 V-Slot Rails & Bed-Split In-Slot MOD=1.5 Racks (2-Bay Forklift Frame)
+    {"id": "XP-RAIL", "mark": "Crossing 2020", "group": "rails", "process": "SHOP CUT / DRILL", "qty": "1/crossing", "color": "#94A3B8",
+     "name": "2020 V-Slot Rail Segment on Turntable Crossing",
+     "material": "2020 Anodized Aluminium V-Slot · Cut 168.65 mm",
+     "notes": "Bolts to XP-ROT disc (2x M5x10 + T-nuts); 1.0 mm clearance gap each end.",
+     "rel_path": "models/components/t_slot_option1_crossing/xp_rail.stl"},
+    {"id": "RK-VMB", "mark": "RK-VMB", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#F59E0B",
+     "name": "In-Slot Rack: Vertical Middle Bridge (69.69 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Slides between lower (Z=90) and upper (Z=330.3) crossings (10.4x5.0 mm).",
+     "rel_path": "models/components/option1_rails/RK_VMB_vert_mid_rack.stl"},
+    {"id": "RK-VUP-1", "mark": "RK-VUP-1", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#F97316",
+     "name": "In-Slot Rack: Vertical Climb Start (169.05 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Bottom climb strip starting 1.0 mm above upper crossing; mates into RK-VUP-2.",
+     "rel_path": "models/components/option1_rails/RK_VUP_1_climb_bot.stl"},
+    {"id": "RK-VUP-2", "mark": "RK-VUP-2", "group": "rails", "process": "3D PRINT (FDM)", "qty": "4", "color": "#EA580C",
+     "name": "In-Slot Rack: Vertical Climb 36P Mid Strip (169.45 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Repeating 36-pitch middle section: print 4x (2x stacked end-to-end per mast).",
+     "rel_path": "models/components/option1_rails/RK_VUP_2_climb_mid_36p.stl"},
+    {"id": "RK-VUP-3", "mark": "RK-VUP-3", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#C2410C",
+     "name": "In-Slot Rack: Vertical Climb Top Cap (155.81 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Top strip above 2x RK-VUP-2 reaching Z=1080 mm (completes 664.35 mm mast).",
+     "rel_path": "models/components/option1_rails/RK_VUP_3_climb_top.stl"},
+    {"id": "RK-HL", "mark": "RK-HL", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#FBBF24",
+     "name": "In-Slot Rack: Horizontal Left Approach Tail (94.68 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Mounts along X = -180.0..-85.32 mm on lower & upper horizontal 2020 rails.",
+     "rel_path": "models/components/option1_rails/RK_HL_horiz_left.stl"},
+    {"id": "RK-HB", "mark": "RK-HB", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#D97706",
+     "name": "In-Slot Rack: Horizontal Bay-to-Bay Span (187.50 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Compact Forklift 358.14 mm bay pitch (1 piece on 220x220 bed; X=85.3..272.8).",
+     "rel_path": "models/components/option1_rails/RK_HB_horiz_bay_span.stl"},
+    {"id": "RK-HR-1", "mark": "RK-HR-1", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#EAB308",
+     "name": "In-Slot Rack: Horizontal Right Overhang 1/2 (131.35 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Inner half of 264.68 mm right overhang; joins cleanly into RK-HR-2 at valley.",
+     "rel_path": "models/components/option1_rails/RK_HR_1_horiz_right_a.stl"},
+    {"id": "RK-HR-2", "mark": "RK-HR-2", "group": "rails", "process": "3D PRINT (FDM)", "qty": "2", "color": "#CA8A04",
+     "name": "In-Slot Rack: Horizontal Right Overhang 2/2 (133.13 mm)",
+     "material": "PETG · 0.12-0.15mm · 100% infill · Flat teeth +Z",
+     "notes": "Outer half ending flush at X = 708.14 mm right rail end.",
+     "rel_path": "models/components/option1_rails/RK_HR_2_horiz_right_b.stl"},
+    {"id": "M-VMB", "mark": "Cut 2020 (VMB)", "group": "rails", "process": "SHOP CUT / DRILL", "qty": "2", "color": "#94A3B8",
+     "name": "2020 V-Slot Alu Rail: Vertical Middle Bridge (69.69 mm)",
+     "material": "2020 Anodized Aluminium V-Slot",
+     "notes": "Cut square 69.69 mm; sits between lower & upper crossings w/ RK-VMB.",
+     "rel_path": "cad/build_option1_full.py"},
+    {"id": "M-VUP", "mark": "Cut 2020 (VUP)", "group": "rails", "process": "SHOP CUT / DRILL", "qty": "2", "color": "#94A3B8",
+     "name": "2020 V-Slot Alu Rail: Vertical Upper Climb Mast (664.35 mm)",
+     "material": "2020 Anodized Aluminium V-Slot",
+     "notes": "Cut square 664.35 mm; holds RK-VUP-1 + 2x RK-VUP-2 + RK-VUP-3.",
+     "rel_path": "cad/build_option1_full.py"},
+    {"id": "M-HL", "mark": "Cut 2020 (HL)", "group": "rails", "process": "SHOP CUT / DRILL", "qty": "2", "color": "#94A3B8",
+     "name": "2020 V-Slot Alu Rail: Horizontal Left Approach (94.68 mm)",
+     "material": "2020 Anodized Aluminium V-Slot",
+     "notes": "Cut square 94.68 mm; holds RK-HL strip on lower & upper rails.",
+     "rel_path": "cad/build_option1_full.py"},
+    {"id": "M-HB", "mark": "Cut 2020 (HB)", "group": "rails", "process": "SHOP CUT / DRILL", "qty": "2", "color": "#94A3B8",
+     "name": "2020 V-Slot Alu Rail: Horizontal Bay Span (187.50 mm)",
+     "material": "2020 Anodized Aluminium V-Slot",
+     "notes": "Cut square 187.50 mm (358.14 mm bay pitch); holds RK-HB strip.",
+     "rel_path": "cad/build_option1_full.py"},
+    {"id": "M-HR", "mark": "Cut 2020 (HR)", "group": "rails", "process": "SHOP CUT / DRILL", "qty": "2", "color": "#94A3B8",
+     "name": "2020 V-Slot Alu Rail: Horizontal Right Overhang (264.68 mm)",
+     "material": "2020 Anodized Aluminium V-Slot",
+     "notes": "Cut square 264.68 mm; holds RK-HR-1 + RK-HR-2 strips.",
+     "rel_path": "cad/build_option1_full.py"},
 ]
 
 
@@ -1321,7 +1393,7 @@ def collect_print_parts() -> tuple[list, dict, dict, dict]:
             in_root = False
         if not (in_root and os.path.isfile(fpath)):
             continue
-        if row["group"] != "metal":
+        if rel.lower().endswith(".stl"):
             item["abs_path"] = fpath
             item["has_stl"] = True
             item["size_kb"] = round(os.path.getsize(fpath) / 1024.0, 1)
@@ -1454,6 +1526,7 @@ PRINT_PARTS_HTML = r"""<!doctype html>
         <button class="chip" data-g="body">Body &amp; Tray</button>
         <button class="chip" data-g="pod">Swivel Pod ×2</button>
         <button class="chip" data-g="hoods">Hoods &amp; Crossings</button>
+        <button class="chip" data-g="rails">Rails &amp; Racks</button>
         <button class="chip" data-g="metal">Metal / Lathe / Cut</button>
       </div>
     </div>

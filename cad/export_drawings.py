@@ -31,6 +31,7 @@ import build_option1_dual_legs as DL  # noqa: E402
 import build_option1_body as OB  # noqa: E402
 import build_option1_full as OF  # noqa: E402
 import build_objects_compartment as OC  # noqa: E402
+import build_rail_racks_option1 as RR  # noqa: E402
 
 
 BUILD_STYLE = {
@@ -537,6 +538,7 @@ def build_all_specs() -> list[dict]:
          "rel_path": "docs/SHOPPING_LIST.md", "shape": metal["M-COL"],
          "key_dims": ["Section: 40.0 x 25.0 mm (2 mm wall)", "Length: 276.0 mm"]},
     ]
+    specs.extend(RR.get_rail_rack_specs())
     return specs
 
 

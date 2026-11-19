@@ -696,5 +696,233 @@
     "svg_rel": "docs/drawings/M-COL.svg",
     "dxf_rel": "docs/drawings/dxf/M-COL.dxf",
     "scale": "1:2"
+  },
+  {
+    "id": "RK-VMB",
+    "mark": "RK-VMB",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      69.69,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 1.81,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-VMB.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-VMB.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "RK-VUP-1",
+    "mark": "RK-VUP-1",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      169.05,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 4.37,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-VUP-1.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-VUP-1.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "RK-VUP-2",
+    "mark": "RK-VUP-2",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      169.45,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 4.38,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-VUP-2.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-VUP-2.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "RK-VUP-3",
+    "mark": "RK-VUP-3",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      155.81,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 4.02,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-VUP-3.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-VUP-3.dxf",
+    "scale": "1:1"
+  },
+  {
+    "id": "RK-HL",
+    "mark": "RK-HL",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      94.68,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 2.44,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-HL.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-HL.dxf",
+    "scale": "1.50:1"
+  },
+  {
+    "id": "RK-HB",
+    "mark": "RK-HB",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      187.5,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 4.85,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-HB.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-HB.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "RK-HR-1",
+    "mark": "RK-HR-1",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      131.35,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 3.39,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-HR-1.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-HR-1.dxf",
+    "scale": "1:1"
+  },
+  {
+    "id": "RK-HR-2",
+    "mark": "RK-HR-2",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      133.13,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 3.43,
+    "holes": [],
+    "svg_rel": "docs/drawings/RK-HR-2.svg",
+    "dxf_rel": "docs/drawings/dxf/RK-HR-2.dxf",
+    "scale": "1:1"
+  },
+  {
+    "id": "XP-RAIL",
+    "mark": "Crossing 2020",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      168.65,
+      20.0,
+      20.0
+    ],
+    "volume_cm3": 23.79,
+    "holes": [
+      "\u00d83.00 mm (\u00d74)",
+      "\u00d85.50 mm"
+    ],
+    "svg_rel": "docs/drawings/XP-RAIL.svg",
+    "dxf_rel": "docs/drawings/dxf/XP-RAIL.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "M-VMB",
+    "mark": "Cut 2020 (VMB)",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      69.69,
+      20.0,
+      20.0
+    ],
+    "volume_cm3": 9.83,
+    "holes": [
+      "\u00d83.00 mm (\u00d74)",
+      "\u00d85.50 mm"
+    ],
+    "svg_rel": "docs/drawings/M-VMB.svg",
+    "dxf_rel": "docs/drawings/dxf/M-VMB.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "M-VUP",
+    "mark": "Cut 2020 (VUP)",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      664.35,
+      20.0,
+      20.0
+    ],
+    "volume_cm3": 93.73,
+    "holes": [
+      "\u00d83.00 mm (\u00d74)",
+      "\u00d85.50 mm"
+    ],
+    "svg_rel": "docs/drawings/M-VUP.svg",
+    "dxf_rel": "docs/drawings/dxf/M-VUP.dxf",
+    "scale": "1:5"
+  },
+  {
+    "id": "M-HL",
+    "mark": "Cut 2020 (HL)",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      94.68,
+      20.0,
+      20.0
+    ],
+    "volume_cm3": 13.36,
+    "holes": [
+      "\u00d83.00 mm (\u00d74)",
+      "\u00d85.50 mm"
+    ],
+    "svg_rel": "docs/drawings/M-HL.svg",
+    "dxf_rel": "docs/drawings/dxf/M-HL.dxf",
+    "scale": "1.50:1"
+  },
+  {
+    "id": "M-HB",
+    "mark": "Cut 2020 (HB)",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      187.5,
+      20.0,
+      20.0
+    ],
+    "volume_cm3": 26.45,
+    "holes": [
+      "\u00d83.00 mm (\u00d74)",
+      "\u00d85.50 mm"
+    ],
+    "svg_rel": "docs/drawings/M-HB.svg",
+    "dxf_rel": "docs/drawings/dxf/M-HB.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "M-HR",
+    "mark": "Cut 2020 (HR)",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      264.68,
+      20.0,
+      20.0
+    ],
+    "volume_cm3": 37.34,
+    "holes": [
+      "\u00d83.00 mm (\u00d74)",
+      "\u00d85.50 mm"
+    ],
+    "svg_rel": "docs/drawings/M-HR.svg",
+    "dxf_rel": "docs/drawings/dxf/M-HR.dxf",
+    "scale": "1:2"
   }
 ]
