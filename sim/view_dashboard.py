@@ -1098,7 +1098,7 @@ PRINT_PARTS_CATALOG = [
     {"id": "R46", "mark": "R46-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#26A69A",
      "name": "Forklift Drop-On Deck + Rear KP08/17HS4401 Cradle",
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Sloped outer wings, corner & mid-edge drop skirts, rear-wall rack tail slots.",
+     "notes": "Sloped outer wings with lowered 178.60 mm skid channels (+1.0mm under 12mm carried skids), drop skirts & tail slots.",
      "rel_path": "models/components/objects_compartment/R46_forklift_deck_B01.stl"},
     {"id": "R47", "mark": "R47-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#00897B",
      "name": "Fixed Base Guide Rail + Solid Rack (Left)",
@@ -1158,7 +1158,7 @@ PRINT_PARTS_CATALOG = [
     {"id": "R58", "mark": "R58-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0284C7",
      "name": "Screwed Center-Bay Overhead Protective Shroud Lid",
      "material": "PETG · 0.2mm · 4 walls · 100% infill",
-     "notes": "Hides T8, R47/R48 racks, R50 & cogs between tines at Z=188.65..190.10; 4x M2x8 into R46.",
+     "notes": "C-channel boundary ribs guard cog/rack tracks (Z<=190.10, +1.50mm under 191.60 tines); 4x M2x14 shared end holes.",
      "rel_path": "models/components/objects_compartment/R58_fork_bay_cover_B01.stl"},
 
     # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs

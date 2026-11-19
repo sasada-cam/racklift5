@@ -94,8 +94,8 @@ CURB_W, CURB_TOP_ADD = 2.5, 2.2
 FORK_DX = 48.0          # left/right tine centers at X = 132 & 228 mm
 SCREW_X = OB.BXR        # 180.0 mm centered symmetrically
 SCREW_Z = 180.50        # lowered -4.0 mm so T8, copper nut & 688ZZ arch all stay strictly < 189.7 mm
-GEAR_Z0, GEAR_Z1 = 183.50, 186.60   # R47/R48 racks (F683ZZ 3.0mm), pinions & tails leave room for R50 chord + R58 shroud <190.30!
-FORK_Z0, FORK_Z1 = 183.50, 190.30   # orange fork blades stand proud ABOVE cogwheels (188.15) & R49 arch (189.60)
+GEAR_Z0, GEAR_Z1 = 183.50, 186.60   # R47/R48 racks (F683ZZ 3.0mm), pinions & tails leave room for R50 chord + R58 shroud
+FORK_Z0, FORK_Z1 = 183.50, 191.60   # +1.30 mm taller orange blades -> +1.50 mm crate lift clearance above R57/R58 (190.10)!
 MID_STROKE_MAX = 120.0  # Stage-1 stroke (total tine reach = 240 mm)
 
 # Stage-2 Horizontal 1:2 Rack-and-Pinion geometry (16T MOD=1.0, rp=8.00 mm)
@@ -136,8 +136,16 @@ def _engrave_verified(part: bd.Part, key: str, origin, x_dir, normal, size: floa
     return out
 
 
+def _bb_hit(ba, bb) -> bool:
+    return (
+        ba.min.X <= bb.max.X and ba.max.X >= bb.min.X
+        and ba.min.Y <= bb.max.Y and ba.max.Y >= bb.min.Y
+        and ba.min.Z <= bb.max.Z and ba.max.Z >= bb.min.Z
+    )
+
+
 def _overlap(a, b) -> float:
-    if not a.bounding_box().overlaps(b.bounding_box()):
+    if not _bb_hit(a.bounding_box(), b.bounding_box()):
         return 0.0
     sa_list = a.solids() if hasattr(a, "solids") else [a]
     sb_list = b.solids() if hasattr(b, "solids") else [b]
@@ -145,7 +153,7 @@ def _overlap(a, b) -> float:
     for sa in sa_list:
         ba = sa.bounding_box()
         for sb in sb_list:
-            if not ba.overlaps(sb.bounding_box()):
+            if not _bb_hit(ba, sb.bounding_box()):
                 continue
             inter = sa & sb
             if inter is not None:
@@ -298,6 +306,10 @@ def build_forklift_deck(tray_clean: bd.Part):
 
     # Central fork bay + embedded T8/nut channel into R46 & R44 + front 688ZZ cradle
     comp = comp - box(BAY_X0, BAY_X1, WALL_Y1, OB.TRAY_Y1 + 0.5, BAY_FLOOR_Z, WALL_TOP_Z + 2.0)
+    # Lowered flat skid landing channels on R46 (X=108.5..121.0 & 239.0..251.5, Z=178.60 mm -> +1.00 mm clear below
+    # 12.0 mm crate skids @ 179.60 mm when carried on 191.60 mm forks, while keeping sloped outer decks & M3 screws!)
+    comp = comp - box(OB.BXR - 71.5, BAY_X0 + 0.1, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
+    comp = comp - box(BAY_X1 - 0.1, OB.BXR + 71.5, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
     comp = comp - box(SCREW_X - 12.2, SCREW_X + 12.2, WALL_Y1, -78.0, NUT_TRENCH_Z, BAY_FLOOR_Z + 0.5)
     comp = comp - box(SCREW_X - 16.5, SCREW_X + 16.5, -78.0, OB.TRAY_Y1 + 0.5, 179.05, BAY_FLOOR_Z + 0.5)
     comp = comp - box(SCREW_X - 10.2, SCREW_X + 10.2, -78.0, OB.TRAY_Y1 + 0.5, NUT_TRENCH_Z, 179.20)
@@ -340,19 +352,6 @@ def build_forklift_deck(tray_clean: bd.Part):
             tray_clean = tray_clean - OB._cyl_axis(1.05, 169.8, 173.4, "z", pin_x, yc_sw)
     comp = comp - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, 178.1)
     tray_clean = tray_clean - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, OB.TRAY_TOP_Z + 0.5)
-    # Thread-forming M2 pilot bores into R46 + R44 for R57+R47 outer cheeks (5x/side) and R47 inner rack spines/flanges
-    for sgn_m in (-1, 1):
-        mx_out = OB.BXR + sgn_m * (FORK_DX + 8.3)  # 123.7 / 236.3
-        for my_h in HOLD_Y_M2:
-            comp = comp - OB._cyl_axis(0.95, 174.20, BAY_FLOOR_Z + 0.5, "z", mx_out, my_h)
-            tray_clean = tray_clean - OB._cyl_axis(0.95, 174.20, OB.TRAY_TOP_Z + 0.5, "z", mx_out, my_h)
-        mx_end = SCREW_X + sgn_m * 19.5  # 160.5 / 199.5 (R47/R48 solid rack end M2 x 10 anchors)
-        for my_r in RACK_BOLT_YS:
-            comp = comp - OB._cyl_axis(0.95, 174.50, BAY_FLOOR_Z + 0.5, "z", mx_end, my_r)
-            tray_clean = tray_clean - OB._cyl_axis(0.95, 174.50, OB.TRAY_TOP_Z + 0.5, "z", mx_end, my_r)
-        mx_flg = SCREW_X + sgn_m * 14.5  # 165.5 / 194.5 (4x M2 x 4 mm hold-downs into R46 bridge, wide edge margin)
-        for my_f in (-202.0, -166.0, -130.0, -94.0):
-            comp = comp - OB._cyl_axis(0.95, 178.40, BAY_FLOOR_Z + 0.5, "z", mx_flg, my_f)
     tray_clean = tray_clean - OB._cyl_axis(4.60, OB.TRAY_Y0 - 0.5, WALL_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(6.80, OB.TRAY_Y0 - 0.5, OB.TRAY_Y0 + 1.2, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(8.20, -77.8, OB.TRAY_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
@@ -477,9 +476,23 @@ def build_forklift_deck(tray_clean: bd.Part):
         comp = comp + box(sx0, sx1, OB.TRAY_Y1 + 0.05, OB.TRAY_Y1 + SK_T + 0.05, 175.0, Z_JOIN)
         comp = comp + box(sx0, sx1, OB.TRAY_Y1 - 2.5, OB.TRAY_Y1 + SK_T + 0.05, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
 
-    # 5) Removable Under-Tray Rear Cantilever Tie Plate (R53-B01): docks flush beneath R46 (Y=-288..-245, Z=155.7..160.15)
+    # Drill M2 pilot bores AFTER drop skirts so front skirt (-72.5..-66.75) cannot close -72.4 end bores
+    for sgn_m in (-1, 1):
+        mx_out = OB.BXR + sgn_m * (FORK_DX + 8.3)  # 123.7 / 236.3
+        for my_h in HOLD_Y_M2:
+            comp = comp - OB._cyl_axis(0.95, 174.20, BAY_FLOOR_Z + 0.5, "z", mx_out, my_h)
+            tray_clean = tray_clean - OB._cyl_axis(0.95, 174.20, OB.TRAY_TOP_Z + 0.5, "z", mx_out, my_h)
+        mx_end = SCREW_X + sgn_m * 19.5  # 160.5 / 199.5 (R47/R48 + R58 shared M2 x 14 anchors)
+        for my_r in RACK_BOLT_YS:
+            comp = comp - OB._cyl_axis(0.95, 174.50, BAY_FLOOR_Z + 0.5, "z", mx_end, my_r)
+            tray_clean = tray_clean - OB._cyl_axis(0.95, 174.50, OB.TRAY_TOP_Z + 0.5, "z", mx_end, my_r)
+        mx_flg = SCREW_X + sgn_m * 14.5  # 165.5 / 194.5 (4x M2 x 4 mm hold-downs into R46 bridge)
+        for my_f in (-202.0, -166.0, -130.0, -94.0):
+            comp = comp - OB._cyl_axis(0.95, 178.40, BAY_FLOOR_Z + 0.5, "z", mx_flg, my_f)
+
+    # 5) Removable Under-Tray Rear Cantilever Tie Plate (R53-B01): docks cleanly beneath R46 (Y=-287.85..-245, Z=155.7..160.15)
     #    & extends forward under R44 rear rim (Y=-245..-218, Z=155.7..167.85); unbolts downward so R46/R44 separate freely!
-    under_tie = box(SCREW_X - 33.0, SCREW_X + 33.0, TIE_Y0 + 0.05, WALL_Y0, CRADLE_Z0, TIE_SPLIT_Z - 0.05)
+    under_tie = box(SCREW_X - 33.0, SCREW_X + 33.0, TIE_Y0 + 0.15, WALL_Y0, CRADLE_Z0, TIE_SPLIT_Z - 0.05)
     with bd.BuildPart() as gus_bp:
         with bd.BuildSketch(bd.Plane.YZ.offset(SCREW_X - 33.0)):
             with bd.BuildLine():
@@ -546,15 +559,15 @@ def build_forklift_deck(tray_clean: bd.Part):
     # 2x rear underside M3 bolts anchoring R53-B01 straight UP into R44 rear rim (Y=-242) + 2x M3 bolts into R46 coupler floor (Y=-275)
     for rx in (155.5, 204.5):
         under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, 168.2, "z", rx, -242.0)
-        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 159.0, "z", rx, -242.0)
+        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 161.55, "z", rx, -242.0)
         tray_clean = tray_clean - OB._cyl_axis(1.45, OB.TRAY_RIB_Z0 - 0.5, OB.TRAY_TOP_Z - 1.5, "z", rx, -242.0)
         hw_solids.append(_socket_bolt(2.70, 2.4, 1.40, 15.0, "z", rx, -242.0, 161.45, head_dir=-1))
 
     for ux in (162.0, 198.0):
         under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, TIE_SPLIT_Z + 0.5, "z", ux, -275.0)
-        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.0, "z", ux, -275.0)
+        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.30, "z", ux, -275.0)
         comp = comp - OB._cyl_axis(1.45, TIE_SPLIT_Z - 0.5, 161.4, "z", ux, -275.0)
-        hw_solids.append(_socket_bolt(2.70, 2.4, 1.40, 6.0, "z", ux, -275.0, 160.45, head_dir=-1))
+        hw_solids.append(_socket_bolt(2.70, 2.0, 1.40, 3.1, "z", ux, -275.0, 158.25, head_dir=-1))
 
     kp_yc = (KP08_Y0 + KP08_Y1) / 2.0
     for bx in (SCREW_X - 21.0, SCREW_X + 21.0):
@@ -600,25 +613,27 @@ def build_forklift_deck(tray_clean: bd.Part):
         comp = comp - OB._cyl_axis(1.45, 191.00, WALL_TOP_Z + 0.5, "z", lx, ly)
         cover_hw.append(_socket_bolt(2.70, 2.40, 1.40, 10.0, "z", lx, ly, 202.45, head_dir=1))
 
-    # 7) Removable Screwed Center-Bay Overhead Shroud (R58-B01):
-    #    Hides T8 screw, R47/R48 racks, R50 carriage, R54/R55 cogs & KW4-3Z-3 switches between the R51/R52 tines
-    #    (X=139.4..220.6, Z=188.65..190.10 < FORK_Z1=190.30); bolted onto 4 integral R46 pedestals via 4x M2 x 8 screws.
+    # 7) Removable Screwed Center-Bay Overhead Shroud (R58-B01) with Integral Cog-Boundary C-Channel Ribs:
+    #    - Longitudinal 3.20 mm boundary ribs along X=139.4..144.4 & 215.6..220.6 (Z=186.90..190.10) stiffen the shroud
+    #      and guard both cogwheel / tine-rack tracks (+0.60 mm clear of R51/R52, +0.80 mm clear of R50 chord).
+    #    - Integral end mounting feet at (160.5 / 199.5, -234.6 & -72.4) share the EXACT 4 end screw holes with R47/R48
+    #      (4x M2 x 14 mm clamping R58 -> R47/R48 -> R46 -> R44 with zero extra R46 pillars needed!).
     bay_cover = (
-        box(139.4, 220.6, -238.0, -70.5, 188.65, 190.10)
-        - box(163.6, 196.4, -78.2, -70.0, 188.40, 190.30)  # front cutout flush around R49 189.60 mm arch crown
+        box(139.4, 220.6, -238.0, -70.0, 188.65, 190.10)
+        + box(139.4, 144.4, -238.0, -70.0, 186.90, 190.10)
+        + box(215.6, 220.6, -238.0, -70.0, 186.90, 190.10)
+        - box(163.6, 196.4, -78.2, -69.5, 186.50, 190.30)  # front cutout flush around R49 189.60 mm arch crown
     )
-    for sx0, sx1 in ((158.0, 163.0), (197.0, 202.0)):  # front outer leveling feet resting on R47/R48 (+0.05 mm clear)
-        bay_cover = bay_cover + box(sx0, sx1, -76.5, -74.2, 186.65, 188.70)
+    for sx0, sx1 in ((157.8, 163.2), (196.8, 202.2)):
+        bay_cover = bay_cover + box(sx0, sx1, -237.2, -231.8, 186.65, 188.70)  # rear feet onto R47/R48 (+0.05 mm clear)
+        bay_cover = bay_cover + box(sx0, sx1, -75.2, -70.0, 186.65, 188.70)   # front feet onto R47/R48 (+0.05 mm clear)
     bay_cover_hw = []
-    for px0, px1 in ((164.0, 167.7), (192.3, 196.0)):
-        comp = comp + box(px0, px1, -238.0, -231.5, 180.50, 188.60)  # rear pillars fused to -238 stop wall + R46 deck
-        comp = comp + box(px0, px1, -85.5, -78.5, 180.50, 188.60)    # front pillars ahead of R47 inner flange (-86.5)
-    for bx in (165.8, 194.2):
-        for by in (-234.6, -82.0):
-            comp = comp - OB._cyl_axis(0.95, 180.40, 188.90, "z", bx, by)
-            bay_cover = bay_cover - OB._cyl_axis(1.10, 188.40, 190.30, "z", bx, by)
+    for sgn_c in (-1, 1):
+        bx = SCREW_X + sgn_c * 19.5  # 160.5 / 199.5 (shared end anchor bores with R47/R48 -> R46 -> R44!)
+        for by in RACK_BOLT_YS:
+            bay_cover = bay_cover - OB._cyl_axis(1.10, 186.50, 190.30, "z", bx, by)
             bay_cover = bay_cover - OB._cyl_axis(1.90, 188.90, 190.30, "z", bx, by)
-            bay_cover_hw.append(_socket_bolt(1.75, 1.15, 0.95, 8.0, "z", bx, by, 188.95, head_dir=1))
+            bay_cover_hw.append(_socket_bolt(1.75, 1.15, 0.95, 14.0, "z", bx, by, 188.95, head_dir=1))
 
     # Engrave R46-B01 on front face of stop wall, R53-B01 on under-tie, R56-B01 & R58-B01 on lids
     comp_part = _engrave_verified(
@@ -673,11 +688,9 @@ def build_forklift_mechanism():
         mx_hole = 0.5 * (outer_x0 + outer_x1)  # 123.7 / 236.3
         for my_h in HOLD_Y_M2:
             rail = rail - OB._cyl_axis(1.10, 180.40, 185.40, "z", mx_hole, my_h)
-        mx_end = SCREW_X + sgn * 19.5  # 160.5 / 199.5 (end M2 x 10 mm anchors: 0.85 mm side walls, closed front/rear!)
+        mx_end = SCREW_X + sgn * 19.5  # 160.5 / 199.5 (shared M2 x 14 mm bores clamping R58 -> R47/R48 -> R46 -> R44)
         for my_r in RACK_BOLT_YS:
-            rail = rail - OB._cyl_axis(1.10, 180.40, 184.60, "z", mx_end, my_r)
-            rail = rail - OB._cyl_axis(1.90, 184.45, 187.50, "z", mx_end, my_r)
-            rack_hw.append(_socket_bolt(1.75, 1.15, 0.95, 10.0, "z", mx_end, my_r, 184.50, head_dir=1))
+            rail = rail - OB._cyl_axis(1.10, 180.40, 186.80, "z", mx_end, my_r)
         mx_flg = SCREW_X + sgn * 14.5  # 165.5 / 194.5 (4x M2 x 4 mm hold-downs into R46 bridge, >=1.15 mm edge rim)
         for my_f in (-202.0, -166.0, -130.0, -94.0):
             rail = rail - OB._cyl_axis(1.10, 180.40, 182.80, "z", mx_flg, my_f)
@@ -750,7 +763,7 @@ def build_forklift_mechanism():
             + OB._cyl_axis(4.02, GEAR_Z1 - 0.85, GEAR_Z1 - 0.05, "z", x_pin, PIN_Y_HOME)
         ) - OB._cyl_axis(1.55, GEAR_Z0 - 0.2, GEAR_Z1 + 0.2, "z", x_pin, PIN_Y_HOME)
         moving_hw.append(f683)
-        moving_hw.append(_socket_bolt(2.50, 0.95, 1.42, 5.6, "z", x_pin, PIN_Y_HOME, GEAR_Z1 - 0.05, head_dir=1))
+        moving_hw.append(_socket_bolt(2.50, 0.95, 1.42, 5.2, "z", x_pin, PIN_Y_HOME, GEAR_Z1 - 0.05, head_dir=1))
 
     # Closed Double-Chord Box-Truss Cross-Bridge on R50-B01 (solves mid-bridge torsion/bending completely!):
     # 1) Thick 3.35 mm lower sewer chord (Z=174.35..177.70 -> +0.75 mm clear above R45 M4 nuts/screws!)
@@ -777,6 +790,8 @@ def build_forklift_mechanism():
     r50_raw = r50_parts[0]
     for p in r50_parts[1:]:
         r50_raw = r50_raw + p
+    for sgn in (-1, 1):  # re-drill F683ZZ M3 pilot bores after unioning lateral gusset wings
+        r50_raw = r50_raw - OB._cyl_axis(1.48, 181.00, 183.80, "z", OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER), PIN_Y_HOME)
     r50_carriage = _engrave_verified(
         r50_raw, "stage1_carriage", (SCREW_X - 7.5, -213.0, 188.35), (1, 0, 0), (0, 0, 1), 2.4
     )
@@ -1039,6 +1054,14 @@ def check_forklift_clearances(parts: dict) -> bool:
         bad.append(("crate_clearance", "fork_hold_rails", "max.Z >= 190.25", 0.0))
     if parts["fork_bay_cover"].bounding_box().max.Z >= 190.25:
         bad.append(("crate_clearance", "fork_bay_cover", "max.Z >= 190.25", 0.0))
+
+    # Carried 12 mm-skid crate test (crate bottom seated on FORK_Z1=191.60 mm, skids hanging down to Z=179.60 mm)
+    carried_load = parts["ref_load"].moved(bd.Location((0.0, 0.0, FORK_Z1 - 195.60)))
+    for ck in ("tray_deck", "compartment_deck", "fork_bay_cover", "fork_hold_rails", "fork_top_cover",
+               "fork_front_arch", "fork_tines", "fork_cover_fasteners", "fork_bay_cover_fasteners", "fork_hold_fasteners"):
+        vc = _overlap(carried_load, parts[ck])
+        if vc > 1e-3:
+            bad.append(("carried_crate_on_forks", ck, "collision", vc))
 
     if bad:
         for item in bad:

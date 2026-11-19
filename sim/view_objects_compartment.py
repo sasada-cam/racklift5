@@ -99,15 +99,25 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#d97706"></span>CNC4759-A Copper T8 Nut</span><button class="active" onclick="toggleLayer('fork_t8_nut', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#80CBC4"></span>R49 Front 688ZZ Bearing Arch</span><button class="active" onclick="toggleLayer('fork_front_arch', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#00897B"></span>R47-R48 Base Rails &amp; CNC4759-A</span><button class="active" onclick="toggleForkFixed(this)">Shown</button></div>
-    <div class="row"><span><span class="dot" style="background:#6366F1"></span>R57 Screwed MGN/T-Slot Hold-Down Rails</span><button onclick="cycleMode('fork_hold_rails', this); syncHoldHw();" data-mode="solid" class="active">Solid</button></div>
+    <div class="row"><span><span class="dot" style="background:#6366F1"></span>R57 Hold-Down Rails</span>
+      <div class="btn-group"><button class="active" onclick="setMode('fork_hold_rails','solid',this);syncHoldHw();">Solid</button><button onclick="setMode('fork_hold_rails','ghost',this);syncHoldHw();">Ghost</button><button onclick="setMode('fork_hold_rails','hidden',this);syncHoldHw();">Hide</button></div>
+    </div>
     <div class="row"><span><span class="dot" style="background:#16A34A"></span>2x KW4-3Z-3 Limit Switches (Home/Max)</span><button class="active" onclick="toggleLayer('fork_limit_switches', this)">Shown</button></div>
-    <div class="row"><span><span class="dot" style="background:#0E7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span><button onclick="cycleMode('fork_top_cover', this); syncCoverHw();" data-mode="solid" class="active">Solid</button></div>
-    <div class="row"><span><span class="dot" style="background:#0284C7"></span>R58 Center-Bay Overhead Shroud</span><button onclick="cycleMode('fork_bay_cover', this); syncBayCoverHw();" data-mode="solid" class="active">Solid</button></div>
+    <div class="row"><span><span class="dot" style="background:#0E7490"></span>R56 Motor &amp; Tail Cover</span>
+      <div class="btn-group"><button class="active" onclick="setMode('fork_top_cover','solid',this);syncCoverHw();">Solid</button><button onclick="setMode('fork_top_cover','ghost',this);syncCoverHw();">Ghost</button><button onclick="setMode('fork_top_cover','hidden',this);syncCoverHw();">Hide</button></div>
+    </div>
+    <div class="row"><span><span class="dot" style="background:#0284C7"></span>R58 Center Overhead Shroud</span>
+      <div class="btn-group"><button class="active" onclick="setMode('fork_bay_cover','solid',this);syncBayCoverHw();">Solid</button><button onclick="setMode('fork_bay_cover','ghost',this);syncBayCoverHw();">Ghost</button><button onclick="setMode('fork_bay_cover','hidden',this);syncBayCoverHw();">Hide</button></div>
+    </div>
     <div class="row"><span><span class="dot" style="background:#26A69A"></span>R46 Deck + Open-Top Motor/Tail Bays</span><button class="active" onclick="toggleLayer('compartment_deck', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#2E7D32"></span>R53 Removable Rear Under-Tray Tie</span><button class="active" onclick="toggleLayer('fork_under_tie', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#38bdf8"></span>B04 + Load Cell + Boom Base</span><button class="active" onclick="toggleBaseUnder(this)">Shown</button></div>
-    <div class="row"><span><span class="dot" style="background:#eab308"></span>Skidded Load (140×130×80)</span><button onclick="cycleMode('ref_load', this)" data-mode="ghost">Ghost</button></div>
-    <div class="row"><span><span class="dot" style="background:#475569"></span>Shelf 1 Bay (184 mm gap)</span><button onclick="cycleMode('ref_rack_bay', this)" data-mode="ghost">Ghost</button></div>
+    <div class="row"><span><span class="dot" style="background:#eab308"></span>Skidded Load (140×130×80)</span>
+      <div class="btn-group"><button onclick="setMode('ref_load','solid',this)">Solid</button><button class="active" onclick="setMode('ref_load','ghost',this)">Ghost</button><button onclick="setMode('ref_load','hidden',this)">Hide</button></div>
+    </div>
+    <div class="row"><span><span class="dot" style="background:#475569"></span>Shelf 1 Bay (184 mm gap)</span>
+      <div class="btn-group"><button onclick="setMode('ref_rack_bay','solid',this)">Solid</button><button class="active" onclick="setMode('ref_rack_bay','ghost',this)">Ghost</button><button onclick="setMode('ref_rack_bay','hidden',this)">Hide</button></div>
+    </div>
     <div class="btn-group" style="margin-top:8px;width:100%">
       <button style="flex:1" onclick="setCam('iso')">3D Iso</button>
       <button style="flex:1" onclick="setCam('top')">Top</button>
@@ -367,18 +377,15 @@ window.syncBayCoverHw = () => {
   }
 };
 
-window.cycleMode = (name, btn) => {
+window.setMode = (name, mode, btn) => {
   const h = meshes[name], mat = mats[name];
   if (!h || !mat) return;
-  const cur = btn.dataset.mode;
-  const next = cur === 'ghost' ? 'solid' : (cur === 'solid' ? 'hidden' : 'ghost');
-  btn.dataset.mode = next;
-  h.visible = next !== 'hidden';
-  mat.transparent = next === 'ghost';
-  mat.opacity = next === 'ghost' ? (name === 'ref_load' ? 0.32 : 0.20) : 1.0;
-  mat.depthWrite = next !== 'ghost';
-  btn.textContent = next[0].toUpperCase() + next.slice(1);
-  btn.classList.toggle('active', next === 'solid');
+  h.visible = mode !== 'hidden';
+  mat.transparent = mode === 'ghost';
+  mat.opacity = mode === 'ghost' ? (name === 'ref_load' ? 0.32 : 0.24) : 1.0;
+  mat.depthWrite = mode !== 'ghost';
+  const grp = btn.closest('.btn-group');
+  if (grp) grp.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b === btn));
 };
 
 window.setCam = (preset) => {

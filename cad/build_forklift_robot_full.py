@@ -53,11 +53,12 @@ def check_full_forklift_clearances(
         ba = a.bounding_box()
         tot = 0.0
         for sb, bb in b_list:
-            if not ba.overlaps(bb):
+            if not OC._bb_hit(ba, bb):
                 continue
-            inter = a.intersect(sb)
-            if inter is not None and hasattr(inter, "solids"):
-                tot += sum(s.volume for s in inter.solids())
+            inter = a & sb
+            if inter is not None:
+                sols = inter.solids() if hasattr(inter, "solids") else [inter]
+                tot += sum(getattr(s, "volume", 0.0) for s in sols)
         return tot
 
     env_boxes = {k: pre_boxes(env[k]) for k in (

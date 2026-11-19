@@ -8,9 +8,9 @@
       272.15,
       46.1
     ],
-    "volume_cm3": 285.38,
+    "volume_cm3": 264.07,
     "holes": [
-      "\u00d81.90 mm (\u00d728)",
+      "\u00d81.90 mm (\u00d722)",
       "\u00d83.30 mm (\u00d718)",
       "\u00d82.90 mm (\u00d78)",
       "\u00d83.40 mm (\u00d74)",
@@ -30,10 +30,9 @@
       167.2,
       6.05
     ],
-    "volume_cm3": 12.68,
+    "volume_cm3": 12.71,
     "holes": [
-      "\u00d82.20 mm (\u00d711)",
-      "\u00d83.80 mm (\u00d72)"
+      "\u00d82.20 mm (\u00d711)"
     ],
     "svg_rel": "docs/drawings/R47.svg",
     "dxf_rel": "docs/drawings/dxf/R47.dxf",
@@ -48,10 +47,9 @@
       167.2,
       6.05
     ],
-    "volume_cm3": 12.68,
+    "volume_cm3": 12.71,
     "holes": [
-      "\u00d82.20 mm (\u00d711)",
-      "\u00d83.80 mm (\u00d72)"
+      "\u00d82.20 mm (\u00d711)"
     ],
     "svg_rel": "docs/drawings/R48.svg",
     "dxf_rel": "docs/drawings/dxf/R48.dxf",
@@ -85,7 +83,7 @@
       162.5,
       14.0
     ],
-    "volume_cm3": 18.79,
+    "volume_cm3": 18.77,
     "holes": [
       "\u00d810.40 mm (\u00d74)",
       "\u00d82.95 mm (\u00d72)",
@@ -103,9 +101,9 @@
     "bbox_mm": [
       11.75,
       272.0,
-      6.8
+      8.1
     ],
-    "volume_cm3": 9.02,
+    "volume_cm3": 10.97,
     "holes": [],
     "svg_rel": "docs/drawings/R51.svg",
     "dxf_rel": "docs/drawings/dxf/R51.dxf",
@@ -118,9 +116,9 @@
     "bbox_mm": [
       11.75,
       272.0,
-      6.8
+      8.1
     ],
-    "volume_cm3": 9.02,
+    "volume_cm3": 10.97,
     "holes": [],
     "svg_rel": "docs/drawings/R52.svg",
     "dxf_rel": "docs/drawings/dxf/R52.dxf",
@@ -132,13 +130,13 @@
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
       66.0,
-      69.95,
+      69.85,
       12.15
     ],
-    "volume_cm3": 28.09,
+    "volume_cm3": 27.93,
     "holes": [
+      "\u00d86.20 mm (\u00d76)",
       "\u00d83.30 mm (\u00d74)",
-      "\u00d86.20 mm (\u00d74)",
       "\u00d85.30 mm (\u00d72)",
       "\u00d810.20 mm (\u00d72)"
     ],
@@ -224,10 +222,10 @@
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
       81.2,
-      167.5,
+      168.0,
       3.45
     ],
-    "volume_cm3": 19.33,
+    "volume_cm3": 22.46,
     "holes": [
       "\u00d82.20 mm (\u00d74)",
       "\u00d83.80 mm (\u00d74)"
