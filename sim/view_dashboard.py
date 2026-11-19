@@ -1118,7 +1118,7 @@ PRINT_PARTS_CATALOG = [
     {"id": "R50", "mark": "R50-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#43A047",
      "name": "Stage-1 55° MGN Linear-Rail H-Carriage (+120 mm)",
      "material": "PETG · 0.15mm · 5 walls · 100% infill · -0.15mm E-foot",
-     "notes": "Closed double-chord box bridge (sewer 174.35 + top 189.70) & 55° MGN T-rail; rub dry PTFE/wax.",
+     "notes": "Closed double-chord box bridge (sewer 174.35 + top 188.35) & 55° MGN T-rail; rub dry PTFE/wax.",
      "rel_path": "models/components/objects_compartment/R50_stage1_carriage_B01.stl"},
     {"id": "R51", "mark": "R51-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#F97316",
      "name": "Stage-2 Fork Tine + 55° MGN Carriage & Tail Hook (L)",
@@ -1155,6 +1155,11 @@ PRINT_PARTS_CATALOG = [
      "material": "PETG · 0.15mm · 5 walls · 100% infill · -0.15mm E-foot",
      "notes": "5x M2x14/side bolt through R47/R48 into R46+R44 locking R50 MGN wings below 192 mm crate (0.8 mm side walls).",
      "rel_path": "models/components/objects_compartment/R57_hold_rail_left_B01.stl"},
+    {"id": "R58", "mark": "R58-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0284C7",
+     "name": "Screwed Center-Bay Overhead Protective Shroud Lid",
+     "material": "PETG · 0.2mm · 4 walls · 100% infill",
+     "notes": "Hides T8, R47/R48 racks, R50 & cogs between tines at Z=188.65..190.10; 4x M2x8 into R46.",
+     "rel_path": "models/components/objects_compartment/R58_fork_bay_cover_B01.stl"},
 
     # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs
     {"id": "R44-FK", "mark": "R44 (Forklift)", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0EA5E9",

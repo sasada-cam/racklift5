@@ -126,6 +126,9 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#0e7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span>
       <div class="btn-group"><button id="v-cover-solid" class="active" onclick="setVis('cover','solid')">Solid</button><button id="v-cover-xray" onclick="setVis('cover','xray')">Ghost</button><button id="v-cover-off" onclick="setVis('cover','off')">Hide</button></div>
     </div>
+    <div class="row"><span><span class="dot" style="background:#0284c7"></span>R58 Center-Bay Overhead Shroud</span>
+      <div class="btn-group"><button id="v-baycov-solid" class="active" onclick="setVis('baycov','solid')">Solid</button><button id="v-baycov-xray" onclick="setVis('baycov','xray')">Ghost</button><button id="v-baycov-off" onclick="setVis('baycov','off')">Hide</button></div>
+    </div>
     <div class="row"><span><span class="dot" style="background:#6366f1"></span>R57 Screwed MGN/T-Slot Hold-Down Rails</span>
       <div class="btn-group"><button id="v-hold-solid" class="active" onclick="setVis('hold','solid')">Solid</button><button id="v-hold-xray" onclick="setVis('hold','xray')">Ghost</button><button id="v-hold-off" onclick="setVis('hold','off')">Hide</button></div>
     </div>
@@ -226,7 +229,8 @@ const mats = {
   tray_boom: mat(0x2563eb, { metalness: 0.25 }), live_wishbone: mat(0x1d4ed8), load_cell: mat(0xe2e8f0, { metalness: 0.80 }),
   tray_deck: mat(0x0ea5e9), battery_pod: mat(0x66bb6a), battery_lid: mat(0x388e3c), battery_pack: mat(0x334155),
   compartment_deck: mat(0x26a69a), fork_under_tie: mat(0x2e7d32), fork_top_cover: mat(0x0e7490),
-  fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0x16a34a),
+  fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }),
+  fork_bay_cover: mat(0x0284c7), fork_bay_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0x16a34a),
   fork_hold_rails: mat(0x6366f1), fork_hold_fasteners: mat(0x334155, { metalness: 0.80 }),
   fork_base_rails: mat(0x00897b, { metalness: 0.25 }),
   fork_front_arch: mat(0x80cbc4), fork_mid_stage: mat(0x43a047, { metalness: 0.25 }),
@@ -325,6 +329,8 @@ regBody('compartment_deck', forkGroup, mats.compartment_deck);
 const fTieMesh = regBody('fork_under_tie', forkGroup, mats.fork_under_tie);
 const fCoverMesh = regBody('fork_top_cover', forkGroup, mats.fork_top_cover);
 const fCoverHwMesh = regBody('fork_cover_fasteners', forkGroup, mats.fork_cover_fasteners);
+const fBayCovMesh = regBody('fork_bay_cover', forkGroup, mats.fork_bay_cover);
+const fBayCovHwMesh = regBody('fork_bay_cover_fasteners', forkGroup, mats.fork_bay_cover_fasteners);
 const fSwMesh = regBody('fork_limit_switches', forkGroup, mats.fork_limit_switches);
 const fHoldMesh = regBody('fork_hold_rails', forkGroup, mats.fork_hold_rails);
 const fHoldHwMesh = regBody('fork_hold_fasteners', forkGroup, mats.fork_hold_fasteners);
@@ -503,6 +509,13 @@ window.setVis = (name, state) => {
     mats.fork_top_cover.transparent = (state === 'xray');
     mats.fork_top_cover.opacity = (state === 'xray') ? 0.28 : 1.0;
     mats.fork_top_cover.depthWrite = (state !== 'xray');
+  }
+  else if (name === 'baycov') {
+    fBayCovMesh.visible = (state !== 'off');
+    fBayCovHwMesh.visible = (state !== 'off');
+    mats.fork_bay_cover.transparent = (state === 'xray');
+    mats.fork_bay_cover.opacity = (state === 'xray') ? 0.28 : 1.0;
+    mats.fork_bay_cover.depthWrite = (state !== 'xray');
   }
   else if (name === 'tray') {
     trayGroup.visible = (state !== 'off');

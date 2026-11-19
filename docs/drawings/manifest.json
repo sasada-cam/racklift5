@@ -8,9 +8,9 @@
       272.15,
       46.1
     ],
-    "volume_cm3": 284.6,
+    "volume_cm3": 285.38,
     "holes": [
-      "\u00d81.90 mm (\u00d724)",
+      "\u00d81.90 mm (\u00d728)",
       "\u00d83.30 mm (\u00d718)",
       "\u00d82.90 mm (\u00d78)",
       "\u00d83.40 mm (\u00d74)",
@@ -28,9 +28,9 @@
     "bbox_mm": [
       46.8,
       167.2,
-      6.65
+      6.05
     ],
-    "volume_cm3": 13.54,
+    "volume_cm3": 12.68,
     "holes": [
       "\u00d82.20 mm (\u00d711)",
       "\u00d83.80 mm (\u00d72)"
@@ -46,9 +46,9 @@
     "bbox_mm": [
       46.8,
       167.2,
-      6.65
+      6.05
     ],
-    "volume_cm3": 13.54,
+    "volume_cm3": 12.68,
     "holes": [
       "\u00d82.20 mm (\u00d711)",
       "\u00d83.80 mm (\u00d72)"
@@ -83,9 +83,9 @@
     "bbox_mm": [
       106.6,
       162.5,
-      15.35
+      14.0
     ],
-    "volume_cm3": 19.53,
+    "volume_cm3": 18.79,
     "holes": [
       "\u00d810.40 mm (\u00d74)",
       "\u00d82.95 mm (\u00d72)",
@@ -105,7 +105,7 @@
       272.0,
       6.8
     ],
-    "volume_cm3": 9.35,
+    "volume_cm3": 9.02,
     "holes": [],
     "svg_rel": "docs/drawings/R51.svg",
     "dxf_rel": "docs/drawings/dxf/R51.dxf",
@@ -120,7 +120,7 @@
       272.0,
       6.8
     ],
-    "volume_cm3": 9.35,
+    "volume_cm3": 9.02,
     "holes": [],
     "svg_rel": "docs/drawings/R52.svg",
     "dxf_rel": "docs/drawings/dxf/R52.dxf",
@@ -153,9 +153,9 @@
     "bbox_mm": [
       17.9,
       17.9,
-      3.7
+      3.1
     ],
-    "volume_cm3": 0.53,
+    "volume_cm3": 0.44,
     "holes": [
       "\u00d87.10 mm",
       "\u00d88.20 mm"
@@ -171,9 +171,9 @@
     "bbox_mm": [
       17.9,
       17.9,
-      3.7
+      3.1
     ],
-    "volume_cm3": 0.53,
+    "volume_cm3": 0.44,
     "holes": [
       "\u00d87.10 mm",
       "\u00d88.20 mm"
@@ -216,6 +216,24 @@
     ],
     "svg_rel": "docs/drawings/R57.svg",
     "dxf_rel": "docs/drawings/dxf/R57.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R58",
+    "mark": "R58-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      81.2,
+      167.5,
+      3.45
+    ],
+    "volume_cm3": 19.33,
+    "holes": [
+      "\u00d82.20 mm (\u00d74)",
+      "\u00d83.80 mm (\u00d74)"
+    ],
+    "svg_rel": "docs/drawings/R58.svg",
+    "dxf_rel": "docs/drawings/dxf/R58.dxf",
     "scale": "1:2"
   },
   {

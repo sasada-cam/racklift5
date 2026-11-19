@@ -61,6 +61,7 @@ PART_IDS = {
     "fork_top_cover": "R56",
     "hold_rail_left": "R57",
     "hold_rail_right": "R57",
+    "fork_bay_cover": "R58",
 }
 # Distinct non-adjacent hex shades (CLAUDE.md §4)
 PART_COLORS = {
@@ -76,6 +77,7 @@ PART_COLORS = {
     "R55": "#CA8A04",  # deep gold (1:2 rack pinion right)
     "R56": "#0E7490",  # deep ocean cyan (screwed top motor & rack-tail enclosure lid)
     "R57": "#6366F1",  # indigo-violet (screwed MGN/T-slot linear hold-down rails)
+    "R58": "#0284C7",  # sky cobalt blue (removable center bay overhead shroud hiding all internal guts)
 }
 
 SLOPE_Z_BACK = 185.40
@@ -92,7 +94,7 @@ CURB_W, CURB_TOP_ADD = 2.5, 2.2
 FORK_DX = 48.0          # left/right tine centers at X = 132 & 228 mm
 SCREW_X = OB.BXR        # 180.0 mm centered symmetrically
 SCREW_Z = 180.50        # lowered -4.0 mm so T8, copper nut & 688ZZ arch all stay strictly < 189.7 mm
-GEAR_Z0, GEAR_Z1 = 183.50, 187.20   # R47/R48 racks, R54/R55 cogwheels & R51/R52 rack tails stay low
+GEAR_Z0, GEAR_Z1 = 183.50, 186.60   # R47/R48 racks (F683ZZ 3.0mm), pinions & tails leave room for R50 chord + R58 shroud <190.30!
 FORK_Z0, FORK_Z1 = 183.50, 190.30   # orange fork blades stand proud ABOVE cogwheels (188.15) & R49 arch (189.60)
 MID_STROKE_MAX = 120.0  # Stage-1 stroke (total tine reach = 240 mm)
 
@@ -598,7 +600,27 @@ def build_forklift_deck(tray_clean: bd.Part):
         comp = comp - OB._cyl_axis(1.45, 191.00, WALL_TOP_Z + 0.5, "z", lx, ly)
         cover_hw.append(_socket_bolt(2.70, 2.40, 1.40, 10.0, "z", lx, ly, 202.45, head_dir=1))
 
-    # Engrave R46-B01 on front face of stop wall, R53-B01 on under-tie, and R56-B01 on top lid deck
+    # 7) Removable Screwed Center-Bay Overhead Shroud (R58-B01):
+    #    Hides T8 screw, R47/R48 racks, R50 carriage, R54/R55 cogs & KW4-3Z-3 switches between the R51/R52 tines
+    #    (X=139.4..220.6, Z=188.65..190.10 < FORK_Z1=190.30); bolted onto 4 integral R46 pedestals via 4x M2 x 8 screws.
+    bay_cover = (
+        box(139.4, 220.6, -238.0, -70.5, 188.65, 190.10)
+        - box(163.6, 196.4, -78.2, -70.0, 188.40, 190.30)  # front cutout flush around R49 189.60 mm arch crown
+    )
+    for sx0, sx1 in ((158.0, 163.0), (197.0, 202.0)):  # front outer leveling feet resting on R47/R48 (+0.05 mm clear)
+        bay_cover = bay_cover + box(sx0, sx1, -76.5, -74.2, 186.65, 188.70)
+    bay_cover_hw = []
+    for px0, px1 in ((164.0, 167.7), (192.3, 196.0)):
+        comp = comp + box(px0, px1, -238.0, -231.5, 180.50, 188.60)  # rear pillars fused to -238 stop wall + R46 deck
+        comp = comp + box(px0, px1, -85.5, -78.5, 180.50, 188.60)    # front pillars ahead of R47 inner flange (-86.5)
+    for bx in (165.8, 194.2):
+        for by in (-234.6, -82.0):
+            comp = comp - OB._cyl_axis(0.95, 180.40, 188.90, "z", bx, by)
+            bay_cover = bay_cover - OB._cyl_axis(1.10, 188.40, 190.30, "z", bx, by)
+            bay_cover = bay_cover - OB._cyl_axis(1.90, 188.90, 190.30, "z", bx, by)
+            bay_cover_hw.append(_socket_bolt(1.75, 1.15, 0.95, 8.0, "z", bx, by, 188.95, head_dir=1))
+
+    # Engrave R46-B01 on front face of stop wall, R53-B01 on under-tie, R56-B01 & R58-B01 on lids
     comp_part = _engrave_verified(
         comp, "forklift_deck", (OB.BXR - 52.0, WALL_Y1, 193.0), (1, 0, 0), (0, 1, 0), 4.2
     )
@@ -608,7 +630,10 @@ def build_forklift_deck(tray_clean: bd.Part):
     top_cover_part = _engrave_verified(
         top_cover, "fork_top_cover", (SCREW_X - 18.0, -270.0, LID_Z1), (1, 0, 0), (0, 0, 1), 4.5
     )
-    return tray_clean, comp_part, under_tie_part, hw_solids, top_cover_part, cover_hw
+    bay_cover_part = _engrave_verified(
+        bay_cover, "fork_bay_cover", (SCREW_X - 10.0, -155.0, 190.10), (1, 0, 0), (0, 0, 1), 4.0
+    )
+    return tray_clean, comp_part, under_tie_part, hw_solids, top_cover_part, cover_hw, bay_cover_part, bay_cover_hw
 
 
 def build_forklift_mechanism():
@@ -637,7 +662,7 @@ def build_forklift_mechanism():
             -237.2, -70.0, GEAR_Z0, GEAR_Z1, y_phase=PIN_Y_HOME,
         )
         full_spine = box(spine_x0, spine_x1, -237.2, -70.0, 180.55, GEAR_Z1)
-        inner_flange = box(flg_x0, flg_x1, -217.0, -78.8, 180.55, 182.90)
+        inner_flange = box(flg_x0, flg_x1, -217.0, -86.5, 180.55, 182.65)
         riser_rear = box(floor_x0, floor_x1, -237.2, -217.0, 180.55, 181.10)
         riser_front = box(floor_x0, floor_x1, -82.2, -70.0, 180.55, 181.10)
         rail = (
@@ -655,8 +680,8 @@ def build_forklift_mechanism():
             rack_hw.append(_socket_bolt(1.75, 1.15, 0.95, 10.0, "z", mx_end, my_r, 184.50, head_dir=1))
         mx_flg = SCREW_X + sgn * 14.5  # 165.5 / 194.5 (4x M2 x 4 mm hold-downs into R46 bridge, >=1.15 mm edge rim)
         for my_f in (-202.0, -166.0, -130.0, -94.0):
-            rail = rail - OB._cyl_axis(1.10, 180.40, 183.10, "z", mx_flg, my_f)
-            rack_hw.append(_socket_bolt(1.75, 1.15, 0.95, 4.0, "z", mx_flg, my_f, 182.90, head_dir=1))
+            rail = rail - OB._cyl_axis(1.10, 180.40, 182.80, "z", mx_flg, my_f)
+            rack_hw.append(_socket_bolt(1.75, 1.15, 0.95, 4.0, "z", mx_flg, my_f, 182.65, head_dir=1))
         face_x = outer_x0 if sgn < 0 else outer_x1
         x_dir = (0, 1, 0) if sgn < 0 else (0, -1, 0)
         norm = (-1, 0, 0) if sgn < 0 else (1, 0, 0)
@@ -725,13 +750,13 @@ def build_forklift_mechanism():
             + OB._cyl_axis(4.02, GEAR_Z1 - 0.85, GEAR_Z1 - 0.05, "z", x_pin, PIN_Y_HOME)
         ) - OB._cyl_axis(1.55, GEAR_Z0 - 0.2, GEAR_Z1 + 0.2, "z", x_pin, PIN_Y_HOME)
         moving_hw.append(f683)
-        moving_hw.append(_socket_bolt(2.50, 1.20, 1.42, 6.2, "z", x_pin, PIN_Y_HOME, GEAR_Z1 - 0.05, head_dir=1))
+        moving_hw.append(_socket_bolt(2.50, 0.95, 1.42, 5.6, "z", x_pin, PIN_Y_HOME, GEAR_Z1 - 0.05, head_dir=1))
 
     # Closed Double-Chord Box-Truss Cross-Bridge on R50-B01 (solves mid-bridge torsion/bending completely!):
     # 1) Thick 3.35 mm lower sewer chord (Z=174.35..177.70 -> +0.75 mm clear above R45 M4 nuts/screws!)
     # 2) Wide 24.0 mm upper lateral gusset wings (Y=-220..-196, Z=181.30..183.30) tying pinion bosses & runners into pylons
-    # 3) Full-height vertical shear posts (Z=174.35..189.70) + 8.2 mm deep rear-offset posts behind R54/R55 pinions (-220..-211.8)
-    # 4) Overhead top box chord (Z=187.55..189.70, Y=-218.5..-207.7) spanning over R47/R48 racks (0.60 mm below 190.3 crate!)
+    # 3) Full-height vertical shear posts (Z=174.35..188.35) + 8.2 mm deep rear-offset posts behind R54/R55 pinions (-220..-211.8)
+    # 4) Overhead top box chord (Z=186.90..188.35, Y=-218.5..-207.7) clears BOTH racks (186.60) & R58 shroud (188.65)!
     r50_parts.append(box(144.2, 165.0, -215.5, -210.6, 174.35, 177.70))
     r50_parts.append(box(164.6, SCREW_X - 10.8, -215.5, -207.7, 174.35, 177.70))
     r50_parts.append(box(SCREW_X + 10.8, 215.8, -215.5, -207.7, 174.35, 177.70))
@@ -739,10 +764,10 @@ def build_forklift_mechanism():
     r50_parts.append(box(207.2, 215.8, -215.5, -207.7, 174.35, 181.50))
     r50_parts.append(box(OB.BXR - FORK_DX + 5.8, 153.3, -220.0, -196.0, 181.30, 183.30))
     r50_parts.append(box(206.7, OB.BXR + FORK_DX - 5.8, -220.0, -196.0, 181.30, 183.30))
-    r50_parts.append(box(145.2, 152.8, -220.0, -211.8, 181.30, 189.70))
-    r50_parts.append(box(207.2, 214.8, -220.0, -211.8, 181.30, 189.70))
-    r50_parts.append(box(145.2, 214.8, -218.5, -207.7, 187.55, 189.70))
-    nut_plate = box(SCREW_X - 11.2, SCREW_X + 11.2, -215.5, -207.7, 174.35, 189.70) - OB._cyl_axis(
+    r50_parts.append(box(145.2, 152.8, -220.0, -211.8, 181.30, 188.35))
+    r50_parts.append(box(207.2, 214.8, -220.0, -211.8, 181.30, 188.35))
+    r50_parts.append(box(145.2, 214.8, -218.5, -207.7, 186.90, 188.35))
+    nut_plate = box(SCREW_X - 11.2, SCREW_X + 11.2, -215.5, -207.7, 174.35, 188.35) - OB._cyl_axis(
         5.30, -216.0, -207.2, "y", SCREW_X, SCREW_Z
     )
     for hx in (SCREW_X - 8.0, SCREW_X + 8.0):
@@ -753,7 +778,7 @@ def build_forklift_mechanism():
     for p in r50_parts[1:]:
         r50_raw = r50_raw + p
     r50_carriage = _engrave_verified(
-        r50_raw, "stage1_carriage", (SCREW_X - 7.5, -213.0, 189.70), (1, 0, 0), (0, 0, 1), 2.4
+        r50_raw, "stage1_carriage", (SCREW_X - 7.5, -213.0, 188.35), (1, 0, 0), (0, 0, 1), 2.4
     )
 
     # Bought Copper T8 Nut + 2x M3 Flange Bolts & Hex Nuts
@@ -918,11 +943,12 @@ def build_objects_base_and_forklift():
         OB.TRAY_X0 - 1.0, OB.TRAY_X1 + 1.0, OB.TRAY_Y0 - 1.0, OB.TRAY_Y1 + 1.0,
         OB.TRAY_RIB_Z0 - 1.0, OB.TRAY_TOP_Z
     )
-    tray_clean, comp_deck, under_tie, comp_hw, top_cover, cover_hw = build_forklift_deck(tray_clean)
+    tray_clean, comp_deck, under_tie, comp_hw, top_cover, cover_hw, bay_cover, bay_cover_hw = build_forklift_deck(tray_clean)
     fork_parts = build_forklift_mechanism()
     rack_hw = fork_parts.pop("_rack_fasteners")
     all_hw = bd.Compound(children=[*lc_hw.solids(), *comp_hw, *rack_hw], label="Base_And_Compartment_Hardware")
     cover_fasteners = bd.Compound(children=cover_hw, label="R56_Cover_M3_Screws")
+    bay_cover_fasteners = bd.Compound(children=bay_cover_hw, label="R58_Bay_Cover_M2_Screws")
 
     box = OB._box
     ly0, ly1 = -236.0, -106.0
@@ -942,19 +968,25 @@ def build_objects_base_and_forklift():
         "fork_under_tie": under_tie,
         "fork_top_cover": top_cover,
         "fork_cover_fasteners": cover_fasteners,
+        "fork_bay_cover": bay_cover,
+        "fork_bay_cover_fasteners": bay_cover_fasteners,
         "base_fasteners": all_hw,
         **fork_parts,
         "ref_load": ref_load,
         "ref_rack_bay": ref_rack,
-        "_print_solids": {"forklift_deck": comp_deck, "under_tie": under_tie, "fork_top_cover": top_cover, **print_solids},
+        "_print_solids": {
+            "forklift_deck": comp_deck, "under_tie": under_tie,
+            "fork_top_cover": top_cover, "fork_bay_cover": bay_cover, **print_solids,
+        },
     }
 
 
 def check_forklift_clearances(parts: dict) -> bool:
-    """Verify 0 solid collisions across base + R46..R57 MGN rails + switches at Home (0 mm) & +240 mm."""
+    """Verify 0 solid collisions across base + R46..R58 MGN rails + shroud + switches at Home (0 mm) & +240 mm."""
     keys = (
         "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
-        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
+        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
+        "fork_bay_cover", "fork_bay_cover_fasteners", "base_fasteners",
         "fork_base_rails", "fork_front_arch", "fork_mid_stage", "fork_limit_switches",
         "fork_hold_rails", "fork_hold_fasteners",
         "fork_pinion_left", "fork_pinion_right", "fork_t8_nut", "fork_mid_fasteners", "fork_tines", "fork_drive",
@@ -968,7 +1000,8 @@ def check_forklift_clearances(parts: dict) -> bool:
 
     fixed_plus_f04 = bd.Compound(children=[parts[k] for k in (
         "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
-        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
+        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
+        "fork_bay_cover", "fork_bay_cover_fasteners", "base_fasteners",
         "fork_base_rails", "fork_front_arch", "fork_drive", "fork_limit_switches",
         "fork_hold_rails", "fork_hold_fasteners",
     )])
@@ -1004,6 +1037,8 @@ def check_forklift_clearances(parts: dict) -> bool:
             bad.append(("z_clearance", low_k, f"max.Z={z_low:.2f} >= fork_top={z_fork_top:.2f}", z_low - z_fork_top))
     if parts["fork_hold_rails"].bounding_box().max.Z >= 190.25:
         bad.append(("crate_clearance", "fork_hold_rails", "max.Z >= 190.25", 0.0))
+    if parts["fork_bay_cover"].bounding_box().max.Z >= 190.25:
+        bad.append(("crate_clearance", "fork_bay_cover", "max.Z >= 190.25", 0.0))
 
     if bad:
         for item in bad:
@@ -1024,7 +1059,7 @@ def main():
     print_solids = parts.pop("_print_solids")
     for lbl in (
         "base_boom", "live_wishbone", "tray_deck", "compartment_deck", "fork_under_tie", "fork_top_cover",
-        "fork_front_arch", "fork_mid_stage", "fork_pinion_left", "fork_pinion_right", "fork_t8_nut",
+        "fork_bay_cover", "fork_front_arch", "fork_mid_stage", "fork_pinion_left", "fork_pinion_right", "fork_t8_nut",
     ):
         assert len(parts[lbl].solids()) == 1, f"{lbl} expected 1 solid"
 
