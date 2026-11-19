@@ -388,10 +388,10 @@ def build_all_specs() -> list[dict]:
 
     specs = [
         # --- Forklift Objects Compartment (R46..R55 + R44-FK) ---
-        {"id": "R46", "mark": "R46-B01", "short_title": "Forklift Deck & Motor Cradle", "name": "Drop-On Sloped Deck, Stop Wall & KP08/17HS4401 Cradle",
-         "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Print deck-down; includes enclosed rear rack-tail safety pockets.",
+        {"id": "R46", "mark": "R46-B01", "short_title": "Forklift Deck & Motor Cradle", "name": "Drop-On Sloped Deck, Stop Wall & Open-Top KP08/17HS4401 + Tail Channels",
+         "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Print deck-down; open-top rear channels & motor pocket covered by screwed lid R56-B01.",
          "rel_path": "models/components/objects_compartment/R46_forklift_deck_B01.stl", "shape": fork["compartment_deck"],
-         "key_dims": ["Deck footprint: 180 x 175 mm", "Rear tail pockets: X=130.2..229.8", "Motor bay: NEMA17 42.3 mm + KP08"]},
+         "key_dims": ["Deck footprint: 180 x 175 mm", "Open-top tail bays: X=127.6..232.4", "Motor bay: NEMA17 42.3 mm + KP08"]},
         {"id": "R47", "mark": "R47-B01", "short_title": "Base Rail & Rack Left", "name": "Fixed Base Guide Rail + Elevated MOD=1.0 Rack (L)",
          "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Print flat on base rail; sits strictly below 190.3 mm fork top.",
          "rel_path": "models/components/objects_compartment/R47_rail_left_B01.stl", "shape": fork["fork_base_rails"].solids()[0],
@@ -428,6 +428,10 @@ def build_all_specs() -> list[dict]:
          "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG / Nylon (0.15mm, 100%)", "notes": "Press-fit F683ZZ; identical profile to R54 (recessed below blades).",
          "rel_path": "models/components/objects_compartment/R55_pinion_right_B01.stl", "shape": fork["fork_pinion_right"],
          "key_dims": ["Pitch Ø16.00 mm (OD 17.90 mm)", "Thickness: 3.70 mm, Z=183.5..187.2", "Hub bore: Ø7.10 mm + Ø8.20 flange"]},
+        {"id": "R56", "mark": "R56-B01", "short_title": "Top Motor & Tail Enclosure", "name": "Removable Screwed Top Motor & Fork-Tail Enclosure Lid",
+         "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Bolts to R46 via 6x M3x10 socket cap screws; encloses 17HS4401 + JST plug & L/R rack tails.",
+         "rel_path": "models/components/objects_compartment/R56_fork_top_cover_B01.stl", "shape": fork["fork_top_cover"],
+         "key_dims": ["Span: 104.8 x 93.9 mm (Z=200.05..209.0)", "Mount: 6x M3 counterbored bores", "JST wire pocket: 13.6 x 9.9 x 5.3 mm"]},
 
         # --- Robot Body & Load Base (R40..R45, P07) ---
         {"id": "R44-FK", "mark": "R44 (Forklift)", "short_title": "Forklift Tray Base", "name": "Printed Tray Base (With T8 Trench & R46 Bores)",

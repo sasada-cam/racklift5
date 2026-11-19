@@ -15,6 +15,7 @@ Every 3D-printed part obeys CLAUDE.md ID + batch + 0.6 mm engraving + distinct c
   - R53: Removable Under-Tray Rear Cantilever Tie Plate (mark: R53-B01)
   - R54: Stage-2 Horizontal 1:2 Spur Pinion - Left  (16T MOD=1.0, mark: R54)
   - R55: Stage-2 Horizontal 1:2 Spur Pinion - Right (16T MOD=1.0, mark: R55)
+  - R56: Removable Screwed Top Motor & Rack-Tail Enclosure Lid (mark: R56-B01)
 
 Bought hardware:
   - CNC4759-A T8 Lead Screw (2 mm pitch, 8 mm lead, ~202 mm cut), trimmed Ø22 copper flange nut,
@@ -54,6 +55,7 @@ PART_IDS = {
     "under_tie": "R53",
     "pinion_left": "R54",
     "pinion_right": "R55",
+    "fork_top_cover": "R56",
 }
 # Distinct non-adjacent hex shades (CLAUDE.md §4)
 PART_COLORS = {
@@ -67,6 +69,7 @@ PART_COLORS = {
     "R53": "#2E7D32",  # deep emerald (removable rear cantilever tie under R46/R44)
     "R54": "#EAB308",  # golden amber (1:2 rack pinion left)
     "R55": "#CA8A04",  # deep gold (1:2 rack pinion right)
+    "R56": "#0E7490",  # deep ocean cyan (screwed top motor & rack-tail enclosure lid)
 }
 
 SLOPE_Z_BACK = 185.40
@@ -369,14 +372,16 @@ def build_forklift_deck(tray_clean: bd.Part):
         SCREW_X - 7.5, SCREW_X + 7.5, REAR_CAP_Y0 - 0.2, BULK_Y0 - 40.1, 195.0, 202.2
     )
     comp = comp + rear_cap
-    # Full-enclosure rear protective rack-tail tunnels (sides, bottom, rear bumper AND full top roof, Y=-338.9..-245.0)
-    # Tails span X=134.8..142.5 (L) and X=217.5..225.2 (R), Z=GEAR_Z0..GEAR_Z1 (183.5..187.2); fully boxed flush to WALL_TOP_Z
+    # Open-top U-channel rear protective rack-tail bays (bottom, outer, inner & rear bumper walls up to WALL_TOP_Z=200.0;
+    # top stays open for drop-in assembly & top visibility, sealed by removable screwed enclosure R56-B01)
+    # Tails span X=134.8..142.5 (L) and X=217.5..225.2 (R), Z=GEAR_Z0..GEAR_Z1 (183.5..187.2)
+    REAR_OUT_PAD = 4.4  # outer wall X=127.6..134.4 (L) & 225.6..232.4 (R) = 6.8 mm wide for M3 lid screws
     for sh_x0, sh_x1, x_clear0, x_clear1 in (
-        (OB.BXR - FORK_DX - 1.8, SCREW_X - 32.8, OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4),   # Left boxed shroud X=130.2..147.2
-        (SCREW_X + 32.8, OB.BXR + FORK_DX + 1.8, OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4),   # Right boxed shroud X=212.8..229.8
+        (OB.BXR - FORK_DX - REAR_OUT_PAD, SCREW_X - 32.8, OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4),
+        (SCREW_X + 32.8, OB.BXR + FORK_DX + REAR_OUT_PAD, OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4),
     ):
         tail_box = box(sh_x0, sh_x1, REAR_CAP_Y0, WALL_Y0 + 0.1, 179.00, WALL_TOP_Z) - box(
-            x_clear0, x_clear1, REAR_CAP_Y0 + 3.0, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6
+            x_clear0, x_clear1, REAR_CAP_Y0 + 3.0, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, WALL_TOP_Z + 0.5
         )
         comp = comp + tail_box
     comp = comp - OB._cyl_axis(4.6, WALL_Y0 - 1.0, WALL_Y1 + 1.0, "y", SCREW_X, SCREW_Z)
@@ -512,14 +517,41 @@ def build_forklift_deck(tray_clean: bd.Part):
         hw_solids.append(_socket_bolt(2.70, 2.8, 1.45, 14.5, "z", fx, -74.0, 182.25, head_dir=1))
         hw_solids.append(_hex_nut(5.5, 2.4, "z", fx, -74.0, 163.40, 1.50))
 
-    # Engrave R46-B01 on front face of stop wall & R53-B01 on flat underside of removable rear tie plate
+    # 6) Removable Screwed Top Motor + Fork-Blade Tail Enclosure Lid (R56-B01):
+    #    Covers BOTH the open-top 17HS4401/coupler/KP08 motor bay AND both open-top left/right fork rack-tail channels
+    #    across X=127.6..232.4, Y=-338.9..-245.0, bolted down via 6x M3 x 10 mm socket cap screws.
+    LID_X0, LID_X1 = OB.BXR - FORK_DX - REAR_OUT_PAD, OB.BXR + FORK_DX + REAR_OUT_PAD  # 127.6..232.4
+    LID_Z0, LID_Z1 = WALL_TOP_Z + 0.05, WALL_TOP_Z + 5.20  # 200.05..205.20 (0.05 mm clear of R46 Z=200.00 rim)
+    top_cover = (
+        box(LID_X0, LID_X1, REAR_CAP_Y0, WALL_Y0, LID_Z0, LID_Z1)
+        - box(SCREW_X - 33.2, SCREW_X + 33.2, REAR_CAP_Y0 - 0.2, BULK_Y1 + 0.3, LID_Z0 - 0.2, 202.05)  # clears Z=201.80 NEMA walls
+    ) + box(SCREW_X - 9.5, SCREW_X + 9.5, REAR_CAP_Y0, BULK_Y0 - 26.5, LID_Z1 - 0.4, 209.00)  # raised JST connector hood
+    # Internal JST socket & rear 4-wire exit tunnel underneath hood (201.80..206.80 -> clears 206.15 JST plug)
+    top_cover = top_cover - box(SCREW_X - 6.8, SCREW_X + 6.8, REAR_CAP_Y0 - 0.2, BULK_Y0 - 29.0, 201.50, 206.80)
+
+    cover_hw = []
+    lid_m3_pts = (
+        (LID_X0 + 3.4, -252.0), (LID_X1 - 3.4, -252.0),   # front outer cheeks (X=131.0, 229.0)
+        (LID_X0 + 3.4, -331.5), (LID_X1 - 3.4, -331.5),   # rear outer cheeks (X=131.0, 229.0)
+        (147.5, -286.0), (212.5, -286.0),                  # center pylons between motor bay & rack channels
+    )
+    for lx, ly in lid_m3_pts:
+        top_cover = top_cover - OB._cyl_axis(1.70, LID_Z0 - 0.5, LID_Z1 + 0.5, "z", lx, ly)
+        top_cover = top_cover - OB._cyl_axis(3.05, 202.40, LID_Z1 + 0.5, "z", lx, ly)
+        comp = comp - OB._cyl_axis(1.45, 191.00, WALL_TOP_Z + 0.5, "z", lx, ly)
+        cover_hw.append(_socket_bolt(2.70, 2.40, 1.40, 10.0, "z", lx, ly, 202.45, head_dir=1))
+
+    # Engrave R46-B01 on front face of stop wall, R53-B01 on under-tie, and R56-B01 on top lid deck
     comp_part = _engrave_verified(
         comp, "forklift_deck", (OB.BXR - 52.0, WALL_Y1, 193.0), (1, 0, 0), (0, 1, 0), 4.2
     )
     under_tie_part = _engrave_verified(
         under_tie, "under_tie", (SCREW_X - 18.0, -262.0, CRADLE_Z0), (1, 0, 0), (0, 0, -1), 4.2
     )
-    return tray_clean, comp_part, under_tie_part, hw_solids
+    top_cover_part = _engrave_verified(
+        top_cover, "fork_top_cover", (SCREW_X - 18.0, -270.0, LID_Z1), (1, 0, 0), (0, 0, 1), 4.5
+    )
+    return tray_clean, comp_part, under_tie_part, hw_solids, top_cover_part, cover_hw
 
 
 def build_forklift_mechanism():
@@ -721,8 +753,9 @@ def build_objects_base_and_forklift():
         OB.TRAY_X0 - 1.0, OB.TRAY_X1 + 1.0, OB.TRAY_Y0 - 1.0, OB.TRAY_Y1 + 1.0,
         OB.TRAY_RIB_Z0 - 1.0, OB.TRAY_TOP_Z
     )
-    tray_clean, comp_deck, under_tie, comp_hw = build_forklift_deck(tray_clean)
+    tray_clean, comp_deck, under_tie, comp_hw, top_cover, cover_hw = build_forklift_deck(tray_clean)
     all_hw = bd.Compound(children=[*lc_hw.solids(), *comp_hw], label="Base_And_Compartment_Hardware")
+    cover_fasteners = bd.Compound(children=cover_hw, label="R56_Cover_M3_Screws")
     fork_parts = build_forklift_mechanism()
 
     box = OB._box
@@ -741,19 +774,22 @@ def build_objects_base_and_forklift():
         "tray_deck": tray_clean,
         "compartment_deck": comp_deck,
         "fork_under_tie": under_tie,
+        "fork_top_cover": top_cover,
+        "fork_cover_fasteners": cover_fasteners,
         "base_fasteners": all_hw,
         **fork_parts,
         "ref_load": ref_load,
         "ref_rack_bay": ref_rack,
-        "_print_solids": {"forklift_deck": comp_deck, "under_tie": under_tie, **print_solids},
+        "_print_solids": {"forklift_deck": comp_deck, "under_tie": under_tie, "fork_top_cover": top_cover, **print_solids},
     }
 
 
 def check_forklift_clearances(parts: dict) -> bool:
-    """Verify 0 solid collisions across base + R46..R55 + hardware at Home (0 mm) & +240 mm."""
+    """Verify 0 solid collisions across base + R46..R56 + hardware at Home (0 mm) & +240 mm."""
     keys = (
         "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
-        "fork_under_tie", "base_fasteners", "fork_base_rails", "fork_front_arch", "fork_mid_stage",
+        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
+        "fork_base_rails", "fork_front_arch", "fork_mid_stage",
         "fork_pinion_left", "fork_pinion_right", "fork_t8_nut", "fork_mid_fasteners", "fork_tines", "fork_drive",
     )
     bad = []
@@ -765,7 +801,8 @@ def check_forklift_clearances(parts: dict) -> bool:
 
     fixed_plus_f04 = bd.Compound(children=[parts[k] for k in (
         "base_boom", "load_cell", "live_wishbone", "tray_deck", "compartment_deck",
-        "fork_under_tie", "base_fasteners", "fork_base_rails", "fork_front_arch", "fork_drive",
+        "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "base_fasteners",
+        "fork_base_rails", "fork_front_arch", "fork_drive",
     )])
     mid_ext = {k: parts[k].moved(bd.Location((0.0, MID_STROKE_MAX, 0.0)))
                for k in ("fork_mid_stage", "fork_t8_nut", "fork_mid_fasteners")}
@@ -816,7 +853,7 @@ def main():
     parts = build_objects_base_and_forklift()
     print_solids = parts.pop("_print_solids")
     for lbl in (
-        "base_boom", "live_wishbone", "tray_deck", "compartment_deck", "fork_under_tie",
+        "base_boom", "live_wishbone", "tray_deck", "compartment_deck", "fork_under_tie", "fork_top_cover",
         "fork_front_arch", "fork_mid_stage", "fork_pinion_left", "fork_pinion_right", "fork_t8_nut",
     ):
         assert len(parts[lbl].solids()) == 1, f"{lbl} expected 1 solid"
@@ -824,17 +861,17 @@ def main():
     for name, shape in parts.items():
         bd.export_stl(shape, os.path.join(SIM_MESH_DIR, f"{name}.stl"), tolerance=0.03, angular_tolerance=0.15)
 
-    # Export clean 1-solid-per-file printable STLs stamped with CLAUDE.md R46..R55 + B01 IDs
+    # Export clean 1-solid-per-file printable STLs stamped with CLAUDE.md R46..R56 + B01 IDs
     for old_p in glob.glob(os.path.join(OUT_DIR, "*.stl")):
         os.remove(old_p)
     for k, sh in print_solids.items():
         pid = PART_IDS[k]
         bd.export_stl(sh, os.path.join(OUT_DIR, f"{pid}_{k}_{BATCH}.stl"), tolerance=0.01, angular_tolerance=0.1)
-    print(f"Exported {len(parts)} viewer meshes + {len(print_solids)} printable R46..R55-{BATCH} STLs")
+    print(f"Exported {len(parts)} viewer meshes + {len(print_solids)} printable R46..R56-{BATCH} STLs")
 
     asm = bd.Compound(
         children=[v for k, v in parts.items() if not k.startswith("ref_")],
-        label="Objects_Compartment_Forklift_CNC4759A_R46_R55",
+        label="Objects_Compartment_Forklift_CNC4759A_R46_R56",
     )
     step_path = os.path.join(OUT_DIR, "objects_forklift_assembly.step")
     bd.export_step(asm, step_path)

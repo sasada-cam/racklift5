@@ -120,8 +120,11 @@ HTML = r"""<!doctype html>
 
   <div class="sec">
     <div class="sec-title">3. Layers</div>
-    <div class="row"><span><span class="dot" style="background:#f97316"></span>R46–R55 Forklift + CNC4759-A + 1:2 Rack-Pinion</span>
+    <div class="row"><span><span class="dot" style="background:#f97316"></span>R46–R56 Forklift + CNC4759-A + 1:2 Rack-Pinion</span>
       <div class="btn-group"><button id="v-fork-solid" class="active" onclick="setVis('fork','solid')">Show</button><button id="v-fork-off" onclick="setVis('fork','off')">Hide</button></div>
+    </div>
+    <div class="row"><span><span class="dot" style="background:#0e7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span>
+      <div class="btn-group"><button id="v-cover-solid" class="active" onclick="setVis('cover','solid')">Solid</button><button id="v-cover-xray" onclick="setVis('cover','xray')">Ghost</button><button id="v-cover-off" onclick="setVis('cover','off')">Hide</button></div>
     </div>
     <div class="row"><span><span class="dot" style="background:#4caf50"></span>B04 Tray + Boom + Wishbone + Load Cell</span>
       <div class="btn-group"><button id="v-tray-solid" class="active" onclick="setVis('tray','solid')">Solid</button><button id="v-tray-xray" onclick="setVis('tray','xray')">Ghost</button><button id="v-tray-off" onclick="setVis('tray','off')">Hide</button></div>
@@ -216,7 +219,8 @@ const mats = {
   body_collar: mat(0x1f7a4d), body_fasteners: mat(0x334155, { metalness: 0.80 }),
   tray_boom: mat(0x2563eb, { metalness: 0.25 }), live_wishbone: mat(0x1d4ed8), load_cell: mat(0xe2e8f0, { metalness: 0.80 }),
   tray_deck: mat(0x0ea5e9), battery_pod: mat(0x66bb6a), battery_lid: mat(0x388e3c), battery_pack: mat(0x334155),
-  compartment_deck: mat(0x26a69a), fork_under_tie: mat(0x2e7d32), fork_base_rails: mat(0x00897b, { metalness: 0.25 }),
+  compartment_deck: mat(0x26a69a), fork_under_tie: mat(0x2e7d32), fork_top_cover: mat(0x0e7490),
+  fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_base_rails: mat(0x00897b, { metalness: 0.25 }),
   fork_front_arch: mat(0x80cbc4), fork_mid_stage: mat(0x43a047, { metalness: 0.25 }),
   fork_pinion_left: mat(0xeab308, { metalness: 0.25 }), fork_pinion_right: mat(0xca8a04, { metalness: 0.25 }),
   fork_t8_nut: mat(0xd97706, { metalness: 0.82, roughness: 0.22 }),
@@ -311,6 +315,8 @@ regBody('load_cell', trayGroup, mats.load_cell);
 regBody('tray_deck', trayGroup, mats.tray_deck);
 regBody('compartment_deck', forkGroup, mats.compartment_deck);
 const fTieMesh = regBody('fork_under_tie', forkGroup, mats.fork_under_tie);
+const fCoverMesh = regBody('fork_top_cover', forkGroup, mats.fork_top_cover);
+const fCoverHwMesh = regBody('fork_cover_fasteners', forkGroup, mats.fork_cover_fasteners);
 regBody('fork_base_rails', forkGroup, mats.fork_base_rails);
 regBody('fork_front_arch', forkGroup, mats.fork_front_arch);
 regBody('fork_drive', forkGroup, mats.fork_drive);
@@ -473,6 +479,13 @@ window.setExplode = (pct) => {
 
 window.setVis = (name, state) => {
   if (name === 'fork') forkGroup.visible = (state !== 'off');
+  else if (name === 'cover') {
+    fCoverMesh.visible = (state !== 'off');
+    fCoverHwMesh.visible = (state !== 'off');
+    mats.fork_top_cover.transparent = (state === 'xray');
+    mats.fork_top_cover.opacity = (state === 'xray') ? 0.28 : 1.0;
+    mats.fork_top_cover.depthWrite = (state !== 'xray');
+  }
   else if (name === 'tray') {
     trayGroup.visible = (state !== 'off');
     mats.tray_deck.transparent = (state === 'xray');
@@ -542,6 +555,8 @@ function animate() {
 
   const k = explodeK;
   fTieMesh.position.set(0, 0, -48 * k);
+  fCoverMesh.position.set(0, 0, 86 * k);
+  fCoverHwMesh.position.set(0, 0, 114 * k);
   fMidMesh.position.set(0, 0.5 * forkMm, 26 * k);
   fPinLMesh.position.set(148.5, -202.0 + 0.5 * forkMm, 36 * k);
   fPinLMesh.rotation.z = -(0.5 * forkMm) / 8.0;

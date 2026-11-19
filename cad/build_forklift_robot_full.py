@@ -67,7 +67,7 @@ def check_full_forklift_clearances(
     mag_boxes = pre_boxes(c_mags)
     turning_tpl = env["turning_tpl"]
 
-    static_fk = ("compartment_deck", "fork_under_tie", "tray_deck", "fork_base_rails", "fork_front_arch", "fork_drive", "base_boom", "load_cell", "live_wishbone")
+    static_fk = ("compartment_deck", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "tray_deck", "fork_base_rails", "fork_front_arch", "fork_drive", "base_boom", "load_cell", "live_wishbone")
     move_body_keys = ("body_collar", "battery_pod", "battery_lid", "battery_pack", "body_fasteners")
 
     # Poses: (label, dx, dz, rot_y, fork_ext_y)
@@ -124,7 +124,7 @@ def check_full_forklift_clearances(
         turn_cross_cmp = bd.Compound(children=turn_cross_solids)
 
         # Check all Forklift + Body parts vs Hoods, Column, H1/H2 Pods, Magnets, Rails & Racks
-        check_keys = ("compartment_deck", "fork_under_tie", "tray_deck", "fork_base_rails", "fork_front_arch", "fork_mid_stage",
+        check_keys = ("compartment_deck", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners", "tray_deck", "fork_base_rails", "fork_front_arch", "fork_mid_stage",
                       "fork_pinion_left", "fork_pinion_right", "fork_t8_nut", "fork_mid_fasteners", "fork_tines", "fork_drive",
                       "base_boom", "live_wishbone", "load_cell", "body_collar", "battery_pod")
         for bk in check_keys:
@@ -214,6 +214,8 @@ def main():
         "tray_deck": forklift_parts["tray_deck"],
         "compartment_deck": forklift_parts["compartment_deck"],
         "fork_under_tie": forklift_parts["fork_under_tie"],
+        "fork_top_cover": forklift_parts["fork_top_cover"],
+        "fork_cover_fasteners": forklift_parts["fork_cover_fasteners"],
         "fork_base_rails": forklift_parts["fork_base_rails"],
         "fork_front_arch": forklift_parts["fork_front_arch"],
         "fork_mid_stage": forklift_parts["fork_mid_stage"],

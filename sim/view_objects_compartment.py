@@ -99,7 +99,8 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#d97706"></span>CNC4759-A Copper T8 Nut</span><button class="active" onclick="toggleLayer('fork_t8_nut', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#80CBC4"></span>R49 Front 688ZZ Bearing Arch</span><button class="active" onclick="toggleLayer('fork_front_arch', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#00897B"></span>R47-R48 Base Rails &amp; CNC4759-A</span><button class="active" onclick="toggleForkFixed(this)">Shown</button></div>
-    <div class="row"><span><span class="dot" style="background:#26A69A"></span>R46 Deck + Rear KP08/17HS4401</span><button class="active" onclick="toggleLayer('compartment_deck', this)">Shown</button></div>
+    <div class="row"><span><span class="dot" style="background:#0E7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span><button onclick="cycleMode('fork_top_cover', this); syncCoverHw();" data-mode="solid" class="active">Solid</button></div>
+    <div class="row"><span><span class="dot" style="background:#26A69A"></span>R46 Deck + Open-Top Motor/Tail Bays</span><button class="active" onclick="toggleLayer('compartment_deck', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#2E7D32"></span>R53 Removable Rear Under-Tray Tie</span><button class="active" onclick="toggleLayer('fork_under_tie', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#38bdf8"></span>B04 + Load Cell + Boom Base</span><button class="active" onclick="toggleBaseUnder(this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#eab308"></span>Skidded Load (140×130×80)</span><button onclick="cycleMode('ref_load', this)" data-mode="ghost">Ghost</button></div>
@@ -175,8 +176,10 @@ const mats = {
   load_cell:        mkMat(0xd1d5db, { metal: 0.80, rough: 0.25 }),
   live_wishbone:    mkMat(0x1d4ed8, { metal: 0.22 }),
   tray_deck:        mkMat(0x0ea5e9, { rough: 0.38 }),
-  compartment_deck: mkMat(0x26a69a, { rough: 0.36 }),
-  fork_under_tie:   mkMat(0x2e7d32, { rough: 0.36 }),
+  compartment_deck:     mkMat(0x26a69a, { rough: 0.36 }),
+  fork_top_cover:       mkMat(0x0e7490, { rough: 0.36 }),
+  fork_cover_fasteners: mkMat(0x334155, { metal: 0.78, rough: 0.26 }),
+  fork_under_tie:       mkMat(0x2e7d32, { rough: 0.36 }),
   base_fasteners:   mkMat(0x334155, { metal: 0.75, rough: 0.28 }),
   fork_base_rails:  mkMat(0x00897b, { metal: 0.25, rough: 0.34 }),
   fork_front_arch:  mkMat(0x80cbc4, { rough: 0.34 }),
@@ -204,7 +207,7 @@ function loadMesh(name, parent, recenter = null) {
 }
 
 [
-  'base_boom','load_cell','live_wishbone','tray_deck','compartment_deck','fork_under_tie','base_fasteners',
+  'base_boom','load_cell','live_wishbone','tray_deck','compartment_deck','fork_top_cover','fork_cover_fasteners','fork_under_tie','base_fasteners',
   'fork_base_rails','fork_front_arch','fork_mid_stage',
   'fork_t8_nut','fork_mid_fasteners','fork_tines','fork_drive'
 ].forEach((k) => loadMesh(k, robotLiftGroup));
@@ -263,8 +266,10 @@ function applyTransforms() {
   if (meshes.live_wishbone)    meshes.live_wishbone.position.set(0, 0, 26 * explodeK);
   if (meshes.base_fasteners)   meshes.base_fasteners.position.set(0, 0, 14 * explodeK);
   if (meshes.tray_deck)        meshes.tray_deck.position.set(0, 0, 52 * explodeK);
-  if (meshes.compartment_deck) meshes.compartment_deck.position.set(0, 0, 86 * explodeK);
-  if (meshes.fork_under_tie)   meshes.fork_under_tie.position.set(0, 0, 12 * explodeK);
+  if (meshes.compartment_deck)     meshes.compartment_deck.position.set(0, 0, 86 * explodeK);
+  if (meshes.fork_top_cover)       meshes.fork_top_cover.position.set(0, 0, 146 * explodeK);
+  if (meshes.fork_cover_fasteners) meshes.fork_cover_fasteners.position.set(0, 0, 174 * explodeK);
+  if (meshes.fork_under_tie)       meshes.fork_under_tie.position.set(0, 0, 12 * explodeK);
 
   if (meshes.fork_base_rails)    meshes.fork_base_rails.position.set(0, 0, 114 * explodeK);
   if (meshes.fork_front_arch)    meshes.fork_front_arch.position.set(0, 0, 114 * explodeK);
@@ -331,6 +336,12 @@ window.toggleBaseUnder = (btn) => {
   });
   btn.textContent = next ? 'Shown' : 'Hidden';
   btn.classList.toggle('active', next);
+};
+
+window.syncCoverHw = () => {
+  if (meshes.fork_cover_fasteners && meshes.fork_top_cover) {
+    meshes.fork_cover_fasteners.visible = meshes.fork_top_cover.visible;
+  }
 };
 
 window.cycleMode = (name, btn) => {

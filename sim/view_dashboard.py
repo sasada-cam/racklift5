@@ -1145,6 +1145,11 @@ PRINT_PARTS_CATALOG = [
      "material": "PETG · 0.15-0.2mm · 100% infill",
      "notes": "Press-fit 1x F683ZZ bearing; 1:2 differential gear meshing R48 & R52.",
      "rel_path": "models/components/objects_compartment/R55_pinion_right_B01.stl"},
+    {"id": "R56", "mark": "R56-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0E7490",
+     "name": "Screwed Top Motor & Fork-Tail Enclosure Lid",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Bolts to R46 via 6x M3x10 screws; covers 17HS4401 + JST plug & L/R rack-tail channels.",
+     "rel_path": "models/components/objects_compartment/R56_fork_top_cover_B01.stl"},
 
     # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs
     {"id": "R44-FK", "mark": "R44 (Forklift)", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0EA5E9",

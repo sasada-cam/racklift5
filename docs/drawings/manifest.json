@@ -8,11 +8,11 @@
       272.15,
       46.1
     ],
-    "volume_cm3": 300.14,
+    "volume_cm3": 292.29,
     "holes": [
       "\u00d83.30 mm (\u00d718)",
+      "\u00d82.90 mm (\u00d78)",
       "\u00d83.40 mm (\u00d74)",
-      "\u00d82.90 mm (\u00d72)",
       "\u00d85.30 mm (\u00d72)",
       "\u00d86.20 mm (\u00d72)",
       "\u00d89.60 mm (\u00d72)"
@@ -175,6 +175,24 @@
     "svg_rel": "docs/drawings/R55.svg",
     "dxf_rel": "docs/drawings/dxf/R55.dxf",
     "scale": "4:1"
+  },
+  {
+    "id": "R56",
+    "mark": "R56-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      104.8,
+      93.9,
+      8.95
+    ],
+    "volume_cm3": 44.0,
+    "holes": [
+      "\u00d83.40 mm (\u00d76)",
+      "\u00d86.10 mm (\u00d76)"
+    ],
+    "svg_rel": "docs/drawings/R56.svg",
+    "dxf_rel": "docs/drawings/dxf/R56.dxf",
+    "scale": "0.75:1"
   },
   {
     "id": "R44-FK",
