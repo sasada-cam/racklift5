@@ -484,6 +484,21 @@
     "scale": "2:1"
   },
   {
+    "id": "P09",
+    "mark": "P09",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      5.8,
+      26.4,
+      3.4
+    ],
+    "volume_cm3": 0.2,
+    "holes": [],
+    "svg_rel": "docs/drawings/P09.svg",
+    "dxf_rel": "docs/drawings/dxf/P09.dxf",
+    "scale": "3:1"
+  },
+  {
     "id": "P10-UP",
     "mark": "P10-UP",
     "process": "3D PRINT (FDM)",
@@ -643,6 +658,99 @@
     ],
     "svg_rel": "docs/drawings/M04.svg",
     "dxf_rel": "docs/drawings/dxf/M04.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M11",
+    "mark": "M11 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      45.0,
+      45.0,
+      24.5
+    ],
+    "volume_cm3": 10.49,
+    "holes": [
+      "\u00d84.50 mm (\u00d74)",
+      "\u00d822.00 mm (\u00d72)",
+      "\u00d827.00 mm (\u00d72)",
+      "\u00d818.00 mm",
+      "\u00d845.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M11.svg",
+    "dxf_rel": "docs/drawings/dxf/M11.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "M13",
+    "mark": "M13 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      2.5,
+      12.0,
+      12.0
+    ],
+    "volume_cm3": 0.15,
+    "holes": [
+      "\u00d88.20 mm",
+      "\u00d812.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M13.svg",
+    "dxf_rel": "docs/drawings/dxf/M13.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M14",
+    "mark": "M14 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      7.95,
+      12.0,
+      12.0
+    ],
+    "volume_cm3": 0.48,
+    "holes": [
+      "\u00d88.20 mm",
+      "\u00d812.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M14.svg",
+    "dxf_rel": "docs/drawings/dxf/M14.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M15",
+    "mark": "M15 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      2.0,
+      12.0,
+      12.0
+    ],
+    "volume_cm3": 0.12,
+    "holes": [
+      "\u00d88.20 mm",
+      "\u00d812.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M15.svg",
+    "dxf_rel": "docs/drawings/dxf/M15.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M16",
+    "mark": "M16 (Shop Cut)",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      20.0,
+      10.0,
+      10.0
+    ],
+    "volume_cm3": 1.15,
+    "holes": [
+      "\u00d85.20 mm",
+      "\u00d810.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M16.svg",
+    "dxf_rel": "docs/drawings/dxf/M16.dxf",
     "scale": "4:1"
   },
   {

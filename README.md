@@ -13,7 +13,7 @@
 > Option 1 swivel pod + crossing turntable, the dual legs on the rails, the body + picker / forklift compartment, and the full robot.
 >
 > * Pick a stage on the left to open its 3D view (or images + **Open in MuJoCo** for the original v3 — cross-platform via `python.exe` on Windows, `mjpython` on macOS, `python` on Linux).
-> * Click **`🖨️ Print & Build Parts (2D/3D)`** (or visit `/print-parts/`) to browse all **52 active components** (`39` printable PETG STLs incl. Forklift `R46–R55` & bed-split in-slot racks `RK-*`, `1` crossing `2020` rail STL `XP-RAIL`, and `12` lathe/cutshop metal drawings), copy exact STL file paths, filter by group (`Rails & Racks`, `Metal / Lathe / Cut`, etc.), see fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`), and toggle between the **3D Model** viewer and **📐 2D Blueprint** ISO A3 `.svg`/`.dxf` engineering drawings (`52/52` coverage).
+> * Click **`🖨️ Print & Build Parts (2D/3D)`** (or visit `/print-parts/`) to browse all **58 active components** (`40` printable PETG STLs incl. Forklift `R46–R55`, `P09`, & bed-split in-slot racks `RK-*`; `2` crossing CNC/lathe STLs `XP-RAIL` & `M11`; and `16` lathe/cutshop metal drawings `M01–M04`, `M13–M16`, `M-T8`, `M-ROD`, `M-COL`, `M-V*/M-H*`), copy exact STL file paths, filter by group (`Rails & Racks`, `Metal / Lathe / Cut`, etc.), see fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`), and toggle between the **3D Model** viewer and **📐 2D Blueprint** ISO A3 `.svg`/`.dxf` engineering drawings (`58/58` coverage).
 > * The live MuJoCo sim of the current v3 (task buttons in the browser): `pixi run -e sim sim`
 >   (macOS: it must run under `mjpython`, which this task does).
 > * The single studios (`sim/view_*.py`) still work on their own, but the dashboard is the one place that shows them all.
@@ -40,7 +40,7 @@ transfer cart between rows - see [v3](#v3-compact-squid-layout-work-in-progress)
 | `models/assembly/` | Whole machine in 3 poses (`reach`, `travel`, `turning`) as STEP + FreeCAD `.FCStd`: 97 named, coloured bodies in 5 groups. |
 | `models/parts_list.csv` | Quantities, sizes and print notes per part. |
 | `models/parts_report.csv` | Volume, solid PETG mass, size and validity of each exact solid. |
-| `docs/drawings/` | **52** dimensioned ISO A3 2D engineering blueprints (`.svg` + `dxf/*.dxf` + `manifest.json`) with fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`). |
+| `docs/drawings/` | **58** dimensioned ISO A3 2D engineering blueprints (`.svg` + `dxf/*.dxf` + `manifest.json`) with fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`). |
 | `docs/` | Renders, BOMs (`SHOPPING_LIST.md`, `OBJECTS_COMPARTMENT_FORKLIFT_BOM.md`), 2D blueprints, and release notes. |
 | `archive/v1/` | RackLift 5 v1 (two-rail lift), kept for reference only. |
 | `archive/v2_original_stl/` | The original mesh STLs of v2 – reference for the volume check. |
@@ -77,7 +77,7 @@ pixi install -e freecad      # + headless FreeCAD 1.0 (~1.5 GB)
 ```
 pixi task list                              # everything available
 pixi run python sim/view_dashboard.py       # all stages + 3D STL paths + 2D blueprints (http://127.0.0.1:8860/)
-pixi run python cad/export_drawings.py      # regenerate 52 ISO A3 2D SVG + DXF blueprints -> docs/drawings/
+pixi run python cad/export_drawings.py      # regenerate 58 ISO A3 2D SVG + DXF blueprints -> docs/drawings/
 pixi run export                             # all parts + 3 assembly poses -> models/   (~1 min)
 pixi run export-parts                       # only the printable parts
 pixi run test                               # validity + volume check vs archive/v2_original_stl

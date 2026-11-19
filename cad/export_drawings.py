@@ -349,13 +349,20 @@ def _build_metal_shop_shapes() -> dict:
     m02 = (bd.Cylinder(radius=6.0, height=12.0) - bd.Cylinder(radius=4.1, height=13.0)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
     m03 = (bd.Cylinder(radius=6.0, height=4.5) - bd.Cylinder(radius=4.1, height=5.5)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
     m04 = (bd.Cylinder(radius=6.0, height=1.5) - bd.Cylinder(radius=4.1, height=2.5)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
+    # M11: Crossing 608ZZ Pivot Bearing Housing (6061-T6 Alu Lathe Turned)
+    m11 = bd.import_step(os.path.join(ROOT, "models/components/t_slot_option1_crossing/fx_pivot_housing.step"))
+    # M13, M14, M15: Crossing axle steel spacer tubes (12 OD x 8.2 ID) & M16 stop-pin sleeve (10 OD x 5.2 ID)
+    m13 = (bd.Cylinder(radius=6.0, height=2.5) - bd.Cylinder(radius=4.1, height=3.5)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
+    m14 = (bd.Cylinder(radius=6.0, height=7.95) - bd.Cylinder(radius=4.1, height=8.95)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
+    m15 = (bd.Cylinder(radius=6.0, height=2.0) - bd.Cylinder(radius=4.1, height=3.0)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
+    m16 = (bd.Cylinder(radius=5.0, height=20.0) - bd.Cylinder(radius=2.6, height=21.0)).moved(bd.Location((0, 0, 0), (0, 90, 0)))
     # T8 Cut Lead Screw (Ø8 x 202 mm 304SS) & MT0092 Smooth Guide Rod (Ø8 x 165 mm)
     m_t8 = OC._build_t8_threaded_screw(0.0, 202.0, 0.0, 0.0).moved(bd.Location((0, 0, 0), (0, 0, 90)))
     m_rod = bd.Cylinder(radius=4.0, height=165.0).moved(bd.Location((0, 0, 0), (0, 90, 0)))
     # 40 x 25 x 2 mm Aluminum Column (276 mm)
     m_col, _ = OF.build_unified_column_and_plugs()
     m_col = m_col.moved(bd.Location((0, 0, 0), (0, 90, 0)))
-    return {"M01": m01, "M02": m02, "M03": m03, "M04": m04, "M-T8": m_t8, "M-ROD": m_rod, "M-COL": m_col}
+    return {"M01": m01, "M02": m02, "M03": m03, "M04": m04, "M11": m11, "M13": m13, "M14": m14, "M15": m15, "M16": m16, "M-T8": m_t8, "M-ROD": m_rod, "M-COL": m_col}
 
 
 def build_all_specs() -> list[dict]:
@@ -367,6 +374,10 @@ def build_all_specs() -> list[dict]:
     _, col_plug = OB.build_column_stub_and_plug()
     o1 = O1.build_assembled_parts()
     s_fix, _, _, _, p08_bkt = DL.build_sensors_and_magnets()
+    p09_raw = s_fix.solids()[0]
+    bb09 = p09_raw.bounding_box()
+    p09_bkt = p09_raw.moved(bd.Location((-0.5 * (bb09.min.X + bb09.max.X), -0.5 * (bb09.min.Y + bb09.max.Y), -bb09.min.Z)))
+    bd.export_stl(p09_bkt, os.path.join(ROOT, "models/components/option1_dual_legs/opt1_P09_swivel_sensor_bridge.stl"), tolerance=0.01, angular_tolerance=0.1)
     _, col_end_plugs = DL.build_anti_crush_inserts()
     p10_up_raw, p10_lo_raw, _ = OF.build_leg_protective_covers()
     metal = _build_metal_shop_shapes()
@@ -485,6 +496,10 @@ def build_all_specs() -> list[dict]:
          "process": "3D PRINT (FDM)", "qty": 2, "material": "PETG (0.15mm, 4 walls, 100%)", "notes": "Holds 2x TO-92S 49E sensors 8.0 mm apart on MT0134.",
          "rel_path": "models/components/option1_dual_legs/opt1_crossing_sensor_bracket.stl", "shape": p08_bkt,
          "key_dims": ["Fang pitch: 8.0 mm c/c", "MT0134 clamp: 1x M3 x 12 + nut"]},
+        {"id": "P09", "mark": "P09", "short_title": "Swivel End-Stop Bridge", "name": "A3144 Swivel End-Stop Sensor Bridge (0° / 90°)",
+         "process": "3D PRINT (FDM)", "qty": 2, "material": "PETG (0.15mm, 100% infill)", "notes": "Mounts on P04 underside; holds 2x A3144 at (-11.0, +-11.0).",
+         "rel_path": "models/components/option1_dual_legs/opt1_P09_swivel_sensor_bridge.stl", "shape": p09_bkt,
+         "key_dims": ["Holds 2x TO-92S A3144 switches", "Detects P01 Ø3x1.8 magnet at 0°/90°"]},
 
         # --- Hoods & Crossings ---
         {"id": "P10-UP", "mark": "P10-UP", "short_title": "Upper Leg Hood", "name": "Upper Leg Protective Hood",
@@ -525,6 +540,26 @@ def build_all_specs() -> list[dict]:
          "process": "LATHE TURNING", "qty": 2, "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Thin 1.5 mm faced steel ring spacer.",
          "rel_path": "docs/SHOPPING_LIST.md#L50", "shape": metal["M04"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Thickness: 1.50 mm"]},
+        {"id": "M11", "mark": "M11 (Lathe)", "short_title": "Crossing Pivot Housing", "name": "608ZZ Duplex Crossing Pivot Bearing Housing",
+         "process": "LATHE TURNING", "qty": "1/crossing", "material": "6061-T6 Alu Bar Ø45 mm", "notes": "Spigot Ø27 g6 x 9.5; twin Ø22 H7 x 7 bearing seats; 4x Ø4.5 on 36 PCD.",
+         "rel_path": "models/components/t_slot_option1_crossing/fx_pivot_housing.stl", "shape": metal["M11"],
+         "key_dims": ["Spigot: Ø27.0 g6 x 9.5 mm", "Bearing bores: Ø22.0 H7 x 7 mm", "4x Ø4.5 holes on 36 mm PCD"]},
+        {"id": "M13", "mark": "M13 (Lathe)", "short_title": "Crossing Front Spacer", "name": "Crossing Axle Front Bearing Steel Spacer",
+         "process": "LATHE TURNING", "qty": "1/crossing", "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Faced square 2.50 mm steel tube spacer in M11 pivot stack.",
+         "rel_path": "docs/SHOPPING_LIST.md#L102", "shape": metal["M13"],
+         "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 2.50 mm (square faces)"]},
+        {"id": "M14", "mark": "M14 (Lathe)", "short_title": "Crossing Preload Spacer", "name": "Crossing Inner-Race Preload Steel Spacer (7.95 mm)",
+         "process": "LATHE TURNING", "qty": "1/crossing", "material": "Steel Tube 12 OD x 8.2 ID (Faces Ground)", "notes": "Ground 0.05 mm shorter than M11 housing shoulder (sets 608ZZ preload).",
+         "rel_path": "docs/SHOPPING_LIST.md#L103", "shape": metal["M14"],
+         "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 7.95 mm (shoulder - 0.05 mm)"]},
+        {"id": "M15", "mark": "M15 (Lathe)", "short_title": "Crossing Preload Collar", "name": "Crossing Rear Preload Steel Collar",
+         "process": "LATHE TURNING", "qty": "1/crossing", "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Faced square 2.00 mm rear collar under DIN 6796 disc spring.",
+         "rel_path": "docs/SHOPPING_LIST.md#L104", "shape": metal["M15"],
+         "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 2.00 mm (square faces)"]},
+        {"id": "M16", "mark": "M16 (Shop Cut)", "short_title": "Stop-Pin Sleeve", "name": "Crossing M5 Stop-Pin Steel Sleeve",
+         "process": "SHOP CUT / DRILL", "qty": "1/crossing", "material": "Steel Tube 10 OD x 5.2 ID", "notes": "Cut square 20.0 mm; runs on M5 x 25 stop pin inside FX-BKT slot.",
+         "rel_path": "docs/SHOPPING_LIST.md#L105", "shape": metal["M16"],
+         "key_dims": ["OD Ø10.0 mm / ID Ø5.2 mm", "Length: 20.00 mm"]},
         {"id": "M-T8", "mark": "CNC4759-A Cut", "short_title": "Cut T8 Lead Screw", "name": "CNC4759-A 304SS T8 Lead Screw (Trimmed)",
          "process": "SHOP CUT / DRILL", "qty": 1, "material": "304 Stainless (from 500 mm kit)", "notes": "Cut 500 mm screw -> 202.0 mm; chamfer cut end for 688ZZ.",
          "rel_path": "docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md#L18", "shape": metal["M-T8"],
