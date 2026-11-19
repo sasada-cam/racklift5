@@ -30,9 +30,12 @@ import re
 import socketserver
 import sys
 import threading
+import time
 import urllib.parse
 import webbrowser
 import xml.etree.ElementTree as ET
+
+_BOOT_TAG = int(time.time())
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
@@ -1069,6 +1072,7 @@ def load_stage_html(stage: dict) -> str:
         rf"\1{prefix}/\2",
         raw_html,
     )
+    rewritten = re.sub(r"(\.stl)(['\"])", rf"\1?v={_BOOT_TAG}\2", rewritten)
     _VIEWER_HTML_CACHE[sid] = rewritten
     return rewritten
 
@@ -1081,7 +1085,7 @@ def collect_stage_manifest() -> list:
             if os.path.isdir(folder):
                 for fname in sorted(os.listdir(folder)):
                     if fname.lower().endswith(".stl"):
-                        stls.append(f"/stage/{s['id']}{mount_url}{fname}")
+                        stls.append(f"/stage/{s['id']}{mount_url}{fname}?v={_BOOT_TAG}")
         item = {k: v for k, v in s.items() if k not in ("mounts", "viewer_module")}
         item["stl_count"] = len(stls)
         item["stl_urls"] = stls
@@ -1427,7 +1431,7 @@ def collect_print_parts() -> tuple[list, dict, dict, dict]:
             item["abs_path"] = fpath
             item["has_stl"] = True
             item["size_kb"] = round(os.path.getsize(fpath) / 1024.0, 1)
-            item["stl_url"] = f"/print-stl/{rel}"
+            item["stl_url"] = f"/print-stl/{rel}?v={int(os.path.getmtime(fpath))}"
             by_rel[rel] = fpath
         else:
             item["abs_path"] = fpath
@@ -2363,7 +2367,7 @@ def make_handler(manifest: list, print_parts: list, print_by_rel: dict, svg_by_n
                     return
                 with open(fpath, "rb") as f:
                     data = f.read()
-                return self._send_bytes(data, "application/octet-stream", "public, max-age=3600")
+                return self._send_bytes(data, "application/octet-stream", "no-store")
 
             if path.startswith("/docs-drawing/"):
                 fname = urllib.parse.unquote(path[len("/docs-drawing/"):])
@@ -2411,7 +2415,7 @@ def make_handler(manifest: list, print_parts: list, print_by_rel: dict, svg_by_n
                             return
                         with open(fpath, "rb") as f:
                             data = f.read()
-                        return self._send_bytes(data, "application/octet-stream", "public, max-age=3600")
+                        return self._send_bytes(data, "application/octet-stream", "no-store")
 
             self.send_error(404)
 
