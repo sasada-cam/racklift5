@@ -199,24 +199,6 @@
     "scale": "1:2"
   },
   {
-    "id": "R44-PK",
-    "mark": "R44 (Legacy Picker)",
-    "process": "3D PRINT (FDM)",
-    "bbox_mm": [
-      180.0,
-      175.0,
-      22.0
-    ],
-    "volume_cm3": 196.07,
-    "holes": [
-      "\u00d816.00 mm (\u00d710)",
-      "\u00d84.40 mm (\u00d78)"
-    ],
-    "svg_rel": "docs/drawings/R44-PK.svg",
-    "dxf_rel": "docs/drawings/dxf/R44-PK.dxf",
-    "scale": "1:2"
-  },
-  {
     "id": "R40",
     "mark": "R40",
     "process": "3D PRINT (FDM)",
@@ -460,6 +442,26 @@
     "svg_rel": "docs/drawings/P06.svg",
     "dxf_rel": "docs/drawings/dxf/P06.dxf",
     "scale": "3:1"
+  },
+  {
+    "id": "RET",
+    "mark": "Unmarked",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      9.6,
+      3.1,
+      9.6
+    ],
+    "volume_cm3": 0.1,
+    "holes": [
+      "\u00d83.30 mm",
+      "\u00d85.20 mm",
+      "\u00d86.30 mm",
+      "\u00d89.60 mm"
+    ],
+    "svg_rel": "docs/drawings/RET.svg",
+    "dxf_rel": "docs/drawings/dxf/RET.dxf",
+    "scale": "4:1"
   },
   {
     "id": "P08",

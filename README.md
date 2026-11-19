@@ -13,7 +13,7 @@
 > Option 1 swivel pod + crossing turntable, the dual legs on the rails, the body + picker / forklift compartment, and the full robot.
 >
 > * Pick a stage on the left to open its 3D view (or images + **Open in MuJoCo** for the original v3 — cross-platform via `python.exe` on Windows, `mjpython` on macOS, `python` on Linux).
-> * Click **`🖨️ Print & Build Parts (2D/3D)`** (or visit `/print-parts/`) to browse all **41 components** (`34` printable PETG STLs + `7` lathe/CNC/shop-cut metal parts), copy exact STL file paths, filter by group, see fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`), and toggle between the **3D Model** viewer and **📐 2D Blueprint** ISO A3 `.svg`/`.dxf` engineering drawings (`38` drawings).
+> * Click **`🖨️ Print & Build Parts (2D/3D)`** (or visit `/print-parts/`) to browse all **38 active components** (`31` printable PETG STLs + `7` lathe/CNC/shop-cut metal parts), copy exact STL file paths, filter by group, see fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`), and toggle between the **3D Model** viewer and **📐 2D Blueprint** ISO A3 `.svg`/`.dxf` engineering drawings (`38/38` coverage).
 > * The live MuJoCo sim of the current v3 (task buttons in the browser): `pixi run -e sim sim`
 >   (macOS: it must run under `mjpython`, which this task does).
 > * The single studios (`sim/view_*.py`) still work on their own, but the dashboard is the one place that shows them all.
