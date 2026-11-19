@@ -2235,13 +2235,22 @@ def make_handler(manifest: list, print_parts: list, print_by_rel: dict, svg_by_n
         def log_message(self, fmt, *args):
             pass
 
+        def finish(self):
+            try:
+                super().finish()
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                pass
+
         def _send_bytes(self, body: bytes, ctype: str, cache_control: str):
-            self.send_response(200)
-            self.send_header("Content-Type", ctype)
-            self.send_header("Content-Length", str(len(body)))
-            self.send_header("Cache-Control", cache_control)
-            self.end_headers()
-            self.wfile.write(body)
+            try:
+                self.send_response(200)
+                self.send_header("Content-Type", ctype)
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", cache_control)
+                self.end_headers()
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                pass
 
         def do_GET(self):
             path = urllib.parse.urlparse(self.path).path
