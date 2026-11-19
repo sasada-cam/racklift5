@@ -321,8 +321,10 @@ def build_forklift_deck(tray_clean: bd.Part):
     tray_clean = tray_clean - box(SCREW_X - 12.6, SCREW_X + 12.6, WALL_Y1, -77.5, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
     # Recessed under-floor sewer duct in R44 (Y=-217..-89 L / -217..-86 C+R) + R50 pylon travel slots through R46 ceiling;
     # 170.80..173.40 sewer bed ties all R44 waffle ribs into 1 solid (+2.9 mm clear of R45), while R46 bridges R47/R48 overhead!
+    # Plus solid flush underside mounting pad on R44 (X=147..213, Y=-245..-208.5, Z=168.0..172.9) so extended R53-B01 clamps flat!
     tray_clean = tray_clean + box(SCREW_X - 38.0, SCREW_X + 38.5, -217.5, -89.2, 170.80, NUT_TRENCH_Z)
     tray_clean = tray_clean + box(SCREW_X - 15.5, SCREW_X + 38.5, -89.4, -85.5, 170.80, NUT_TRENCH_Z)
+    tray_clean = tray_clean + box(SCREW_X - 33.0, SCREW_X + 33.0, OB.TRAY_Y0, -208.5, OB.TRAY_RIB_Z0, 172.90)
     for lx, ly in ((208.5, -174.0), (208.5, -142.0)):  # re-open R45 right-wing captive M4 hex sockets & bores cleanly
         tray_clean = tray_clean - OB._cyl_axis(2.20, 167.5, 174.2, "z", lx, ly)
         with bd.BuildPart() as hx_cut:
@@ -393,6 +395,9 @@ def build_forklift_deck(tray_clean: bd.Part):
     for rx0, rx1 in ((SCREW_X - 33.0, SCREW_X - 28.0), (SCREW_X + 28.0, SCREW_X + 33.0)):
         rear_cradle = rear_cradle + box(rx0, rx1, BULK_Y1, TIE_Y0 + 0.1, CRADLE_Z0, WALL_TOP_Z)
         rear_cradle = rear_cradle + box(rx0, rx1, TIE_Y0, SEAM_Y, TIE_SPLIT_Z, WALL_TOP_Z)
+    # Solid internal M3x14 anchor bosses at Y=-280.5..-269.5 flanking the Ø19 coupler (X=147..164 & 196..213, Z=160.2..173.5)
+    for bx0, bx1 in ((SCREW_X - 33.0, SCREW_X - 16.0), (SCREW_X + 16.0, SCREW_X + 33.0)):
+        rear_cradle = rear_cradle + box(bx0, bx1, -280.5, -269.5, TIE_SPLIT_Z, 173.50)
 
     kp_housing = box(SCREW_X - 33.0, SCREW_X + 33.0, KP08_Y0 - 0.5, SEAM_Y, 165.40, WALL_TOP_Z)
     kp_foot_cut = box(SCREW_X - 27.8, SCREW_X + 27.8, KP08_Y0 - 1.0, KP08_Y1 + 0.3, 165.00, SCREW_Z - 9.7)
@@ -502,17 +507,17 @@ def build_forklift_deck(tray_clean: bd.Part):
         for my_f in (-202.0, -166.0, -130.0, -94.0):
             comp = comp - OB._cyl_axis(0.95, 178.40, BAY_FLOOR_Z + 0.5, "z", mx_flg, my_f)
 
-    # 5) Removable Under-Tray Rear Cantilever Tie Plate (R53-B01): docks cleanly beneath R46 (Y=-287.85..-245, Z=155.7..160.15)
-    #    & extends forward under R44 rear rim (Y=-245..-218, Z=155.7..167.85); unbolts downward so R46/R44 separate freely!
+    # 5) Removable Under-Tray Rear Cantilever Tie Plate (R53-B01): docks cleanly beneath R46B (Y=-287.85..-245, Z=155.7..160.15)
+    #    & extends 36.5 mm forward under R44 blue tray deck (Y=-245..-208.5, Z=155.7..167.85) with 4x identical collinear M3x14 screws!
     under_tie = box(SCREW_X - 33.0, SCREW_X + 33.0, TIE_Y0 + 0.15, WALL_Y0, CRADLE_Z0, TIE_SPLIT_Z - 0.05)
     with bd.BuildPart() as gus_bp:
         with bd.BuildSketch(bd.Plane.YZ.offset(SCREW_X - 33.0)):
             with bd.BuildLine():
                 bd.Polyline(
                     (WALL_Y0, CRADLE_Z0),
-                    (-234.5, CRADLE_Z0),
-                    (-218.0, 164.80),
-                    (-218.0, 167.85),
+                    (-210.5, CRADLE_Z0),
+                    (-208.5, 164.80),
+                    (-208.5, 167.85),
                     (WALL_Y0, 167.85),
                     (WALL_Y0, CRADLE_Z0),
                 )
@@ -568,18 +573,20 @@ def build_forklift_deck(tray_clean: bd.Part):
                                                    OB.TRAY_Y0 + 8.0 if odir < 0 else OB.TRAY_Y1 + 0.2, "y", sx, sz)
             hw_solids.append(_socket_bolt(2.70, 2.4, 1.40, 10.0, "y", sx, sy, sz, head_dir=odir))
 
-    # 2x rear underside M3 bolts anchoring R53-B01 straight UP into R44 rear rim (Y=-242) + 2x M3 bolts into R46 coupler floor (Y=-275)
-    for rx in (155.5, 204.5):
-        under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, 168.2, "z", rx, -242.0)
-        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 161.55, "z", rx, -242.0)
-        tray_clean = tray_clean - OB._cyl_axis(1.45, OB.TRAY_RIB_Z0 - 0.5, OB.TRAY_TOP_Z - 1.5, "z", rx, -242.0)
-        hw_solids.append(_socket_bolt(2.70, 2.4, 1.40, 15.0, "z", rx, -242.0, 161.45, head_dir=-1))
-
-    for ux in (162.0, 198.0):
+    # 4x Identical Collinear M3 x 14 mm underside bolts on R53-B01 aligned at X = SCREW_X ± 21.0 (159.0 & 201.0, matching M5 KP08):
+    # - 2x Front at Y = -215.5 mm (29.5 mm deep inside blue R44 tray deck pad, Z = 158.25..172.25 mm)
+    # - 2x Rear  at Y = -275.0 mm (30.0 mm behind seam into solid R46B coupler side bosses, Z = 158.25..172.25 mm)
+    for ux in (SCREW_X - 21.0, SCREW_X + 21.0):
+        # Front pair (Y = -215.5 into R44-FK blue tray pad)
+        under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, 168.2, "z", ux, -215.5)
+        under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.30, "z", ux, -215.5)
+        tray_clean = tray_clean - OB._cyl_axis(1.45, OB.TRAY_RIB_Z0 - 0.5, 172.60, "z", ux, -215.5)
+        hw_solids.append(_socket_bolt(2.70, 2.40, 1.40, 14.0, "z", ux, -215.5, 158.25, head_dir=-1))
+        # Rear pair (Y = -275.0 into R46B-B01 coupler side bosses)
         under_tie = under_tie - OB._cyl_axis(1.65, CRADLE_Z0 - 0.5, TIE_SPLIT_Z + 0.5, "z", ux, -275.0)
         under_tie = under_tie - OB._cyl_axis(3.10, CRADLE_Z0 - 0.5, 158.30, "z", ux, -275.0)
-        rear_cradle = rear_cradle - OB._cyl_axis(1.45, TIE_SPLIT_Z - 0.5, 161.4, "z", ux, -275.0)
-        hw_solids.append(_socket_bolt(2.70, 2.0, 1.40, 3.1, "z", ux, -275.0, 158.25, head_dir=-1))
+        rear_cradle = rear_cradle - OB._cyl_axis(1.45, TIE_SPLIT_Z - 0.5, 172.60, "z", ux, -275.0)
+        hw_solids.append(_socket_bolt(2.70, 2.40, 1.40, 14.0, "z", ux, -275.0, 158.25, head_dir=-1))
 
     kp_yc = (KP08_Y0 + KP08_Y1) / 2.0
     for bx in (SCREW_X - 21.0, SCREW_X + 21.0):

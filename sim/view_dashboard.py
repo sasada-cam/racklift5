@@ -1142,7 +1142,7 @@ PRINT_PARTS_CATALOG = [
     {"id": "R53", "mark": "R53-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#2E7D32",
      "name": "Removable Under-Tray Rear Cantilever Tie Plate",
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Bottom flange bridge across Y=-245 seam: bolts upward into R46B (2x M5 + 2x M3) & R44/R46A (2x M3); unbolts downward.",
+     "notes": "Bottom flange bridge across Y=-245 seam (66.0x79.35 mm): extends 36.5 mm deep under blue R44 tray pad w/ 4x identical collinear M3x14 screws + 2x M5 KP08 bolts at X=159 & 201.",
      "rel_path": "models/components/objects_compartment/R53_under_tie_B01.stl"},
     {"id": "R54", "mark": "R54", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#EAB308",
      "name": "16T MOD=1.0 Spur Pinion (Left, F683ZZ Hub)",

@@ -30,7 +30,7 @@
       96.85,
       46.1
     ],
-    "volume_cm3": 156.84,
+    "volume_cm3": 159.94,
     "holes": [
       "\u00d82.90 mm (\u00d710)",
       "\u00d83.30 mm (\u00d74)",
@@ -152,13 +152,13 @@
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
       66.0,
-      69.85,
+      79.35,
       12.15
     ],
-    "volume_cm3": 27.93,
+    "volume_cm3": 40.05,
     "holes": [
-      "\u00d86.20 mm (\u00d76)",
       "\u00d83.30 mm (\u00d74)",
+      "\u00d86.20 mm (\u00d74)",
       "\u00d85.30 mm (\u00d72)",
       "\u00d810.20 mm (\u00d72)"
     ],
@@ -265,14 +265,14 @@
       175.0,
       10.0
     ],
-    "volume_cm3": 165.68,
+    "volume_cm3": 172.97,
     "holes": [
       "\u00d82.90 mm (\u00d729)",
       "\u00d81.90 mm (\u00d714)",
       "\u00d816.00 mm (\u00d713)",
       "\u00d84.40 mm (\u00d76)",
-      "\u00d83.30 mm (\u00d72)",
-      "\u00d816.40 mm (\u00d72)"
+      "\u00d82.10 mm (\u00d72)",
+      "\u00d83.30 mm (\u00d72)"
     ],
     "svg_rel": "docs/drawings/R44-FK.svg",
     "dxf_rel": "docs/drawings/dxf/R44-FK.dxf",
