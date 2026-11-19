@@ -70,22 +70,26 @@ Exact parts, quantities, verified dimensions, and local Sri Lanka sourcing (`tro
 
 ---
 
-## 2. 3D-Printed Parts (`models/components/objects_compartment/`, PETG, Batch `B01`)
+## 2. 3D-Printed Parts (`models/components/objects_compartment/`, PETG, Batch `B01`, `220 × 220 mm` Bed Ready)
 
-Print settings: `0.2 mm` layers, `4` walls, `40 %` gyroid infill. Every STL is `1` solid and engraved `0.6 mm` deep per `CLAUDE.md` rules (`R49`, `R54`, `R55` are `id_only`).
+Print settings: `0.2 mm` layers (`0.15 mm` on `R50`, `R51`, `R52`, `R54`, `R55`, `R57`), `4–5` walls, `40–100 %` infill. Every STL is `1` solid, engraved `0.6 mm` deep per `CLAUDE.md` rules, and fits a **`220 × 220 mm` 3D printer build plate** (`R51-B01` & `R52-B01` placed at **`45°` diagonal = `200.6 × 200.6 mm`**; `R46` split at `Y = -245.0 mm` into **`R46A-B01` + `R46B-B01`**):
 
-| ID | Mark | STL File | Colour | Qty | Role & Key Dimensions |
-|---|---|---|---|---|---|
-| **R46** | `R46-B01` | `R46_forklift_deck_B01.stl` | `#26A69A` | **1** | Drop-on `180 × 175 mm` sloped deck, stop wall (`Y=-245..-238` w/ rack tail slots), unified `KP08` + wrapped `17HS4401` cradle, `3.2 mm` vertical corner & mid-edge skirts flush to `Z = 168.0` |
-| **R47** | `R47-B01` | `R47_rail_left_B01.stl` | `#00897B` | **1** | Left fixed guide channel (`X = 132 mm`) + elevated bridged `MOD=1.0` Base Rack (`X = 156.5`, `Z = 183.9..187.9`) |
-| **R48** | `R48-B01` | `R48_rail_right_B01.stl` | `#1B5E20` | **1** | Right fixed guide channel (`X = 228 mm`) + elevated bridged `MOD=1.0` Base Rack (`X = 203.5`, `Z = 183.9..187.9`) |
-| **R49** | `R49` | `R49_front_688zz_arch_B01.stl` | `#80CBC4` | **1** | Front `688ZZ` bearing arch saddle (`Y = -77.5..-70.5 mm`, `Z <= 189.60 mm`), engraved on flat front arch face |
-| **R50** | `R50-B01` | `R50_stage1_carriage_B01.stl` | `#43A047` | **1** | Stage-1 bridged H-carriage (`+120 mm` stroke), copper `T8` nut plate (`X = 180 mm`), vertical `M3` pinion bosses (`Y = -202 mm`) |
-| **R51** | `R51-B01` | `R51_fork_tine_left_B01.stl` | `#F97316` | **1** | Left `4.0 mm` fork blade (`Z = 183.9..187.9 mm`), beveled nose wedge (`Y = -63 mm`), inboard `MOD=1.0` rack (`Y = -335..-78 mm`), `+240 mm` full reach |
-| **R52** | `R52-B01` | `R52_fork_tine_right_B01.stl` | `#EA580C` | **1** | Right `4.0 mm` fork blade (`Z = 183.9..187.9 mm`), beveled nose wedge (`Y = -63 mm`), inboard `MOD=1.0` rack (`Y = -335..-78 mm`), `+240 mm` full reach |
-| **R53** | `R53-B01` | `R53_under_tie_B01.stl` | `#2E7D32` | **1** | Removable under-tray rear cantilever tie plate (`Y = -288..-218`, flush at `Z = 155.70`); unbolts downward (`-Z`) so `R44` separates cleanly from `R46` |
-| **R54** | `R54` | `R54_pinion_left_B01.stl` | `#EAB308` | **1** | Left horizontal `16T MOD=1.0` spur pinion (`rp = 8.0 mm`, `F683ZZ` center bore, `X = 148.5, Y = -202.0`), meshes `R47` ↔ `R51` at `1:2` |
-| **R55** | `R55` | `R55_pinion_right_B01.stl` | `#CA8A04` | **1** | Right horizontal `16T MOD=1.0` spur pinion (`rp = 8.0 mm`, `F683ZZ` center bore, `X = 211.5, Y = -202.0`), meshes `R48` ↔ `R52` at `1:2` |
+| ID | Mark | STL File | Colour | Qty | `220 × 220 mm` Bed Setup | Role & Key Dimensions |
+|---|---|---|---|---|---|---|
+| **R46A** | `R46A-B01` | `R46A_forklift_deck_B01.stl` | `#26A69A` | **1** | **Flat `0°`** (`186.5 × 181.5 × 32.0 mm`) | Drop-on front sloped deck, lowered `178.60 mm` skid channels, `7 mm` stop wall (`Y=-245..-238` w/ `2×` tenon mortises + `2× M3` bores) & drop skirts |
+| **R46B** | `R46B-B01` | `R46B_fork_rear_cradle_B01.stl` | `#0D9488` | **1** | **Flat `0°`** (`104.8 × 96.9 × 46.1 mm`) | Bolt-on rear `KP08` + wrapped `17HS4401` cradle + open-top rack-tail U-channels (`Y=-338.9..-245.05`) + `2×` front shear tenons |
+| **R47** | `R47-B01` | `R47_rail_left_B01.stl` | `#00897B` | **1** | **Flat `0°`** (`46.8 × 167.2 × 6.05 mm`) | Left fixed guide channel (`X = 132 mm`) + full-length solid `MOD=1.0` Base Rack (`X = 156.5`, `Z = 180.55..186.60`) |
+| **R48** | `R48-B01` | `R48_rail_right_B01.stl` | `#1B5E20` | **1** | **Flat `0°`** (`46.8 × 167.2 × 6.05 mm`) | Right fixed guide channel (`X = 228 mm`) + full-length solid `MOD=1.0` Base Rack (`X = 203.5`, `Z = 180.55..186.60`) |
+| **R49** | `R49` | `R49_front_688zz_arch_B01.stl` | `#80CBC4` | **1** | **Flat `0°`** (`32.0 × 7.0 × 10.5 mm`) | Front `688ZZ` bearing arch saddle (`Y = -77.5..-70.5 mm`, `Z <= 189.60 mm`) |
+| **R50** | `R50-B01` | `R50_stage1_carriage_B01.stl` | `#43A047` | **1** | **Flat `0°`** (`106.6 × 162.5 × 14.0 mm`) | Stage-1 `55°` MGN H-carriage (`+120 mm` stroke) with closed double-chord Vierendeel box bridge (`Z = 174.35..188.35 mm`) |
+| **R51** | `R51-B01` | `R51_fork_tine_left_B01.stl` | `#F97316` | **1** | **★ `45°` Diagonal** (`200.6 × 200.6 mm` box) | Left `272.0 × 11.75 × 8.1 mm` fork blade (`Z = 183.5..191.60 mm`), `55°` MGN carriage groove + tail hook (`1-piece unbroken`) |
+| **R52** | `R52-B01` | `R52_fork_tine_right_B01.stl` | `#EA580C` | **1** | **★ `45°` Diagonal** (`200.6 × 200.6 mm` box) | Right `272.0 × 11.75 × 8.1 mm` fork blade (`Z = 183.5..191.60 mm`), prints side-by-side with `R51-B01` along the `45°` diagonal |
+| **R53** | `R53-B01` | `R53_under_tie_B01.stl` | `#2E7D32` | **1** | **Flat `0°`** (`66.0 × 69.9 × 12.15 mm`) | Removable bottom tie plate bridging `Y = -245.0` seam (`2× M5` + `2× M3` into `R46B`, `2× M3` into `R44`/`R46A`) |
+| **R54** | `R54` | `R54_pinion_left_B01.stl` | `#EAB308` | **1** | **Flat `0°`** (`17.9 × 17.9 × 3.1 mm`) | Left horizontal `16T MOD=1.0` spur pinion (`F683ZZ` hub, `X = 148.5, Y = -202.0`), meshes `R47` ↔ `R51` at `1:2` |
+| **R55** | `R55` | `R55_pinion_right_B01.stl` | `#CA8A04` | **1** | **Flat `0°`** (`17.9 × 17.9 × 3.1 mm`) | Right horizontal `16T MOD=1.0` spur pinion (`F683ZZ` hub, `X = 211.5, Y = -202.0`), meshes `R48` ↔ `R52` at `1:2` |
+| **R56** | `R56-B01` | `R56_fork_top_cover_B01.stl` | `#0E7490` | **1** | **Flat `0°`** (`104.8 × 100.9 × 8.95 mm`) | Screwed top motor & rack-tail enclosure lid bridging `Y = -245.0` seam (`6× M3×10` into `R46B` + `2× M3×10` into `R46A` stop wall) |
+| **R57** | `R57-B01` | `R57_hold_rail_left_B01.stl` | `#6366F1` | **2** | **Flat `0°`** (`8.0 × 166.6 × 5.75 mm`) | Screwed `55°` MGN/T-slot linear hold-down rails (`5× M2×14`/side through `R47`/`R48` into `R46A`+`R44`) |
+| **R58** | `R58-B01` | `R58_fork_bay_cover_B01.stl` | `#0284C7` | **1** | **Flat `0°`** (`81.2 × 168.0 × 3.45 mm`) | Screwed center-bay overhead shroud with longitudinal cog-boundary C-channel ribs (`4× M2×14` shared end holes) |
 
 ---
 

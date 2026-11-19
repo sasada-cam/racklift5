@@ -69,7 +69,7 @@ def check_full_forklift_clearances(
     turning_tpl = env["turning_tpl"]
 
     static_fk = (
-        "compartment_deck", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
+        "compartment_deck", "fork_rear_cradle", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
         "fork_bay_cover", "fork_bay_cover_fasteners",
         "tray_deck", "fork_base_rails", "fork_front_arch", "fork_drive", "fork_limit_switches",
         "fork_hold_rails", "fork_hold_fasteners",
@@ -131,7 +131,7 @@ def check_full_forklift_clearances(
         turn_cross_cmp = bd.Compound(children=turn_cross_solids)
 
         # Check all Forklift + Body parts vs Hoods, Column, H1/H2 Pods, Magnets, Rails & Racks
-        check_keys = ("compartment_deck", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
+        check_keys = ("compartment_deck", "fork_rear_cradle", "fork_under_tie", "fork_top_cover", "fork_cover_fasteners",
                       "fork_bay_cover", "fork_bay_cover_fasteners", "tray_deck", "fork_base_rails",
                       "fork_front_arch", "fork_limit_switches", "fork_hold_rails", "fork_hold_fasteners",
                       "fork_mid_stage", "fork_pinion_left", "fork_pinion_right", "fork_t8_nut", "fork_mid_fasteners", "fork_tines",
@@ -222,6 +222,7 @@ def main():
         "live_wishbone": forklift_parts["live_wishbone"],
         "tray_deck": forklift_parts["tray_deck"],
         "compartment_deck": forklift_parts["compartment_deck"],
+        "fork_rear_cradle": forklift_parts["fork_rear_cradle"],
         "fork_under_tie": forklift_parts["fork_under_tie"],
         "fork_top_cover": forklift_parts["fork_top_cover"],
         "fork_cover_fasteners": forklift_parts["fork_cover_fasteners"],

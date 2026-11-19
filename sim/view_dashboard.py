@@ -1094,16 +1094,23 @@ def collect_stage_manifest() -> list:
 
 
 PRINT_PARTS_CATALOG = [
-    # 1. Forklift Objects Compartment (R46..R55, Batch B01)
-    {"id": "R46", "mark": "R46-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#26A69A",
-     "name": "Forklift Drop-On Deck + Rear KP08/17HS4401 Cradle",
+    # 1. Forklift Objects Compartment (R46A, R46B, R47..R58, Batch B01)
+    {"id": "R46A", "mark": "R46A-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#26A69A",
+     "name": "Front Forklift Sloped Deck, Skid Channels & 7mm Stop Wall",
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Sloped outer wings with lowered 178.60 mm skid channels (+1.0mm under 12mm carried skids), drop skirts & tail slots.",
-     "rel_path": "models/components/objects_compartment/R46_forklift_deck_B01.stl"},
+     "bed_cfg": "Flat 0° on 220×220 Bed (186.5×181.5 mm · 33.5×38.5 mm spare)",
+     "notes": "Split at Y=-245.0 mm stop wall so it prints flat & straight on 220x220 bed! Lowered 178.60 mm skid channels + 2x tenon mortises + 2x M3 wall bores.",
+     "rel_path": "models/components/objects_compartment/R46A_forklift_deck_B01.stl"},
+    {"id": "R46B", "mark": "R46B-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0D9488",
+     "name": "Bolt-On Rear 17HS4401 Motor, KP08 & Rack-Tail Housing",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "bed_cfg": "Flat 0° on 220×220 Bed (104.8×96.9 mm · 115×123 mm spare)",
+     "notes": "Split at Y=-245.0 mm stop wall; triple-clamped to R46A via 2x alignment shear tenons + 2x M3x14 wall bolts + R56 top lid bridge + R53 bottom tie plate.",
+     "rel_path": "models/components/objects_compartment/R46B_fork_rear_cradle_B01.stl"},
     {"id": "R47", "mark": "R47-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#00897B",
      "name": "Fixed Base Guide Rail + Solid Rack (Left)",
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Full-length solid MOD=1.0 rack seated flush on R46 sewer ceiling + 2x M2x10 & 4x M2x4 anchors.",
+     "notes": "Full-length solid MOD=1.0 rack seated flush on R46A sewer ceiling + 2x M2x14 & 4x M2x4 anchors.",
      "rel_path": "models/components/objects_compartment/R47_rail_left_B01.stl"},
     {"id": "R48", "mark": "R48-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#1B5E20",
      "name": "Fixed Base Guide Rail + Solid Rack (Right)",
@@ -1123,17 +1130,19 @@ PRINT_PARTS_CATALOG = [
     {"id": "R51", "mark": "R51-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#F97316",
      "name": "Stage-2 Fork Tine + 55° MGN Carriage & Tail Hook (L)",
      "material": "PETG · 0.15mm · 5 walls · 100% infill · -0.15mm E-foot",
-     "notes": "Wrap-around 55° MGN groove + tail hook (136.4 mm lock at +240 mm); dry PTFE/wax lube.",
+     "bed_cfg": "★ Rotate 45° Diagonal on 220×220 Bed (200.6×200.6 mm · 1-Piece No Split!)",
+     "notes": "272.0 x 11.75 mm blade fits 220x220 bed as 1 solid piece when rotated 45° diagonally (19.4 mm spare margin; print L+R side-by-side in 1 job!).",
      "rel_path": "models/components/objects_compartment/R51_fork_tine_left_B01.stl"},
     {"id": "R52", "mark": "R52-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#EA580C",
      "name": "Stage-2 Fork Tine + 55° MGN Carriage & Tail Hook (R)",
      "material": "PETG · 0.15mm · 5 walls · 100% infill · -0.15mm E-foot",
-     "notes": "Mirrored right tine with 55° MGN linear groove + tail hook.",
+     "bed_cfg": "★ Rotate 45° Diagonal on 220×220 Bed (200.6×200.6 mm · 1-Piece No Split!)",
+     "notes": "272.0 x 11.75 mm mirrored right blade fits 220x220 bed at 45° diagonal alongside R51-B01 with zero splice joint!",
      "rel_path": "models/components/objects_compartment/R52_fork_tine_right_B01.stl"},
     {"id": "R53", "mark": "R53-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#2E7D32",
      "name": "Removable Under-Tray Rear Cantilever Tie Plate",
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Bolts upward under R46 cradle & R44 rear rim; unbolts downward for teardown.",
+     "notes": "Bottom flange bridge across Y=-245 seam: bolts upward into R46B (2x M5 + 2x M3) & R44/R46A (2x M3); unbolts downward.",
      "rel_path": "models/components/objects_compartment/R53_under_tie_B01.stl"},
     {"id": "R54", "mark": "R54", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#EAB308",
      "name": "16T MOD=1.0 Spur Pinion (Left, F683ZZ Hub)",
@@ -1146,9 +1155,9 @@ PRINT_PARTS_CATALOG = [
      "notes": "Press-fit 1x F683ZZ bearing; 1:2 differential gear meshing R48 & R52.",
      "rel_path": "models/components/objects_compartment/R55_pinion_right_B01.stl"},
     {"id": "R56", "mark": "R56-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0E7490",
-     "name": "Screwed Top Motor & Fork-Tail Enclosure Lid",
+     "name": "Screwed Top Motor & Fork-Tail Enclosure + Seam Bridge Lid",
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Bolts to R46 via 6x M3x10 screws; covers 17HS4401 + JST plug & L/R rack-tail channels.",
+     "notes": "Top flange bridge across Y=-245 seam (104.8x100.9 mm): bolts to R46B (6x M3x10) & R46A stop wall (2x M3x10 at Y=-241.5).",
      "rel_path": "models/components/objects_compartment/R56_fork_top_cover_B01.stl"},
     {"id": "R57", "mark": "R57-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "2 (L+R)", "color": "#6366F1",
      "name": "Screwed 55° MGN/T-Slot Linear Hold-Down Guide Rails",
@@ -1481,9 +1490,20 @@ def collect_print_parts() -> tuple[list, dict, dict, dict]:
             item["dxf_url"] = None
 
         m = man_by_id.get(pid, {})
-        item["bbox_mm"] = m.get("bbox_mm")
+        bbox = m.get("bbox_mm")
+        item["bbox_mm"] = bbox
         item["scale"] = m.get("scale", "")
         item["holes"] = m.get("holes", [])
+        if "bed_cfg" not in item:
+            if "PRINT" in item.get("process", "") and bbox and len(bbox) == 3:
+                dx, dy, dz = bbox
+                if max(dx, dy) <= 220.0:
+                    item["bed_cfg"] = f"Flat 0° on 220×220 Bed ({dx:.1f}×{dy:.1f} mm · fits straight)"
+                else:
+                    diag = (dx + dy) / 1.41421356
+                    item["bed_cfg"] = f"★ Rotate 45° Diagonal on 220×220 Bed ({diag:.1f}×{diag:.1f} mm · 1-Piece!)"
+            else:
+                item["bed_cfg"] = ""
         items.append(item)
     return items, by_rel, svg_by_name, dxf_by_name
 
@@ -1526,6 +1546,11 @@ PRINT_PARTS_HTML = r"""<!doctype html>
   .proc-lathe{background:#4c1d95;color:#ddd6fe;border:1px solid #8b5cf6}
   .proc-cut{background:#1e293b;color:#cbd5e1;border:1px solid #64748b}
   .dim-badge{font-size:10px;color:#fbbf24;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .bed-pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;margin-bottom:4px;font-weight:700;background:rgba(14,165,233,.14);color:#7dd3fc;border:1px solid rgba(56,189,248,.32)}
+  .bed-pill.diag{background:rgba(249,115,22,.18);color:#fdba74;border-color:#f97316}
+  .bed-guide{background:#0b1324;border:1px solid #1e3a5f;border-radius:7px;padding:7px 9px;font-size:10.5px;color:#cbd5e1;line-height:1.38}
+  .bed-guide b{color:#38bdf8}
+  .bed-guide .warn{color:#fdba74;font-weight:700}
   .pname{font-size:12.5px;font-weight:600;color:#f8fafc;margin-bottom:2px}
   .pmeta{font-size:10.5px;color:var(--muted);margin-bottom:5px}
   .path-box{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#0b1222;border:1px solid #1e2d47;border-radius:5px;padding:4px 7px}
@@ -1568,10 +1593,15 @@ PRINT_PARTS_HTML = r"""<!doctype html>
         <h2>Print &amp; Fabrication Parts (3D + 2D)</h2>
         <span id="cntPill" class="count-pill">0 Parts</span>
       </div>
-      <input id="q" class="search" type="search" placeholder="Search ID (R46, M01), process (Lathe, PETG), or file..."/>
+      <input id="q" class="search" type="search" placeholder="Search ID (R46A, R51, M01), 45° diagonal, PETG, or file..."/>
+      <div class="bed-guide">
+        <b>220 × 220 mm 3D Printer Bed Configuration (100% Fit):</b><br/>
+        • <span class="warn">R51-B01 &amp; R52-B01 (272×11.75 mm):</span> Place <b>45° Diagonal</b> in slicer → <b>200.6 × 200.6 mm</b> box (1-piece unbroken, 19.4 mm spare; print both side-by-side in 1 job!).<br/>
+        • <b>R46A-B01 (186.5×181.5) &amp; R46B-B01 (104.8×96.9):</b> Split at <code>Y = -245.0 mm</code> stop wall → both print <b>Flat 0°</b> &amp; lock via 2× tenons + 2× M3 wall bolts + R56 top lid + R53 bottom tie.
+      </div>
       <div class="chips">
         <button class="chip active" data-g="all">All</button>
-        <button class="chip" data-g="forklift">Forklift (R46–R55)</button>
+        <button class="chip" data-g="forklift">Forklift (R46A–R58)</button>
         <button class="chip" data-g="body">Body &amp; Tray</button>
         <button class="chip" data-g="pod">Swivel Pod ×2</button>
         <button class="chip" data-g="hoods">Hoods &amp; Crossings</button>
@@ -1763,7 +1793,8 @@ function selectPart(part, forceMode) {
   document.querySelectorAll('.pcard').forEach((el) => el.classList.toggle('active', el.dataset.id === part.id));
   document.getElementById('vTitle').textContent = `${part.mark} · ${part.name} (Qty ${part.qty})`;
   const sizeTxt = part.has_stl ? `${part.size_kb} KB STL` : 'Shop Drawing / BOM Spec';
-  document.getElementById('vMeta').textContent = `[${part.process}] ${part.material} — ${part.notes} (${sizeTxt})`;
+  const bedTxt = part.bed_cfg ? ` · [${part.bed_cfg}]` : '';
+  document.getElementById('vMeta').textContent = `[${part.process}] ${part.material} — ${part.notes} (${sizeTxt})${bedTxt}`;
   document.getElementById('vPath').textContent = part.svg_path ? `${part.abs_path}  ·  2D: ${part.svg_path}` : part.abs_path;
 
   const tab2d = document.getElementById('tab2d');
@@ -1822,7 +1853,7 @@ function renderList() {
   const q = document.getElementById('q').value.trim().toLowerCase();
   const vis = parts.filter((p) => {
     const gOk = curGroup === 'all' || p.group === curGroup;
-    const qOk = !q || (`${p.id} ${p.mark} ${p.process} ${p.name} ${p.rel_path} ${p.notes} ${p.material}`).toLowerCase().includes(q);
+    const qOk = !q || (`${p.id} ${p.mark} ${p.process} ${p.name} ${p.rel_path} ${p.notes} ${p.material} ${p.bed_cfg || ''}`).toLowerCase().includes(q);
     return gOk && qOk;
   });
   document.getElementById('cntPill').textContent = `${vis.length} / ${parts.length} Parts`;
@@ -1832,6 +1863,8 @@ function renderList() {
     card.className = 'pcard' + (activePart && activePart.id === p.id ? ' active' : '');
     card.dataset.id = p.id;
     const dimTxt = (p.bbox_mm && p.bbox_mm.length === 3) ? `${p.bbox_mm[0].toFixed(0)}×${p.bbox_mm[1].toFixed(0)}×${p.bbox_mm[2].toFixed(0)}mm` : `${p.size_kb} KB`;
+    const isDiag = p.bed_cfg && p.bed_cfg.includes('45°');
+    const bedHtml = p.bed_cfg ? `<div class="bed-pill ${isDiag ? 'diag' : ''}">🖨️ ${p.bed_cfg}</div>` : '';
     card.innerHTML = `
       <div class="prow">
         <div class="pid-wrap">
@@ -1843,6 +1876,7 @@ function renderList() {
         <span class="dim-badge">${dimTxt}</span>
       </div>
       <div class="pname">${p.name}</div>
+      ${bedHtml}
       <div class="pmeta">${p.material} · ${p.notes}</div>
       <div class="path-box">
         <code title="${p.abs_path}">${p.rel_path}</code>

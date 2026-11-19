@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø2.20 mm (×11)</text><text x="15" y="268.5" class="sm">Process &amp; Settings: PETG (0.2mm, 4 walls, 40%) — Mirrored right base rail &amp; full-length rack seated on R46.</text><text x="15" y="276.0" class="sm">Source File: models/components/objects_compartment/R48_rail_right_B01.stl</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø2.20 mm (×11)</text><text x="15" y="268.5" class="sm">Process &amp; Settings: PETG (0.2mm, 4 walls, 40%) — 220x220 Bed: Print FLAT 0° (46.8 x 167.2 mm); mirrored right base rail &amp; full-length rack.</text><text x="15" y="276.0" class="sm">Source File: models/components/objects_compartment/R48_rail_right_B01.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#ecfdf5" stroke="#059669" stroke-width="0.45"/>

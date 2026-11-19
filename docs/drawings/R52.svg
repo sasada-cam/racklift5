@@ -40,11 +40,11 @@
   <!-- Right-Mid Specifications Panel -->
   <text x="291" y="157" class="lbl">CRITICAL DIMENSIONS &amp; FIT</text>
   <text x="291" y="162.5" class="sm">Envelope: 11.75 × 272.00 × 8.10 mm (10.97 cm³)</text>
-  <text x="291" y="169.0" class="sm">• Total length: 272.0 mm</text><text x="291" y="175.5" class="sm">• Blade top Z=191.60 (+1.50mm over R58)</text><text x="291" y="182.0" class="sm">• Stroke: +240 mm (136.4 mm MGN overlap)</text>
+  <text x="291" y="169.0" class="sm">• 220x220 Bed: 45° Diagonal = 200.6 x 200.6 mm</text><text x="291" y="175.5" class="sm">• Total length: 272.0 mm (1-piece unbroken)</text><text x="291" y="182.0" class="sm">• Blade top Z=191.60 (+1.50mm over R58)</text>
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: None / flat profiles</text><text x="15" y="268.5" class="sm">Process &amp; Settings: PETG (0.15mm, 5 walls, 100%, -0.15mm E-foot) — Mirrored right fork tine + 55-deg MGN carriage groove.</text><text x="15" y="276.0" class="sm">Source File: models/components/objects_compartment/R52_fork_tine_right_B01.stl</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: None / flat profiles</text><text x="15" y="268.5" class="sm">Process &amp; Settings: PETG (0.15mm, 5 walls, 100%, -0.15mm E-foot) — 220x220 Bed: ROTATE 45° DIAGONAL alongside R51 -&gt; 200.6 x 200.6 mm footprint (1-piece, NO SPLIT)!</text><text x="15" y="276.0" class="sm">Source File: models/components/objects_compartment/R52_fork_tine_right_B01.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#ecfdf5" stroke="#059669" stroke-width="0.45"/>

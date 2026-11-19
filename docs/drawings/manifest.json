@@ -1,25 +1,47 @@
 [
   {
-    "id": "R46",
-    "mark": "R46-B01",
+    "id": "R46A",
+    "mark": "R46A-B01",
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
       186.5,
-      272.15,
-      46.1
+      181.5,
+      32.0
     ],
-    "volume_cm3": 264.07,
+    "volume_cm3": 106.54,
     "holes": [
       "\u00d81.90 mm (\u00d722)",
-      "\u00d83.30 mm (\u00d718)",
-      "\u00d82.90 mm (\u00d78)",
+      "\u00d83.30 mm (\u00d716)",
       "\u00d83.40 mm (\u00d74)",
-      "\u00d85.30 mm (\u00d72)",
+      "\u00d82.90 mm (\u00d72)",
+      "\u00d86.10 mm (\u00d72)",
       "\u00d86.20 mm (\u00d72)"
     ],
-    "svg_rel": "docs/drawings/R46.svg",
-    "dxf_rel": "docs/drawings/dxf/R46.dxf",
-    "scale": "0.30:1"
+    "svg_rel": "docs/drawings/R46A.svg",
+    "dxf_rel": "docs/drawings/dxf/R46A.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R46B",
+    "mark": "R46B-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      104.8,
+      96.85,
+      46.1
+    ],
+    "volume_cm3": 156.84,
+    "holes": [
+      "\u00d82.90 mm (\u00d710)",
+      "\u00d83.30 mm (\u00d74)",
+      "\u00d85.30 mm (\u00d72)",
+      "\u00d89.60 mm (\u00d72)",
+      "\u00d813.60 mm",
+      "\u00d823.00 mm"
+    ],
+    "svg_rel": "docs/drawings/R46B.svg",
+    "dxf_rel": "docs/drawings/dxf/R46B.dxf",
+    "scale": "0.75:1"
   },
   {
     "id": "R47",
@@ -186,13 +208,13 @@
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
       104.8,
-      93.9,
+      100.9,
       8.95
     ],
-    "volume_cm3": 44.0,
+    "volume_cm3": 47.57,
     "holes": [
-      "\u00d83.40 mm (\u00d76)",
-      "\u00d86.10 mm (\u00d76)"
+      "\u00d83.40 mm (\u00d78)",
+      "\u00d86.10 mm (\u00d78)"
     ],
     "svg_rel": "docs/drawings/R56.svg",
     "dxf_rel": "docs/drawings/dxf/R56.dxf",

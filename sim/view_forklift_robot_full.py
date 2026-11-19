@@ -228,7 +228,7 @@ const mats = {
   body_collar: mat(0x1f7a4d), body_fasteners: mat(0x334155, { metalness: 0.80 }),
   tray_boom: mat(0x2563eb, { metalness: 0.25 }), live_wishbone: mat(0x1d4ed8), load_cell: mat(0xe2e8f0, { metalness: 0.80 }),
   tray_deck: mat(0x0ea5e9), battery_pod: mat(0x66bb6a), battery_lid: mat(0x388e3c), battery_pack: mat(0x334155),
-  compartment_deck: mat(0x26a69a), fork_under_tie: mat(0x2e7d32), fork_top_cover: mat(0x0e7490),
+  compartment_deck: mat(0x26a69a), fork_rear_cradle: mat(0x0d9488), fork_under_tie: mat(0x2e7d32), fork_top_cover: mat(0x0e7490),
   fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }),
   fork_bay_cover: mat(0x0284c7), fork_bay_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0x16a34a),
   fork_hold_rails: mat(0x6366f1), fork_hold_fasteners: mat(0x334155, { metalness: 0.80 }),
@@ -326,6 +326,7 @@ regBody('live_wishbone', trayGroup, mats.live_wishbone);
 regBody('load_cell', trayGroup, mats.load_cell);
 regBody('tray_deck', trayGroup, mats.tray_deck);
 regBody('compartment_deck', forkGroup, mats.compartment_deck);
+const fRearCradleMesh = regBody('fork_rear_cradle', forkGroup, mats.fork_rear_cradle);
 const fTieMesh = regBody('fork_under_tie', forkGroup, mats.fork_under_tie);
 const fCoverMesh = regBody('fork_top_cover', forkGroup, mats.fork_top_cover);
 const fCoverHwMesh = regBody('fork_cover_fasteners', forkGroup, mats.fork_cover_fasteners);
@@ -585,9 +586,12 @@ function animate() {
   lowerHub.climbPivot.rotation.y = climbAng;
 
   const k = explodeK;
+  fRearCradleMesh.position.set(0, -36 * k, 0);
   fTieMesh.position.set(0, 0, -48 * k);
-  fCoverMesh.position.set(0, 0, 86 * k);
-  fCoverHwMesh.position.set(0, 0, 114 * k);
+  fCoverMesh.position.set(0, -18 * k, 86 * k);
+  fCoverHwMesh.position.set(0, -18 * k, 114 * k);
+  fBayCovMesh.position.set(0, 0, 96 * k);
+  fBayCovHwMesh.position.set(0, 0, 120 * k);
   fHoldMesh.position.set(0, 0, 44 * k);
   fHoldHwMesh.position.set(0, 0, 72 * k);
   fMidMesh.position.set(0, 0.5 * forkMm, 26 * k);
