@@ -155,10 +155,11 @@
       79.35,
       12.15
     ],
-    "volume_cm3": 40.05,
+    "volume_cm3": 39.61,
     "holes": [
       "\u00d83.30 mm (\u00d74)",
       "\u00d86.20 mm (\u00d74)",
+      "\u00d84.80 mm (\u00d72)",
       "\u00d85.30 mm (\u00d72)",
       "\u00d810.20 mm (\u00d72)"
     ],
@@ -265,14 +266,14 @@
       175.0,
       10.0
     ],
-    "volume_cm3": 172.97,
+    "volume_cm3": 175.16,
     "holes": [
       "\u00d82.90 mm (\u00d729)",
       "\u00d81.90 mm (\u00d714)",
       "\u00d816.00 mm (\u00d713)",
       "\u00d84.40 mm (\u00d76)",
-      "\u00d82.10 mm (\u00d72)",
-      "\u00d83.30 mm (\u00d72)"
+      "\u00d82.25 mm (\u00d74)",
+      "\u00d85.00 mm (\u00d74)"
     ],
     "svg_rel": "docs/drawings/R44-FK.svg",
     "dxf_rel": "docs/drawings/dxf/R44-FK.dxf",

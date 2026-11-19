@@ -321,10 +321,13 @@ def build_forklift_deck(tray_clean: bd.Part):
     tray_clean = tray_clean - box(SCREW_X - 12.6, SCREW_X + 12.6, WALL_Y1, -77.5, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
     # Recessed under-floor sewer duct in R44 (Y=-217..-89 L / -217..-86 C+R) + R50 pylon travel slots through R46 ceiling;
     # 170.80..173.40 sewer bed ties all R44 waffle ribs into 1 solid (+2.9 mm clear of R45), while R46 bridges R47/R48 overhead!
-    # Plus solid flush underside mounting pad on R44 (X=147..213, Y=-245..-208.5, Z=168.0..172.9) so extended R53-B01 clamps flat!
+    # Plus solid flush underside mounting pad on R44 (X=147..213, Y=-245..-208.5, Z=168.0..172.9) so extended R53-B01 clamps flat,
+    # AND solid 5.15 mm thick blue R44-FK switch-cradle blocks (X=141.5..166.2, Z=168.0..178.0) under BOTH Home & Max limit switches!
     tray_clean = tray_clean + box(SCREW_X - 38.0, SCREW_X + 38.5, -217.5, -89.2, 170.80, NUT_TRENCH_Z)
     tray_clean = tray_clean + box(SCREW_X - 15.5, SCREW_X + 38.5, -89.4, -85.5, 170.80, NUT_TRENCH_Z)
     tray_clean = tray_clean + box(SCREW_X - 33.0, SCREW_X + 33.0, OB.TRAY_Y0, -208.5, OB.TRAY_RIB_Z0, 172.90)
+    tray_clean = tray_clean + box(SCREW_X - 38.5, SCREW_X - 13.8, OB.TRAY_Y0, -216.8, OB.TRAY_RIB_Z0, OB.TRAY_TOP_Z)
+    tray_clean = tray_clean + box(SCREW_X - 38.5, SCREW_X - 13.8, -91.2, OB.TRAY_Y1, OB.TRAY_RIB_Z0, OB.TRAY_TOP_Z)
     for lx, ly in ((208.5, -174.0), (208.5, -142.0)):  # re-open R45 right-wing captive M4 hex sockets & bores cleanly
         tray_clean = tray_clean - OB._cyl_axis(2.20, 167.5, 174.2, "z", lx, ly)
         with bd.BuildPart() as hx_cut:
@@ -341,19 +344,20 @@ def build_forklift_deck(tray_clean: bd.Part):
     ):
         comp = comp - box(py_x0, py_x1, -217.0, py_y1, NUT_TRENCH_Z, BAY_FLOOR_Z + 0.5)
         tray_clean = tray_clean - box(py_x0, py_x1, -217.0, py_y1, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
-    # Sewer plunger entry notches at Home (-218.2..-216.8) & Max (-89.2..-88.2) for KW4-3Z-3 plungers (R46 ceiling intact overhead!)
-    for pl_n0, pl_n1 in ((-218.2, -216.8), (-89.2, -88.2)):
+    # Sewer plunger entry notches at Home (-218.2..-215.5) & Max (-91.4..-88.2) for KW4-3Z-3 plungers (R46 ceiling intact overhead!)
+    for pl_n0, pl_n1 in ((-218.2, -215.5), (-91.4, -88.2)):
         tray_clean = tray_clean - box(SCREW_X - 22.2, SCREW_X - 17.4, pl_n0, pl_n1, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.2)
-    # Recessed KW4-3Z-3 pockets (20x10.6x7.0 mm + C/NO/NC lug relief) & 9.5 mm M2 pin holes
-    for sw_y0, sw_y1, t_y0, t_y1, yc_sw in (
-        (-229.0, -217.4, -233.6, -228.5, -223.2),
-        (-89.1,  -77.7,  -78.2,  -73.6,  -83.3),
+    # Recessed KW4-3Z-3 pockets seated on solid 5.15 mm R44-FK floor (Z=168.00..173.15) + 4x M2x12 screws & captive M2 hex nuts
+    for sw_y0, sw_y1, t_y0, t_y1, pin_y in (
+        (-229.0, -217.4, -233.6, -228.5, -225.4),
+        (-89.1,  -77.7,  -78.2,  -73.4,  -81.1),
     ):
-        comp = comp - box(SCREW_X - 36.8, SCREW_X - 15.6, sw_y0, sw_y1, 173.0, BAY_FLOOR_Z + 0.5)
-        tray_clean = tray_clean - box(SCREW_X - 36.8, SCREW_X - 15.6, sw_y0, sw_y1, 173.0, OB.TRAY_TOP_Z + 0.5)
-        tray_clean = tray_clean - box(SCREW_X - 36.5, SCREW_X - 16.0, t_y0, t_y1, 173.0, OB.TRAY_TOP_Z + 0.5)
-        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # exact 9.5 mm KW4-3Z-3 mounting hole pitch
-            tray_clean = tray_clean - OB._cyl_axis(1.05, 169.8, 173.4, "z", pin_x, yc_sw)
+        comp = comp - box(SCREW_X - 36.8, SCREW_X - 15.6, sw_y0, sw_y1, 173.15, BAY_FLOOR_Z + 0.5)
+        tray_clean = tray_clean - box(SCREW_X - 36.4, SCREW_X - 15.6, sw_y0, sw_y1, 173.15, OB.TRAY_TOP_Z + 0.5)
+        tray_clean = tray_clean - box(SCREW_X - 36.2, SCREW_X - 16.0, t_y0, t_y1, 173.15, OB.TRAY_TOP_Z + 0.5)
+        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # exact 9.5 mm KW4-3Z-3 mounting hole pitch (149.25 & 158.75)
+            tray_clean = tray_clean - OB._cyl_axis(1.12, OB.TRAY_RIB_Z0 - 0.5, 173.40, "z", pin_x, pin_y)
+            tray_clean = tray_clean - OB._cyl_axis(2.50, OB.TRAY_RIB_Z0 - 0.5, 170.00, "z", pin_x, pin_y)
     comp = comp - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, 178.1)
     tray_clean = tray_clean - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, OB.TRAY_TOP_Z + 0.5)
     tray_clean = tray_clean - OB._cyl_axis(4.60, OB.TRAY_Y0 - 0.5, WALL_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
@@ -615,6 +619,14 @@ def build_forklift_deck(tray_clean: bd.Part):
         tray_clean = tray_clean - OB._cyl_axis(1.65, OB.TRAY_RIB_Z0 - 0.5, OB.TRAY_TOP_Z + 0.5, "z", fx, -74.0)
         hw_solids.append(_socket_bolt(2.70, 2.8, 1.45, 14.5, "z", fx, -74.0, 182.25, head_dir=1))
         hw_solids.append(_hex_nut(5.5, 2.4, "z", fx, -74.0, 163.40, 1.50))
+
+    # 4x M2 x 11 mm mounting screws + 4x captive M2 hex nuts clamping both KW4-3Z-3 limit switches onto R44-FK floor
+    for pin_y in (-225.4, -81.1):
+        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # 149.25 & 158.75 (exact 9.50 mm pitch)
+            if pin_y < -200.0:
+                under_tie = under_tie - OB._cyl_axis(2.40, CRADLE_Z0 - 0.5, 168.2, "z", pin_x, pin_y)
+            hw_solids.append(_socket_bolt(1.75, 1.15, 0.95, 11.0, "z", pin_x, pin_y, 179.25, head_dir=1))
+            hw_solids.append(_hex_nut(4.0, 1.60, "z", pin_x, pin_y, 168.25, 1.05))
 
     # 6) Removable Screwed Top Motor + Fork-Blade Tail Enclosure Lid (R56-B01):
     #    Extended 7.0 mm forward over the R46A stop wall (Y=-338.9..-238.0, 104.8 x 100.9 mm) so R56-B01 bolts into BOTH
@@ -917,8 +929,10 @@ def build_forklift_mechanism():
         body = box(SW_X0, SW_X1, sw_y0, sw_y1, 173.20, 180.00)
         # Cut realistic Donghai stepped end shoulders near terminal face + 2x Ø2.25 mm mounting holes on 9.5 mm pitch
         yc_sw = 0.5 * (sw_y0 + sw_y1)
+        pin_y = yc_sw - 2.2 if sw_y0 < -200 else yc_sw + 2.2
         for pin_x in (SW_X0 + 5.25, SW_X0 + 14.75):  # 149.25 & 158.75 (exact 9.50 mm pitch)
-            body = body - OB._cyl_axis(1.12, 172.8, 180.4, "z", pin_x, yc_sw - 2.2 if sw_y0 < -200 else yc_sw + 2.2)
+            body = body - OB._cyl_axis(1.12, 172.8, 180.4, "z", pin_x, pin_y)
+            body = body - OB._cyl_axis(1.95, 179.15, 180.4, "z", pin_x, pin_y)
         sw_solids.append(body)
         # Off-center 3.0 x 2.0 mm push-button plunger (~5.5 mm from C-end, aligned with R50 bumper X=158.0..162.4)
         sw_solids.append(box(SW_X1 - 5.5, SW_X1 - 2.5, pl_y0, pl_y1, 175.40, 177.80))
