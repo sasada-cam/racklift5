@@ -350,6 +350,23 @@ gearbox space - reach them from the open back). The stepped `Ø9.6 × 3.1 mm` sh
 Picker: 212 mm stroke. The basket rides centred between the fingers on the tray (y -210..-80, 1 mm each side), is put
 on the shelf at y 2..132 and picked with the tip finger 1 mm behind it; `build_option1_body.py` checks this ("reach").
 
+## Printed part IDs (Forklift Objects Compartment: `cad/build_objects_compartment.py`, batch `B01`)
+
+All 10 printed STLs in `models/components/objects_compartment/` carry 0.6 mm engraved ID + batch (`BATCH = "B01"`, `R49`/`R54`/`R55` are `id_only`) and distinct non-adjacent colours matching Stage 14 (`sim/view_objects_compartment.py`) and Stage 15 (`sim/view_forklift_robot_full.py`):
+
+| ID | Mark | Part | Colour |
+|---|---|---|---|
+| R46 | `R46-B01` | Drop-On Sloped Skid-Wing Deck, Rear Wall & KP08/`17HS4401` Cradle | `#26A69A` teal green |
+| R47 | `R47-B01` | Fixed Base Guide Rail + Bridged `MOD=1.0` Rack - Left | `#00897B` cyan-teal |
+| R48 | `R48-B01` | Fixed Base Guide Rail + Bridged `MOD=1.0` Rack - Right | `#1B5E20` forest green |
+| R49 | `R49` | Front `688ZZ` Bearing Arch Saddle | `#80CBC4` mint teal |
+| R50 | `R50-B01` | Stage-1 Bridged H-Carriage (copper T8 nut plate + vertical `F683ZZ` pinion bosses) | `#43A047` leaf green |
+| R51 | `R51-B01` | Stage-2 Tapered Fork Tine + Inboard `MOD=1.0` Rack - Left (+240 mm reach) | `#F97316` safety orange |
+| R52 | `R52-B01` | Stage-2 Tapered Fork Tine + Inboard `MOD=1.0` Rack - Right (+240 mm reach) | `#EA580C` burnt orange |
+| R53 | `R53-B01` | Removable Under-Tray Rear Cantilever Tie Plate (`Y = -288..-218`) | `#2E7D32` deep emerald |
+| R54 | `R54` | Horizontal `1:2` `16T MOD=1.0` Spur Pinion - Left (`F683ZZ` hub) | `#EAB308` golden amber |
+| R55 | `R55` | Horizontal `1:2` `16T MOD=1.0` Spur Pinion - Right (`F683ZZ` hub) | `#CA8A04` deep gold |
+
 ## Printed part IDs (v3 rack, robot body, cart, docks, covers)
 
 Every printed part outside the swivel pod has an ID from `generator/part_ids_v3.py`, engraved 0.6 mm deep with the

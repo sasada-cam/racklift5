@@ -160,6 +160,8 @@ Print settings: 0.2 mm layers, 4 walls, 40 % gyroid. Gears: 0.12 mm layers, 100 
 
 ## 4. Totals to buy (pods + crossings + body)
 
+> **Objects Compartment (2-Stage Forklift):** See [`docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md`](./OBJECTS_COMPARTMENT_FORKLIFT_BOM.md) for the exact `N20` leadscrew, `8 mm` Tronic.lk (`MT0092`) smooth shafts, `F683ZZ` / `684ZZ` bearings, `GT2` belt, printed STLs, and skipped rails/brackets list.
+
 | Item | Qty |
 |---|---|
 | 608ZZ bearings (H04) | 4 + 48 = **52** |

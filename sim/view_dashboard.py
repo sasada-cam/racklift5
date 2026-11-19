@@ -980,17 +980,50 @@ STAGES = [
         "step": "13",
         "title": "Complete Full Robot + Racks & Leg Hoods",
         "category": "option1",
-        "badge": "Latest Full Build",
+        "badge": "Full Build",
         "viewer_module": "view_option1_full",
         "cad_files": ["cad/build_option1_full.py", "cad/build_t_slot_option1.py"],
         "sim_file": "sim/view_option1_full.py",
         "summary": "Complete dual-leg robot, compact 2-bay racks, bolted M5/M6 rail standoffs, and twin stationary protective leg hoods with outside M3 nuts.",
         "notes": "0 collisions verified across all static hardware, -15..-75 deg intermediate swivel sweeps, and all 5 operational poses.",
         "uses": ["10_option1_hub", "11_dual_legs", "12_option1_body", "04_4632_370", "05_td8125mg", "06_openbuilds_kit"],
-        "used_by": [],
+        "used_by": ["14_objects_base"],
         "mounts": {
             "/meshes_pod/": os.path.join(BUILD_DIR, "meshes_t_slot_option1"),
             "/meshes_full/": os.path.join(BUILD_DIR, "meshes_option1_full"),
+        },
+    },
+    {
+        "id": "14_objects_base",
+        "step": "14",
+        "title": "Objects Compartment · 2-Stage Forklift",
+        "category": "option1",
+        "badge": "Active Focus",
+        "viewer_module": "view_objects_compartment",
+        "cad_files": ["cad/build_objects_compartment.py", "cad/build_option1_body.py"],
+        "sim_file": "sim/view_objects_compartment.py",
+        "summary": "Dedicated 2-stage 1:2 differential reach forklift (F01-F04) mounted on C01 sloped skid-wing deck over B02 + TAL220 + B05 + B04, modeled directly around the Duino.lk CNC4759-A T8 Lead Screw kit + Tronic.lk MT0382 17HS4401 NEMA 17 stepper (42.3x42.3x40 mm, 0.4 Nm) and F683ZZ pulley loops.",
+        "notes": "0 collisions verified at Home (0 mm) and Full Shelf Reach (+240 mm, +10 mm Z-lift) with 44 mm stage overlap and unloaded transit on C01 outer sloped wings.",
+        "uses": ["12_option1_body"],
+        "used_by": ["15_forklift_full"],
+        "mounts": {"/meshes/": os.path.join(BUILD_DIR, "meshes_objects_compartment")},
+    },
+    {
+        "id": "15_forklift_full",
+        "step": "15",
+        "title": "Full Robot + Embedded Forklift",
+        "category": "option1",
+        "badge": "Integrated Build",
+        "viewer_module": "view_forklift_robot_full",
+        "cad_files": ["cad/build_forklift_robot_full.py", "cad/build_objects_compartment.py", "cad/build_option1_full.py"],
+        "sim_file": "sim/view_forklift_robot_full.py",
+        "summary": "Complete Option 1 dual-leg robot (H1/H2 pods, P10 hoods, 40x25 column, B01/B03, 2-bay 2020 railings & racks) integrated with the CNC4759-A 2-Stage Forklift Objects Compartment.",
+        "notes": "0 collisions verified across Home, +240 mm Fork Reach (+10 mm leg Z-lift), -45/-90 deg swivels, and Bay 0 -> Bay 1 rail traverse.",
+        "uses": ["13_option1_full", "14_objects_base"],
+        "used_by": [],
+        "mounts": {
+            "/meshes_pod/": os.path.join(BUILD_DIR, "meshes_t_slot_option1"),
+            "/meshes_full/": os.path.join(BUILD_DIR, "meshes_forklift_robot_full"),
         },
     },
 ]
@@ -1143,18 +1176,18 @@ DASHBOARD_HTML = r"""<!doctype html>
           <div class="logo">R5</div>
           <div>
             <h1>RackLift5 Timeline</h1>
-            <span id="stageCounter">13 Builds · v1 → Full Robot</span>
+            <span id="stageCounter">15 Builds · v1 → Full Forklift</span>
           </div>
         </div>
         <button id="collapseBtn" class="abtn" title="Hide sidebar">◀</button>
       </div>
 
       <div class="filters">
-        <button class="fbtn active" data-filter="all">All (13)</button>
+        <button class="fbtn active" data-filter="all">All (14)</button>
         <button class="fbtn" data-filter="legacy">Legacy (3)</button>
         <button class="fbtn" data-filter="reusable">Reusable (3)</button>
         <button class="fbtn" data-filter="prototype">Prototypes (3)</button>
-        <button class="fbtn" style="grid-column:span 2" data-filter="option1">Full System (4)</button>
+        <button class="fbtn" style="grid-column:span 2" data-filter="option1">Full System (5)</button>
       </div>
 
       <div class="tool-row">
@@ -1369,7 +1402,7 @@ async function init() {
   });
 
   const hashId = window.location.hash.replace('#', '');
-  const initialId = STAGES.some((s) => s.id === hashId) ? hashId : '13_option1_full';
+  const initialId = STAGES.some((s) => s.id === hashId) ? hashId : '14_objects_base';
   selectStage(initialId);
 }
 
