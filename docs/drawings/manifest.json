@@ -103,7 +103,7 @@
       272.0,
       6.8
     ],
-    "volume_cm3": 9.27,
+    "volume_cm3": 9.35,
     "holes": [],
     "svg_rel": "docs/drawings/R51.svg",
     "dxf_rel": "docs/drawings/dxf/R51.dxf",
@@ -118,7 +118,7 @@
       272.0,
       6.8
     ],
-    "volume_cm3": 9.27,
+    "volume_cm3": 9.35,
     "holes": [],
     "svg_rel": "docs/drawings/R52.svg",
     "dxf_rel": "docs/drawings/dxf/R52.dxf",
@@ -205,9 +205,9 @@
     "bbox_mm": [
       8.0,
       166.6,
-      5.95
+      5.75
     ],
-    "volume_cm3": 6.89,
+    "volume_cm3": 6.8,
     "holes": [
       "\u00d83.20 mm (\u00d73)",
       "\u00d85.10 mm (\u00d73)"

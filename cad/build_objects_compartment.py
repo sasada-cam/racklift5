@@ -17,7 +17,7 @@ Every 3D-printed part obeys CLAUDE.md ID + batch + 0.6 mm engraving + distinct c
   - R55: Stage-2 Horizontal 1:2 Spur Pinion - Right (16T MOD=1.0, mark: R55)
   - R56: Removable Screwed Top Motor & Rack-Tail Enclosure Lid (mark: R56-B01)
   - R57: Screwed MGN/T-Slot Hold-Down Linear Guide Rails (L/R, mark: R57-B01)
-  - R50 <-> R51/R52 Interlock: 45-deg Chamfered MGN/T-Slot Linear Rail + Wrap-Around Carriage
+  - R50 <-> R51/R52 Interlock: 55-deg Steepened Dovetail MGN Linear Rail + Wrap-Around Carriage
   - Center Trench End-Stops: 2x SS-5GL Microswitches + R47/R48 Plastic Hard-Stop Risers (±1.5 mm)
 
 Bought hardware:
@@ -627,22 +627,22 @@ def build_forklift_mechanism():
     for pkey, sgn in (("pinion_left", -1), ("pinion_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
         x_pin = OB.BXR + sgn * (FORK_DX - PIN_DX_CENTER)  # 148.5 (L) / 211.5 (R)
-        # Main base runner (126.7..138.6 L / 221.4..233.3 R) with 45-deg chamfered outer MGN shoulder captured by R57
+        # Main base runner (126.7..138.6 L / 221.4..233.3 R) with 55-deg steepened outer MGN shoulder captured by R57
         x_out = (xc - 5.3) if sgn < 0 else (xc + 5.3)
         x_in = (xc + 6.6) if sgn < 0 else (xc - 6.6)
         r50_base_xz = [
-            (x_out, 181.30), (x_out, 183.25), (x_out - sgn * 0.55, 183.80),
-            (x_out - sgn * 2.70, 183.80), (x_out - sgn * 2.70, 183.30),
+            (x_out, 181.30), (x_out, 183.10), (x_out - sgn * 0.65, 184.00),
+            (x_out - sgn * 2.70, 184.00), (x_out - sgn * 2.70, 183.30),
             (x_in, 183.30), (x_in, 181.30),
         ]
         r50_parts.append(OB._extrude_xz_poly(r50_base_xz, -234.0, -71.5))
-        # Centered 45-deg MGN / T-Shaped Linear Rail (Y=-234.0..-71.5) supporting R51/R52 continuously on both sides
+        # Centered 55-deg Steepened MGN / Dovetail T-Rail (Y=-234.0..-78.6): 30% lower pry force, support-free FDM print
         x_mgn = OB.BXR + sgn * (FORK_DX - 1.9)  # 133.9 (L) / 226.1 (R)
         mgn_rail_xz = [
-            (x_mgn - 1.20, 183.20), (x_mgn - 1.20, 183.95),
-            (x_mgn - 2.50, 185.25), (x_mgn - 2.50, 186.55), (x_mgn - 1.90, 187.15),
-            (x_mgn + 1.90, 187.15), (x_mgn + 2.50, 186.55), (x_mgn + 2.50, 185.25),
-            (x_mgn + 1.20, 183.95), (x_mgn + 1.20, 183.20),
+            (x_mgn - 1.20, 183.20), (x_mgn - 1.20, 183.85),
+            (x_mgn - 2.50, 185.70), (x_mgn - 2.50, 186.60), (x_mgn - 1.95, 187.15),
+            (x_mgn + 1.95, 187.15), (x_mgn + 2.50, 186.60), (x_mgn + 2.50, 185.70),
+            (x_mgn + 1.20, 183.85), (x_mgn + 1.20, 183.20),
         ]
         r50_parts.append(OB._extrude_xz_poly(mgn_rail_xz, -234.0, -78.6))
 
@@ -710,26 +710,26 @@ def build_forklift_mechanism():
         x_mgn = OB.BXR + sgn * (FORK_DX - 1.9)  # 133.9 (L) / 226.1 (R)
         bl0 = (xc - 2.4) if sgn < 0 else (xc - 6.8)  # 129.6..138.8 (L) / 221.2..230.4 (R)
         bl1 = (xc + 6.8) if sgn < 0 else (xc + 2.4)
-        # Inverted-U MGN carriage groove with >=0.35 mm all-around clearance over R50 T-rail
+        # Inverted-U 55-deg MGN carriage groove with >=0.37 mm perpendicular clearance over R50 dovetail T-rail
         mgn_cut_xz = [
-            (x_mgn - 1.58, FORK_Z0 - 0.2), (x_mgn - 1.58, 183.80),
-            (x_mgn - 2.90, 185.15), (x_mgn - 2.90, 186.75), (x_mgn - 2.15, 187.50),
-            (x_mgn + 2.15, 187.50), (x_mgn + 2.90, 186.75), (x_mgn + 2.90, 185.15),
-            (x_mgn + 1.58, 183.80), (x_mgn + 1.58, FORK_Z0 - 0.2),
+            (x_mgn - 1.58, FORK_Z0 - 0.2), (x_mgn - 1.58, 183.75),
+            (x_mgn - 2.90, 185.62), (x_mgn - 2.90, 186.80), (x_mgn - 2.15, 187.55),
+            (x_mgn + 2.15, 187.55), (x_mgn + 2.90, 186.80), (x_mgn + 2.90, 185.62),
+            (x_mgn + 1.58, 183.75), (x_mgn + 1.58, FORK_Z0 - 0.2),
         ]
         blade = box(bl0, bl1, -234.0, -78.0, 183.60, FORK_Z1) - OB._extrude_xz_poly(mgn_cut_xz, -234.5, -77.5)
         x_pitch_tine = OB.BXR + sgn * (FORK_DX - PIN_DX_TINE)  # 140.5 (L) / 219.5 (R)
-        # Rack back spine starts at 136.9 (0.5 mm clear of R50 T-head) + continuous inner MGN claw down tail (-335..-234)
+        # Rack back spine starts at 136.9 (0.5 mm clear of R50 T-head) + continuous inner 55-deg MGN claw down tail (-335..-234)
         x_rack_back = xc - sgn * 4.9  # 136.9 (L) / 223.1 (R)
         tine_rack = _build_horizontal_rack(
             x_pitch_tine, x_rack_back, 1 if sgn < 0 else -1,
             -335.0, -78.0, GEAR_Z0, GEAR_Z1, y_phase=PIN_Y_HOME,
         )
-        # Continuous inner MGN lower dovetail hook along rear rack tail (-335..-233.5 -> 143.5 mm lock at +240 mm!)
+        # Continuous inner 55-deg MGN lower dovetail hook along rear rack tail (-335..-233.5 -> 136.4 mm lock at +240 mm!)
         tail_hook_xz = [
             (x_mgn - sgn * 1.58, 183.60),
-            (x_mgn - sgn * 2.90, 184.95),
-            (x_mgn - sgn * 3.40, 184.95),
+            (x_mgn - sgn * 2.90, 185.45),
+            (x_mgn - sgn * 3.40, 185.45),
             (x_mgn - sgn * 3.40, 183.60),
         ]
         tine_rack = tine_rack + OB._extrude_xz_poly(tail_hook_xz, -335.0, -233.5)
@@ -745,7 +745,7 @@ def build_forklift_mechanism():
         tine_raw = blade + tine_rack + tn.part
         tines[key] = _engrave_verified(tine_raw, key, (xc - sgn * 2.2, -185.0, FORK_Z1), (0, 1, 0), (0, 0, 1), 2.5)
 
-    # R57-B01: 100% Printable Screwed MGN/T-Slot Linear Hold-Down Rails (capturing R50 outer 45-deg wing, Z=184.10..190.10)
+    # R57-B01: 100% Printable Screwed 55-deg MGN Hold-Down Rails (capturing R50 outer 55-deg wing, Z=184.35..190.10)
     hold_parts, hold_hw = {}, []
     for key, sgn in (("hold_rail_left", -1), ("hold_rail_right", 1)):
         xc = OB.BXR + sgn * FORK_DX
@@ -754,7 +754,7 @@ def build_forklift_mechanism():
         rail_a = (
             box(ox0, ox1, -237.2, -70.6, 185.05, 190.10)
             + box(min(ox0, lx0), max(ox1, lx1), -237.2, -70.6, 186.60, 190.10)
-            + box(lx0, lx1, -237.2, -70.6, 184.15, 190.10)  # 0.35 mm clear above R50 183.80 outer MGN wing
+            + box(lx0, lx1, -237.2, -70.6, 184.35, 190.10)  # 0.35 mm clear above R50 184.00 outer MGN wing
         )
         mx_h = 0.5 * (ox0 + ox1)  # 123.7 / 236.3
         for my_h in HOLD_Y_M3:
