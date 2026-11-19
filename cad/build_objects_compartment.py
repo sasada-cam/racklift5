@@ -369,28 +369,16 @@ def build_forklift_deck(tray_clean: bd.Part):
         SCREW_X - 7.5, SCREW_X + 7.5, REAR_CAP_Y0 - 0.2, BULK_Y0 - 40.1, 195.0, 202.2
     )
     comp = comp + rear_cap
-    # Protective U-channel cradles & rear bumper shrouds enclosing the exposed R51/R52 rear rack tails (Y=-338.9..-245)
-    # Tails span X=134.8..142.5 (L) and X=217.5..225.2 (R), Z=GEAR_Z0..GEAR_Z1 (183.5..187.2); shroud adds floor, outer wall, rear cap & retainer bridges
-    for gx_in, gx_out, sh_x0, sh_x1 in (
-        (SCREW_X - 32.9, OB.BXR - FORK_DX + 1.2, OB.BXR - FORK_DX - 1.8, SCREW_X - 32.8),   # Left tail cradle X=130.2..147.2
-        (OB.BXR + FORK_DX - 1.2, SCREW_X + 32.9, SCREW_X + 32.8, OB.BXR + FORK_DX + 1.8),   # Right tail cradle X=212.8..229.8
+    # Full-enclosure rear protective rack-tail tunnels (sides, bottom, rear bumper AND full top roof, Y=-338.9..-245.0)
+    # Tails span X=134.8..142.5 (L) and X=217.5..225.2 (R), Z=GEAR_Z0..GEAR_Z1 (183.5..187.2); fully boxed flush to WALL_TOP_Z
+    for sh_x0, sh_x1, x_clear0, x_clear1 in (
+        (OB.BXR - FORK_DX - 1.8, SCREW_X - 32.8, OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4),   # Left boxed shroud X=130.2..147.2
+        (SCREW_X + 32.8, OB.BXR + FORK_DX + 1.8, OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4),   # Right boxed shroud X=212.8..229.8
     ):
-        w_x0, w_x1 = (sh_x0, sh_x0 + 3.0) if sh_x0 < OB.BXR else (sh_x1 - 3.0, sh_x1)
-        tail_pocket = (
-            box(sh_x0, sh_x1, REAR_CAP_Y0, WALL_Y0 + 0.1, 179.00, GEAR_Z0 - 0.70)            # bottom support floor Z=179.0..182.8
-            + box(w_x0, w_x1, REAR_CAP_Y0, WALL_Y0 + 0.1, 179.00, 191.00)                    # outer protective side wall
-            + box(sh_x0, sh_x1, REAR_CAP_Y0, REAR_CAP_Y0 + 2.8, 179.00, 191.00)              # closed rear end bumper behind -335 mm
-            + box(sh_x0, sh_x1, REAR_CAP_Y0, REAR_CAP_Y0 + 13.0, GEAR_Z1 + 0.80, 191.00)     # rear top anti-lift keeper lip
-            + box(sh_x0, sh_x1, WALL_Y0 - 10.0, WALL_Y0 + 0.1, GEAR_Z1 + 0.80, 191.00)       # front-wall top keeper bridge
+        tail_box = box(sh_x0, sh_x1, REAR_CAP_Y0, WALL_Y0 + 0.1, 179.00, WALL_TOP_Z) - box(
+            x_clear0, x_clear1, REAR_CAP_Y0 + 3.0, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6
         )
-        # Keep motor cradle cheeks / bulkhead clearance clean; tie directly into R46 rear wall & cheeks
-        tail_cut = box(gx_in - 1.0 if sh_x0 < OB.BXR else sh_x0 - 0.5, sh_x1 + 0.5 if sh_x0 < OB.BXR else gx_out + 1.0,
-                       REAR_CAP_Y0 - 0.2, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
-        # Re-carve exact sliding tail tunnel so inner tooth clearance stays >= 0.7 mm
-        x_clear0 = (OB.BXR - FORK_DX + 2.4) if sh_x0 < OB.BXR else (OB.BXR + FORK_DX - 10.4)
-        x_clear1 = (OB.BXR - FORK_DX + 10.4) if sh_x0 < OB.BXR else (OB.BXR + FORK_DX - 2.4)
-        tail_pocket = tail_pocket - box(x_clear0, x_clear1, REAR_CAP_Y0 + 3.0, WALL_Y0 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
-        comp = comp + tail_pocket
+        comp = comp + tail_box
     comp = comp - OB._cyl_axis(4.6, WALL_Y0 - 1.0, WALL_Y1 + 1.0, "y", SCREW_X, SCREW_Z)
     comp = comp - OB._cyl_axis(6.8, WALL_Y0 - 0.5, WALL_Y0 + 1.0, "y", SCREW_X, SCREW_Z)
 
