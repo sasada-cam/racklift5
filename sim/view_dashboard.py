@@ -1439,9 +1439,10 @@ PRINT_PARTS_HTML = r"""<!doctype html>
   .bbox-pill{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;padding:4px 8px;border-radius:6px;background:#0b1222;border:1px solid var(--border);color:#fbbf24}
   .vstage{flex:1;position:relative;min-height:0;display:flex;overflow:hidden}
   #threeWrap{flex:1;position:relative;min-height:0;overflow:hidden}
-  #svgWrap{display:none;flex:1;min-height:0;overflow:auto;background:#1e293b;padding:14px;align-items:center;justify-content:center}
-  #svgImg{max-width:100%;max-height:100%;object-fit:contain;background:#ffffff;border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.45);cursor:zoom-in}
-  #svgImg.zoomed{max-width:none;max-height:none;width:1380px;cursor:zoom-out}
+  #svgWrap{display:none;flex:1;min-height:0;overflow:auto;background:#1e293b;padding:14px;cursor:grab}
+  #svgWrap.dragging{cursor:grabbing;user-select:none}
+  #svgImg{display:block;margin:auto;max-width:100%;max-height:100%;object-fit:contain;background:#ffffff;border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.45);flex-shrink:0}
+  #svgImg.custom-zoom{max-width:none;max-height:none}
   #noStlNote{display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);font-size:13px;padding:24px;text-align:center}
 </style>
 <script type="importmap">
@@ -1491,11 +1492,14 @@ PRINT_PARTS_HTML = r"""<!doctype html>
         <a id="dlDxfBtn" class="sbtn" download style="padding:5px 9px;font-size:11px">⬇ .dxf</a>
         <button id="wireBtn" class="sbtn" style="padding:5px 9px;font-size:11px">Wireframe</button>
         <button id="rstBtn" class="sbtn" style="padding:5px 9px;font-size:11px">Reset View</button>
+        <button id="zOutBtn" class="sbtn" style="display:none;padding:5px 9px;font-size:11px" title="Zoom out 2D drawing">−</button>
+        <button id="zFitBtn" class="sbtn" style="display:none;padding:5px 9px;font-size:11px" title="Fit drawing to screen">Fit</button>
+        <button id="zInBtn" class="sbtn" style="display:none;padding:5px 9px;font-size:11px" title="Zoom in 2D drawing">+</button>
       </div>
     </div>
     <div class="vstage">
       <div id="threeWrap"></div>
-      <div id="svgWrap"><img id="svgImg" alt="2D Engineering Drawing (Click to Zoom)"/></div>
+      <div id="svgWrap"><img id="svgImg" draggable="false" alt="2D Engineering Drawing (Wheel/Click to Zoom, Drag to Pan)"/></div>
       <div id="noStlNote">
         <strong style="color:#f8fafc">Workshop Machined / Shop-Cut Metal Component</strong>
         <span>No 3D-print STL needed — open the <b>📐 2D Blueprint</b> tab or download <code>.svg</code> / <code>.dxf</code> for lathe &amp; cutting dimensions.</span>
@@ -1544,8 +1548,37 @@ const cache = new Map();
 let activePart = null;
 let wireOn = false;
 let viewMode = '3d';
+let svgZoom = 1.0; // 1.0 = Fit, >1.0 = zoomed width relative to fit width
 let parts = [];
 let curGroup = 'all';
+
+function applySvgZoom(nextZoom, anchorX, anchorY) {
+  const prevW = svgImg.clientWidth || 1;
+  const prevH = svgImg.clientHeight || 1;
+  const rect = svgWrap.getBoundingClientRect();
+  const cx = (anchorX !== undefined) ? (anchorX - rect.left) : rect.width * 0.5;
+  const cy = (anchorY !== undefined) ? (anchorY - rect.top) : rect.height * 0.5;
+  const relX = (svgWrap.scrollLeft + cx) / prevW;
+  const relY = (svgWrap.scrollTop + cy) / prevH;
+
+  if (!nextZoom || nextZoom <= 1.02) {
+    svgZoom = 1.0;
+    svgImg.classList.remove('custom-zoom');
+    svgImg.style.width = '';
+    svgWrap.scrollLeft = 0;
+    svgWrap.scrollTop = 0;
+  } else {
+    svgZoom = Math.min(5.0, Math.max(1.05, nextZoom));
+    const fitW = Math.max(400, svgWrap.clientWidth - 28);
+    svgImg.classList.add('custom-zoom');
+    svgImg.style.width = Math.round(fitW * svgZoom) + 'px';
+    const newW = svgImg.clientWidth;
+    const newH = svgImg.clientHeight;
+    svgWrap.scrollLeft = Math.max(0, relX * newW - cx);
+    svgWrap.scrollTop = Math.max(0, relY * newH - cy);
+  }
+  document.getElementById('zFitBtn').textContent = svgZoom <= 1.02 ? 'Fit' : `${Math.round(svgZoom * 100)}%`;
+}
 
 function resize() {
   const w = Math.max(100, wrap.clientWidth);
@@ -1577,9 +1610,13 @@ function setMode(mode) {
   svgWrap.style.display = mode === '2d' ? 'flex' : 'none';
   document.getElementById('wireBtn').style.display = (mode === '3d' && hasStl) ? 'inline-flex' : 'none';
   document.getElementById('rstBtn').style.display = (mode === '3d' && hasStl) ? 'inline-flex' : 'none';
+  document.getElementById('zOutBtn').style.display = (mode === '2d') ? 'inline-flex' : 'none';
+  document.getElementById('zFitBtn').style.display = (mode === '2d') ? 'inline-flex' : 'none';
+  document.getElementById('zInBtn').style.display = (mode === '2d') ? 'inline-flex' : 'none';
   if (mode === '3d' && hasStl) {
     resize();
   } else if (mode === '2d' && activePart && activePart.svg_url) {
+    applySvgZoom(1.0);
     svgImg.src = activePart.svg_url;
   }
 }
@@ -1732,7 +1769,42 @@ document.querySelectorAll('.chip').forEach((btn) => {
 document.getElementById('q').addEventListener('input', renderList);
 document.getElementById('tab3d').addEventListener('click', () => setMode('3d'));
 document.getElementById('tab2d').addEventListener('click', () => setMode('2d'));
-svgImg.addEventListener('click', () => svgImg.classList.toggle('zoomed'));
+document.getElementById('zInBtn').addEventListener('click', () => applySvgZoom(svgZoom <= 1.02 ? 1.6 : svgZoom * 1.3));
+document.getElementById('zOutBtn').addEventListener('click', () => applySvgZoom(svgZoom / 1.3));
+document.getElementById('zFitBtn').addEventListener('click', () => applySvgZoom(1.0));
+
+svgWrap.addEventListener('wheel', (e) => {
+  if (viewMode !== '2d') return;
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.18 : 1 / 1.18;
+  applySvgZoom(svgZoom * factor, e.clientX, e.clientY);
+}, { passive: false });
+
+let panState = null;
+svgWrap.addEventListener('mousedown', (e) => {
+  if (viewMode !== '2d' || e.button !== 0) return;
+  panState = { x: e.clientX, y: e.clientY, sl: svgWrap.scrollLeft, st: svgWrap.scrollTop, moved: false };
+  svgWrap.classList.add('dragging');
+});
+window.addEventListener('mousemove', (e) => {
+  if (!panState) return;
+  const dx = e.clientX - panState.x;
+  const dy = e.clientY - panState.y;
+  if (Math.hypot(dx, dy) > 4) panState.moved = true;
+  if (panState.moved) {
+    svgWrap.scrollLeft = panState.sl - dx;
+    svgWrap.scrollTop = panState.st - dy;
+  }
+});
+window.addEventListener('mouseup', (e) => {
+  if (!panState) return;
+  const wasClick = !panState.moved;
+  panState = null;
+  svgWrap.classList.remove('dragging');
+  if (wasClick && (e.target === svgImg || e.target === svgWrap)) {
+    applySvgZoom(svgZoom <= 1.02 ? 1.85 : 1.0, e.clientX, e.clientY);
+  }
+});
 document.getElementById('copyAbsBtn').addEventListener('click', (e) => {
   if (activePart) copyText(activePart.abs_path, e.target);
 });
