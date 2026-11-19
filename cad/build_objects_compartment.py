@@ -300,12 +300,21 @@ def build_forklift_deck(tray_clean: bd.Part):
     comp = comp - box(OB.BXR - FORK_DX + 2.4, OB.BXR - FORK_DX + 10.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
     comp = comp - box(OB.BXR + FORK_DX - 10.4, OB.BXR + FORK_DX - 2.4, WALL_Y0 - 0.5, WALL_Y1 + 0.5, GEAR_Z0 - 0.5, GEAR_Z1 + 0.6)
     tray_clean = tray_clean - box(SCREW_X - 12.6, SCREW_X + 12.6, WALL_Y1, -77.5, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
-    # Recessed left-trench pockets + wire groove for 2x SS-5GL end-stop microswitches (Home Y=-229.5..-215.8 & Max Y=-92.5..-78.0)
-    for sw_y0, sw_y1 in ((-229.5, -215.8), (-92.5, -78.0)):
-        comp = comp - box(SCREW_X - 18.4, SCREW_X - 12.4, sw_y0, sw_y1, 173.8, BAY_FLOOR_Z + 0.5)
-        tray_clean = tray_clean - box(SCREW_X - 18.4, SCREW_X - 12.4, sw_y0, sw_y1, 173.8, OB.TRAY_TOP_Z + 0.5)
-    comp = comp - box(SCREW_X - 18.4, SCREW_X - 16.0, WALL_Y0 - 0.5, -78.0, 175.0, 178.1)
-    tray_clean = tray_clean - box(SCREW_X - 18.4, SCREW_X - 16.0, WALL_Y0 - 0.5, -78.0, 175.0, OB.TRAY_TOP_Z + 0.5)
+    # Bumper-tab travel slot (X=157.8..162.8) + recessed KW4-3Z-3 pockets (20x10.6x7.0 mm + C/NO/NC lug relief) & 9.5 mm M2 pin holes
+    comp = comp - box(SCREW_X - 22.4, SCREW_X - 17.2, WALL_Y1, -77.7, NUT_TRENCH_Z, BAY_FLOOR_Z + 0.5)
+    tray_clean = tray_clean - box(SCREW_X - 22.4, SCREW_X - 17.2, WALL_Y1, -77.7, NUT_TRENCH_Z, OB.TRAY_TOP_Z + 0.5)
+    for sw_y0, sw_y1, t_y0, t_y1, yc_sw in (
+        (-229.0, -217.4, -234.5, -228.5, -223.2),
+        (-89.1,  -77.7,  -78.2,  -72.6,  -83.3),
+    ):
+        comp = comp - box(SCREW_X - 36.8, SCREW_X - 15.6, sw_y0, sw_y1, 173.0, BAY_FLOOR_Z + 0.5)
+        tray_clean = tray_clean - box(SCREW_X - 36.8, SCREW_X - 15.6, sw_y0, sw_y1, 173.0, OB.TRAY_TOP_Z + 0.5)
+        comp = comp - box(SCREW_X - 36.5, SCREW_X - 16.0, t_y0, t_y1, 173.0, BAY_FLOOR_Z + 0.5)
+        tray_clean = tray_clean - box(SCREW_X - 36.5, SCREW_X - 16.0, t_y0, t_y1, 173.0, OB.TRAY_TOP_Z + 0.5)
+        for pin_x in (SCREW_X - 30.75, SCREW_X - 21.25):  # exact 9.5 mm KW4-3Z-3 mounting hole pitch
+            tray_clean = tray_clean - OB._cyl_axis(1.05, 169.8, 173.4, "z", pin_x, yc_sw)
+    comp = comp - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, 178.1)
+    tray_clean = tray_clean - box(SCREW_X - 37.5, SCREW_X - 34.0, WALL_Y0 - 0.5, -75.0, 174.5, OB.TRAY_TOP_Z + 0.5)
     tray_clean = tray_clean - OB._cyl_axis(4.60, OB.TRAY_Y0 - 0.5, WALL_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(6.80, OB.TRAY_Y0 - 0.5, OB.TRAY_Y0 + 1.2, "y", SCREW_X, SCREW_Z)
     tray_clean = tray_clean - OB._cyl_axis(8.20, -77.8, OB.TRAY_Y1 + 0.5, "y", SCREW_X, SCREW_Z)
@@ -684,6 +693,8 @@ def build_forklift_mechanism():
     for hx in (SCREW_X - 8.0, SCREW_X + 8.0):
         nut_plate = nut_plate - OB._cyl_axis(1.65, -216.0, -207.2, "y", hx, SCREW_Z)
     r50_parts.append(nut_plate)
+    # Downward trigger bumper under R50 left cross-wing pushing both KW4-3Z-3 plungers axially along ±Y (X=158.0..162.4, clear of R47/R49)
+    r50_parts.append(box(SCREW_X - 22.0, SCREW_X - 17.6, -215.5, -210.6, 175.60, 181.50))
 
     r50_raw = r50_parts[0]
     for p in r50_parts[1:]:
@@ -766,15 +777,29 @@ def build_forklift_mechanism():
         norm = (-1, 0, 0) if sgn < 0 else (1, 0, 0)
         hold_parts[key] = _engrave_verified(rail_a, key, (face_x, -154.0, 187.6), x_dir, norm, 2.2)
 
-    # 2x Center-Trench End-Stop Limit Switches (Home @ Y=-225, Max-Extend @ Y=-83) recessed in left trench flank
+    # 2x Accurate Donghai KW4-3Z-3 Sub-Miniature Limit Switches (Duino.lk SW0160: 20.0x10.6x6.8 mm body + 9.5 mm M2 bores
+    # + off-center black push-button plunger at X=158.5..161.5 + 3x pierced SPDT C/NO/NC spade terminals, 20x16x7 mm overall)
     sw_solids = []
-    for sw_y0, sw_y1, lvy0, lvy1 in (
-        (-228.5, -216.2, -217.5, -215.8),  # Home switch body + rear actuation plunger
-        (-87.3,  -78.3,  -87.9,  -87.4),   # Max-Extend detector switch body + front actuation plunger
+    SW_X0, SW_X1 = SCREW_X - 36.0, SCREW_X - 16.0  # 144.0 .. 164.0 (20.0 mm long)
+    for sw_y0, sw_y1, pl_y0, pl_y1, term_y0, term_y1 in (
+        (-228.5, -217.9, -217.9, -215.8, -232.9, -228.5),  # Home KW4-3Z-3: plunger +Y (-215.8), 3 lugs -Y
+        (-88.6,  -78.0,  -90.5,  -88.6,  -78.0,  -73.6),   # Max  KW4-3Z-3: plunger -Y (-90.5), 3 lugs +Y (clears R49!)
     ):
-        sw_solids.append(box(SCREW_X - 17.5, SCREW_X - 12.6, sw_y0, sw_y1, 174.0, 180.2))  # switch housing
-        sw_solids.append(box(SCREW_X - 13.0, SCREW_X - 11.7, lvy0, lvy1, 176.5, 179.4))    # roller / actuator tab
-    limit_switches = bd.Compound(children=sw_solids, label="Center_Trench_Limit_Switches_2x")
+        body = box(SW_X0, SW_X1, sw_y0, sw_y1, 173.20, 180.00)
+        # Cut realistic Donghai stepped end shoulders near terminal face + 2x Ø2.25 mm mounting holes on 9.5 mm pitch
+        yc_sw = 0.5 * (sw_y0 + sw_y1)
+        for pin_x in (SW_X0 + 5.25, SW_X0 + 14.75):  # 149.25 & 158.75 (exact 9.50 mm pitch)
+            body = body - OB._cyl_axis(1.12, 172.8, 180.4, "z", pin_x, yc_sw - 2.2 if sw_y0 < -200 else yc_sw + 2.2)
+        sw_solids.append(body)
+        # Off-center 3.0 x 2.0 mm push-button plunger (~5.5 mm from C-end, aligned with R50 bumper X=158.0..162.4)
+        sw_solids.append(box(SW_X1 - 5.5, SW_X1 - 2.5, pl_y0, pl_y1, 175.40, 177.80))
+        # 3x flat perforated SPDT solder lugs (NC @ 146.5, NO @ 154.0, C @ 162.0 -> 20x16x7 mm overall envelope!)
+        for lx in (SW_X0 + 2.5, SW_X0 + 10.0, SW_X1 - 2.0):
+            lug = box(lx - 1.5, lx + 1.5, term_y0, term_y1, 176.25, 176.95) - OB._cyl_axis(
+                0.70, 176.0, 177.2, "z", lx, 0.5 * (term_y0 + term_y1)
+            )
+            sw_solids.append(lug)
+    limit_switches = bd.Compound(children=sw_solids, label="DuinoLK_KW4_3Z_3_Limit_Switches_2x")
 
     # F04: Realistic CNC4759-A T8 Screw + KP08 + Slotted Coupler + 688ZZ + MT0382 17HS4401 NEMA 17
     f04.append(_build_t8_threaded_screw(-274.0, -72.0, SCREW_X, SCREW_Z))

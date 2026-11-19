@@ -129,7 +129,7 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#6366f1"></span>R57 Screwed MGN/T-Slot Hold-Down Rails</span>
       <div class="btn-group"><button id="v-hold-solid" class="active" onclick="setVis('hold','solid')">Solid</button><button id="v-hold-xray" onclick="setVis('hold','xray')">Ghost</button><button id="v-hold-off" onclick="setVis('hold','off')">Hide</button></div>
     </div>
-    <div class="row"><span><span class="dot" style="background:#ef4444"></span>2x Center Limit Switches</span>
+    <div class="row"><span><span class="dot" style="background:#16a34a"></span>2x KW4-3Z-3 Limit Switches</span>
       <div class="btn-group"><button id="v-sw-solid" class="active" onclick="setVis('sw','solid')">Show</button><button id="v-sw-off" onclick="setVis('sw','off')">Hide</button></div>
     </div>
     <div class="row"><span><span class="dot" style="background:#4caf50"></span>B04 Tray + Boom + Wishbone + Load Cell</span>
@@ -226,7 +226,7 @@ const mats = {
   tray_boom: mat(0x2563eb, { metalness: 0.25 }), live_wishbone: mat(0x1d4ed8), load_cell: mat(0xe2e8f0, { metalness: 0.80 }),
   tray_deck: mat(0x0ea5e9), battery_pod: mat(0x66bb6a), battery_lid: mat(0x388e3c), battery_pack: mat(0x334155),
   compartment_deck: mat(0x26a69a), fork_under_tie: mat(0x2e7d32), fork_top_cover: mat(0x0e7490),
-  fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0xef4444),
+  fork_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0x16a34a),
   fork_hold_rails: mat(0x6366f1), fork_hold_fasteners: mat(0x334155, { metalness: 0.80 }),
   fork_base_rails: mat(0x00897b, { metalness: 0.25 }),
   fork_front_arch: mat(0x80cbc4), fork_mid_stage: mat(0x43a047, { metalness: 0.25 }),
