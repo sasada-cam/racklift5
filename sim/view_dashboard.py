@@ -1089,6 +1089,677 @@ def collect_stage_manifest() -> list:
     return out
 
 
+PRINT_PARTS_CATALOG = [
+    # 1. Forklift Objects Compartment (R46..R55, Batch B01)
+    {"id": "R46", "mark": "R46-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#26A69A",
+     "name": "Forklift Drop-On Deck + Rear KP08/17HS4401 Cradle",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Sloped outer wings, corner & mid-edge drop skirts, rear-wall rack tail slots.",
+     "rel_path": "models/components/objects_compartment/R46_forklift_deck_B01.stl"},
+    {"id": "R47", "mark": "R47-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#00897B",
+     "name": "Fixed Base Guide Rail + Bridged Rack (Left)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Elevated MOD=1.0 fixed rack beam bridging over R50 cross-bridge.",
+     "rel_path": "models/components/objects_compartment/R47_rail_left_B01.stl"},
+    {"id": "R48", "mark": "R48-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#1B5E20",
+     "name": "Fixed Base Guide Rail + Bridged Rack (Right)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Mirrored right guide track & MOD=1.0 fixed rack.",
+     "rel_path": "models/components/objects_compartment/R48_rail_right_B01.stl"},
+    {"id": "R49", "mark": "R49", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#80CBC4",
+     "name": "Front 688ZZ Bearing Arch Saddle",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Bolts to tray front at Z <= 189.6 mm; retains 688ZZ front T8 bearing.",
+     "rel_path": "models/components/objects_compartment/R49_front_688zz_arch_B01.stl"},
+    {"id": "R50", "mark": "R50-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#43A047",
+     "name": "Stage-1 Bridged H-Carriage (+120 mm)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Copper T8 nut plate + vertical M3 pinion bosses.",
+     "rel_path": "models/components/objects_compartment/R50_stage1_carriage_B01.stl"},
+    {"id": "R51", "mark": "R51-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#F97316",
+     "name": "Stage-2 Tapered Fork Tine + Inboard Rack (Left)",
+     "material": "PETG · 0.2mm · 4 walls · 100% / 40%",
+     "notes": "4.0 mm blade + MOD=1.0 rack tail (-335..-78 mm), +240 mm reach.",
+     "rel_path": "models/components/objects_compartment/R51_fork_tine_left_B01.stl"},
+    {"id": "R52", "mark": "R52-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#EA580C",
+     "name": "Stage-2 Tapered Fork Tine + Inboard Rack (Right)",
+     "material": "PETG · 0.2mm · 4 walls · 100% / 40%",
+     "notes": "Mirrored right tine blade + MOD=1.0 rack tail.",
+     "rel_path": "models/components/objects_compartment/R52_fork_tine_right_B01.stl"},
+    {"id": "R53", "mark": "R53-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#2E7D32",
+     "name": "Removable Under-Tray Rear Cantilever Tie Plate",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Bolts upward under R46 cradle & R44 rear rim; unbolts downward for teardown.",
+     "rel_path": "models/components/objects_compartment/R53_under_tie_B01.stl"},
+    {"id": "R54", "mark": "R54", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#EAB308",
+     "name": "16T MOD=1.0 Spur Pinion (Left, F683ZZ Hub)",
+     "material": "PETG · 0.15-0.2mm · 100% infill",
+     "notes": "Press-fit 1x F683ZZ bearing; 1:2 differential gear meshing R47 & R51.",
+     "rel_path": "models/components/objects_compartment/R54_pinion_left_B01.stl"},
+    {"id": "R55", "mark": "R55", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#CA8A04",
+     "name": "16T MOD=1.0 Spur Pinion (Right, F683ZZ Hub)",
+     "material": "PETG · 0.15-0.2mm · 100% infill",
+     "notes": "Press-fit 1x F683ZZ bearing; 1:2 differential gear meshing R48 & R52.",
+     "rel_path": "models/components/objects_compartment/R55_pinion_right_B01.stl"},
+
+    # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs
+    {"id": "R44-FK", "mark": "R44 (Forklift)", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0EA5E9",
+     "name": "Printed Tray Base (Forklift Cut & T8 Trench)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "USE THIS R44 FOR FORKLIFT BUILD: includes T8 trench & R46/R53 bolt bores.",
+     "rel_path": "sim/build/meshes_objects_compartment/tray_deck.stl"},
+    {"id": "R44-PK", "mark": "R44 (Legacy Picker)", "group": "body", "process": "3D PRINT (FDM)", "qty": "Alt", "color": "#7FD8A6",
+     "name": "Printed Tray Base (Original Picker Build)",
+     "material": "PETG · 0.2mm · 4 walls · 30% gyroid",
+     "notes": "Original Option 1 picker tray without Forklift T8 trench.",
+     "rel_path": "models/components/option1_body/opt1_body_printed_tray_R44.stl"},
+    {"id": "R40", "mark": "R40", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#1F7A4D",
+     "name": "Body Column Collar",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Clamps 40x25 column; 11 mm access bores over lower pod bolts.",
+     "rel_path": "models/components/option1_body/opt1_body_column_collar_R40.stl"},
+    {"id": "R41", "mark": "R41", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#4CAF50",
+     "name": "Tray Boom (Column -> TAL220 Load Cell)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Fixed cantilever arm supporting the TAL220 load cell.",
+     "rel_path": "models/components/option1_body/opt1_body_tray_boom_R41.stl"},
+    {"id": "R42", "mark": "R42", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#66BB6A",
+     "name": "Battery / Electronics Counterweight Pod",
+     "material": "PETG · 0.2mm · 3-4 walls · 25% gyroid",
+     "notes": "Mounts opposite tray on 40x25 column collar.",
+     "rel_path": "models/components/option1_body/opt1_body_battery_pod_R42.stl"},
+    {"id": "R43", "mark": "R43", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#388E3C",
+     "name": "Battery Pod Lid",
+     "material": "PETG · 0.2mm · 3 walls · 25% gyroid",
+     "notes": "Top cover for R42 electronics/battery box.",
+     "rel_path": "models/components/option1_body/opt1_body_battery_lid_R43.stl"},
+    {"id": "R45", "mark": "R45", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#2E6B47",
+     "name": "Live Wishbone (TAL220 -> R44 Tray)",
+     "material": "PETG · 0.2mm · 4 walls · 50% gyroid",
+     "notes": "Transfers live tray & forklift weight onto TAL220 load cell.",
+     "rel_path": "models/components/option1_body/opt1_body_live_wishbone_R45.stl"},
+    {"id": "P07", "mark": "P07-B01", "group": "body", "process": "3D PRINT (FDM)", "qty": "2", "color": "#F29429",
+     "name": "Column Anti-Crush Plug (End Inserts)",
+     "material": "PETG · 0.2mm · 4 walls · 50% gyroid",
+     "notes": "Fits top & bottom inside 40x25x2 alu column to stop M4 bolt crushing.",
+     "rel_path": "models/components/option1_dual_legs/opt1_column_anticrush_plug.stl"},
+    {"id": "P07B", "mark": "P07B", "group": "body", "process": "3D PRINT (FDM)", "qty": "1", "color": "#F59E0B",
+     "name": "Mid-Column Collar Anti-Crush Plug",
+     "material": "PETG · 0.2mm · 4 walls · 50% gyroid",
+     "notes": "Mid-column insert inside R40 collar bolt zone.",
+     "rel_path": "models/components/option1_body/opt1_body_anticrush_plug_P07B.stl"},
+
+    # 3. Dual Swivel Pods (P01..P08, Print 2x per robot)
+    {"id": "P01", "mark": "P01-B01", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#2E8EE6",
+     "name": "Swivel Carriage Pod + 40T Gear",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid · Tree supports",
+     "notes": "Print deck-down; tree supports under arm hub & front can clamp.",
+     "rel_path": "models/components/t_slot_option1/opt1_carriage_pod_40t.stl"},
+    {"id": "P02", "mark": "P02-B01", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#1B4A99",
+     "name": "Motor Can Cap (Removable +Y)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Bolts to P01 with 4x M3 screws; removable to insert 4632-370 motor.",
+     "rel_path": "models/components/t_slot_option1/opt1_motor_cap.stl"},
+    {"id": "P03", "mark": "P03-B01", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#8FD0FF",
+     "name": "Pinion Cover (623ZZ Outboard Housing)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Pulls off -Y for climber pinion service (3x M3 screws).",
+     "rel_path": "models/components/t_slot_option1/opt1_pinion_cover.stl"},
+    {"id": "P04", "mark": "P04-B01", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#33B873",
+     "name": "Fixed Body Mount (Servo Cage + Top M8 Boss)",
+     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
+     "notes": "Bolts to MT0134 gantry plate & column; houses TD-8125MG servo.",
+     "rel_path": "models/components/t_slot_option1/opt1_body_mount.stl"},
+    {"id": "P05", "mark": "P05", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#F59E0B",
+     "name": "20T Swivel Servo Gear",
+     "material": "PETG / Nylon · 0.15mm · 100% infill",
+     "notes": "2:1 torque reduction driving P01 40T ring gear.",
+     "rel_path": "models/components/t_slot_option1/opt1_20t_servo_gear.stl"},
+    {"id": "P06", "mark": "P06", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#EB7A24",
+     "name": "14T Climb Pinion Gear",
+     "material": "PETG / Nylon · 0.15mm · 100% infill",
+     "notes": "Fits 6 mm D-shaft on 4632-370 climber motor.",
+     "rel_path": "models/components/t_slot_option1/opt1_pinion_14t.stl"},
+    {"id": "RET", "mark": "Unmarked", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#64748B",
+     "name": "Pinion Shaft Retainer Collar",
+     "material": "PETG · 0.15mm · 100% infill",
+     "notes": "Too small to mark (10x10x2.5 mm); store in labelled batch bag.",
+     "rel_path": "models/components/t_slot_option1/opt1_shaft_retainer.stl"},
+    {"id": "P08", "mark": "P08", "group": "pod", "process": "3D PRINT (FDM)", "qty": "2", "color": "#06B6D4",
+     "name": "Crossing 49E Hall Sensor Dual-Fang Bracket",
+     "material": "PETG · 0.15-0.2mm · 4 walls",
+     "notes": "Clamps onto MT0134 corner slot for 49E crossing centering.",
+     "rel_path": "models/components/option1_dual_legs/opt1_crossing_sensor_bracket.stl"},
+
+    # 4. Protective Leg Hoods & Rail Crossing Parts
+    {"id": "P10-UP", "mark": "P10-UP", "group": "hoods", "process": "3D PRINT (FDM)", "qty": "1", "color": "#A855F7",
+     "name": "Upper Leg Protective Hood",
+     "material": "PETG · 0.2mm · 3 walls · 25% gyroid",
+     "notes": "Shrouds upper leg mechanism against rack debris.",
+     "rel_path": "models/components/option1_full/opt1_P10_UP_leg_hood.stl"},
+    {"id": "P10-LO", "mark": "P10-LO", "group": "hoods", "process": "3D PRINT (FDM)", "qty": "1", "color": "#9333EA",
+     "name": "Lower Leg Protective Hood",
+     "material": "PETG · 0.2mm · 3 walls · 25% gyroid",
+     "notes": "Shrouds lower leg mechanism.",
+     "rel_path": "models/components/option1_full/opt1_P10_LO_leg_hood.stl"},
+    {"id": "P10-MC", "mark": "P10-MC", "group": "hoods", "process": "3D PRINT (FDM)", "qty": "2", "color": "#C084FC",
+     "name": "Leg Motor Cover Cap",
+     "material": "PETG · 0.2mm · 3 walls · 25% gyroid",
+     "notes": "Protective cap over 4632-370 motor tail.",
+     "rel_path": "models/components/option1_full/opt1_P10_leg_motor_cover.stl"},
+    {"id": "P11", "mark": "P11", "group": "hoods", "process": "3D PRINT (FDM)", "qty": "2", "color": "#7C3AED",
+     "name": "Leg Servo Guard",
+     "material": "PETG · 0.2mm · 3 walls · 25% gyroid",
+     "notes": "Guard around TD-8125MG servo horn.",
+     "rel_path": "models/components/option1_full/opt1_P11_leg_servo_guard.stl"},
+    {"id": "XP-ROT", "mark": "Crossing Rotor", "group": "hoods", "process": "CNC / 3D PRINT", "qty": "1/crossing", "color": "#A8B2C0",
+     "name": "Turntable Rotor Disc",
+     "material": "6061-T6 Alu (CNC) or PETG · 4 walls · 50%",
+     "notes": "Preloaded 608ZZ duplex turntable rotor at rail crossings.",
+     "rel_path": "models/components/t_slot_option1_crossing/xp_rotor.stl"},
+    {"id": "XP-RCK", "mark": "Crossing Rack", "group": "hoods", "process": "CNC / 3D PRINT", "qty": "1/crossing", "color": "#F59E0B",
+     "name": "Turntable Movable Rack Segment",
+     "material": "PETG 100% or Delrin CNC",
+     "notes": "Rotating tooth segment bridging vertical <-> horizontal rail crossing.",
+     "rel_path": "models/components/t_slot_option1_crossing/xp_rack.stl"},
+    {"id": "FX-BKT", "mark": "Crossing Bracket", "group": "hoods", "process": "CNC / 3D PRINT", "qty": "1/crossing", "color": "#7C8A9C",
+     "name": "Fixed Crossing Bracket",
+     "material": "6061-T6 Alu (CNC/Laser) or PETG · 4 walls · 50%",
+     "notes": "Links vertical & horizontal 2020 rails at crossing junction (96x96x10 mm).",
+     "rel_path": "models/components/t_slot_option1_crossing/fx_bracket.stl"},
+
+    # 5. Machined Metal / Lathe & Shop-Cut Stock Parts (2D Drawings)
+    {"id": "M01", "mark": "M01 (Lathe)", "group": "metal", "process": "LATHE TURNING", "qty": "2", "color": "#94A3B8",
+     "name": "Common Swivel Axle (Bright Mild / Silver Steel)",
+     "material": "Bright Mild / Silver Steel (NO hardened rod)",
+     "notes": "Face square 69.0 mm; drill Ø3.3 x 12 & tap M4 x 10 both ends.",
+     "rel_path": "docs/SHOPPING_LIST.md"},
+    {"id": "M02", "mark": "M02 (Lathe)", "group": "metal", "process": "LATHE TURNING", "qty": "2", "color": "#64748B",
+     "name": "Bottom Bearing Steel Axle Spacer Tube",
+     "material": "Steel Tube Ø12 OD x Ø8.2 ID",
+     "notes": "Part off & face ends flat/square to 12.00 mm.",
+     "rel_path": "docs/SHOPPING_LIST.md"},
+    {"id": "M03", "mark": "M03 (Lathe)", "group": "metal", "process": "LATHE TURNING", "qty": "2", "color": "#475569",
+     "name": "Top Bearing Trim-to-Snug Steel Spacer",
+     "material": "Steel Tube Ø12 OD x Ø8.2 ID",
+     "notes": "Cut ~4.50 mm; lap/trim on assembly for snug 608ZZ preload.",
+     "rel_path": "docs/SHOPPING_LIST.md"},
+    {"id": "M04", "mark": "M04 (Lathe)", "group": "metal", "process": "LATHE TURNING", "qty": "2", "color": "#334155",
+     "name": "Axle Boss Steel Washer Spacer",
+     "material": "Steel Tube Ø12 OD x Ø8.2 ID",
+     "notes": "Thin 1.50 mm faced steel ring spacer.",
+     "rel_path": "docs/SHOPPING_LIST.md"},
+    {"id": "M-T8", "mark": "CNC4759-A Cut", "group": "metal", "process": "SHOP CUT / DRILL", "qty": "1", "color": "#CBD5E1",
+     "name": "304SS T8 Lead Screw (Trimmed to ~202 mm)",
+     "material": "304 Stainless Steel (from 500 mm kit)",
+     "notes": "Cut 500 mm screw -> 202.0 mm; chamfer cut end for 688ZZ bearing.",
+     "rel_path": "docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md"},
+    {"id": "M-ROD", "mark": "MT0092 Cut", "group": "metal", "process": "SHOP CUT / DRILL", "qty": "2", "color": "#9CA3AF",
+     "name": "Hardened Smooth Shafts (2 x 165 mm, Optional)",
+     "material": "Case-Hardened Steel (Abrasive Cutoff ONLY)",
+     "notes": "DO NOT tap/thread hardened MT0092 rod; cut with abrasive wheel.",
+     "rel_path": "docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md"},
+    {"id": "M-COL", "mark": "Column 276 mm", "group": "metal", "process": "SHOP CUT / DRILL", "qty": "1", "color": "#94A3B8",
+     "name": "40 x 25 x 2 mm Hollow Alu Spine Column",
+     "material": "6063-T5 / 6061 Aluminum 40x25x2 mm",
+     "notes": "Cut square 276.0 mm; drill M4/M5 patterns for H1/H2 pods & R40 collar.",
+     "rel_path": "docs/SHOPPING_LIST.md"},
+]
+
+
+def collect_print_parts() -> tuple[list, dict, dict, dict]:
+    items = []
+    by_rel = {}
+    svg_by_name = {}
+    dxf_by_name = {}
+    root_real = os.path.realpath(ROOT)
+    draw_dir = os.path.realpath(os.path.join(root_real, "docs", "drawings"))
+    dxf_dir = os.path.realpath(os.path.join(draw_dir, "dxf"))
+
+    man_by_id = {}
+    man_file = os.path.join(draw_dir, "manifest.json")
+    if os.path.isfile(man_file):
+        try:
+            with open(man_file, encoding="utf-8") as mf:
+                for entry in json.load(mf):
+                    man_by_id[entry["id"]] = entry
+        except Exception:
+            pass
+
+    for row in PRINT_PARTS_CATALOG:
+        rel = row["rel_path"]
+        item = dict(row)
+        fpath = os.path.realpath(os.path.join(root_real, *rel.split("/")))
+        try:
+            in_root = os.path.commonpath([root_real, fpath]) == root_real
+        except ValueError:
+            in_root = False
+        if not (in_root and os.path.isfile(fpath)):
+            continue
+        if row["group"] != "metal":
+            item["abs_path"] = fpath
+            item["has_stl"] = True
+            item["size_kb"] = round(os.path.getsize(fpath) / 1024.0, 1)
+            item["stl_url"] = f"/print-stl/{rel}"
+            by_rel[rel] = fpath
+        else:
+            item["abs_path"] = fpath
+            item["has_stl"] = False
+            item["size_kb"] = 0
+            item["stl_url"] = None
+
+        pid = row["id"]
+        svg_file = os.path.realpath(os.path.join(draw_dir, f"{pid}.svg"))
+        dxf_file = os.path.realpath(os.path.join(dxf_dir, f"{pid}.dxf"))
+        try:
+            in_svg = os.path.commonpath([draw_dir, svg_file]) == draw_dir
+        except ValueError:
+            in_svg = False
+        try:
+            in_dxf = os.path.commonpath([dxf_dir, dxf_file]) == dxf_dir
+        except ValueError:
+            in_dxf = False
+        if in_svg and os.path.isfile(svg_file):
+            fname = f"{pid}.svg"
+            item["svg_url"] = f"/docs-drawing/{fname}"
+            item["svg_path"] = svg_file
+            svg_by_name[fname] = svg_file
+        else:
+            item["svg_url"] = None
+            item["svg_path"] = None
+        if in_dxf and os.path.isfile(dxf_file):
+            dfname = f"{pid}.dxf"
+            item["dxf_url"] = f"/docs-dxf/{dfname}"
+            dxf_by_name[dfname] = dxf_file
+        else:
+            item["dxf_url"] = None
+
+        m = man_by_id.get(pid, {})
+        item["bbox_mm"] = m.get("bbox_mm")
+        item["scale"] = m.get("scale", "")
+        item["holes"] = m.get("holes", [])
+        items.append(item)
+    return items, by_rel, svg_by_name, dxf_by_name
+
+
+PRINT_PARTS_HTML = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>RackLift5 · Print &amp; Fabrication Parts (3D + 2D)</title>
+<style>
+  :root{--bg:#090e1a;--panel:#0f172a;--panel2:#131d33;--border:#24324a;--text:#e2e8f0;--muted:#94a3b8;--accent:#38bdf8;--green:#10b981;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);font:12.5px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  .layout{display:flex;height:100vh;width:100vw}
+  .list-pane{width:520px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+  .list-head{padding:12px 14px 10px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+  .head-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .head-top h2{font-size:14px;font-weight:700;color:#f8fafc}
+  .count-pill{font-size:10.5px;padding:2px 8px;border-radius:999px;background:#1e293b;color:#7dd3fc;border:1px solid var(--border);font-weight:600}
+  .search{width:100%;background:#0b1222;border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:#f8fafc;font-size:12px;outline:none}
+  .search:focus{border-color:var(--accent)}
+  .chips{display:flex;flex-wrap:wrap;gap:4px}
+  .chip{background:#152036;color:#cbd5e1;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:10.5px;cursor:pointer}
+  .chip.active{background:#0284c7;border-color:#38bdf8;color:#fff;font-weight:600}
+  .parts-list{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:7px}
+  .parts-list::-webkit-scrollbar{width:6px}
+  .parts-list::-webkit-scrollbar-thumb{background:#293752;border-radius:3px}
+  .pcard{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:9px 10px;cursor:pointer;transition:.12s}
+  .pcard:hover{border-color:#4b648f}
+  .pcard.active{background:#172542;border-color:#38bdf8;box-shadow:0 0 0 1px rgba(56,189,248,.28)}
+  .prow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;flex-wrap:wrap}
+  .pid-wrap{display:flex;align-items:center;gap:5px;min-width:0;flex-wrap:wrap}
+  .swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.35)}
+  .pid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;font-weight:700;color:#7dd3fc;background:#0b1222;border:1px solid var(--border);padding:1px 6px;border-radius:4px}
+  .qty{font-size:10px;padding:1px 6px;border-radius:999px;background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.35);font-weight:600}
+  .proc{font-size:9.5px;padding:1px 6px;border-radius:999px;font-weight:700;letter-spacing:.3px}
+  .proc-fdm{background:#064e3b;color:#6ee7b7;border:1px solid #059669}
+  .proc-cnc{background:#451a03;color:#fbbf24;border:1px solid #d97706}
+  .proc-lathe{background:#4c1d95;color:#ddd6fe;border:1px solid #8b5cf6}
+  .proc-cut{background:#1e293b;color:#cbd5e1;border:1px solid #64748b}
+  .dim-badge{font-size:10px;color:#fbbf24;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .pname{font-size:12.5px;font-weight:600;color:#f8fafc;margin-bottom:2px}
+  .pmeta{font-size:10.5px;color:var(--muted);margin-bottom:5px}
+  .path-box{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#0b1222;border:1px solid #1e2d47;border-radius:5px;padding:4px 7px}
+  .path-box code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .act-btns{display:flex;gap:4px;flex-shrink:0}
+  .sbtn{background:#1b2840;color:#e2e8f0;border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+  .sbtn:hover{border-color:var(--accent);color:#fff}
+  .sbtn.tab.active{background:#0284c7;border-color:#38bdf8;color:#fff;font-weight:600}
+  .sbtn.disabled{opacity:.38;pointer-events:none}
+
+  .view-pane{flex:1;position:relative;display:flex;flex-direction:column;min-width:0;background:#070b14}
+  .view-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--border)}
+  .vinfo h3{font-size:13.5px;color:#f8fafc;font-weight:700}
+  .vinfo p{font-size:11px;color:var(--muted)}
+  .vpath{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:#93c5fd;margin-top:2px;word-break:break-all}
+  .vtools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .bbox-pill{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;padding:4px 8px;border-radius:6px;background:#0b1222;border:1px solid var(--border);color:#fbbf24}
+  .vstage{flex:1;position:relative;min-height:0;display:flex;overflow:hidden}
+  #threeWrap{flex:1;position:relative;min-height:0;overflow:hidden}
+  #svgWrap{display:none;flex:1;min-height:0;overflow:auto;background:#1e293b;padding:14px;align-items:center;justify-content:center}
+  #svgImg{max-width:100%;max-height:100%;object-fit:contain;background:#ffffff;border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.45);cursor:zoom-in}
+  #svgImg.zoomed{max-width:none;max-height:none;width:1380px;cursor:zoom-out}
+  #noStlNote{display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);font-size:13px;padding:24px;text-align:center}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div class="layout">
+  <div class="list-pane">
+    <div class="list-head">
+      <div class="head-top">
+        <h2>Print &amp; Fabrication Parts (3D + 2D)</h2>
+        <span id="cntPill" class="count-pill">0 Parts</span>
+      </div>
+      <input id="q" class="search" type="search" placeholder="Search ID (R46, M01), process (Lathe, PETG), or file..."/>
+      <div class="chips">
+        <button class="chip active" data-g="all">All</button>
+        <button class="chip" data-g="forklift">Forklift (R46–R55)</button>
+        <button class="chip" data-g="body">Body &amp; Tray</button>
+        <button class="chip" data-g="pod">Swivel Pod ×2</button>
+        <button class="chip" data-g="hoods">Hoods &amp; Crossings</button>
+        <button class="chip" data-g="metal">Metal / Lathe / Cut</button>
+      </div>
+    </div>
+    <div id="partsList" class="parts-list"></div>
+  </div>
+
+  <div class="view-pane">
+    <div class="view-bar">
+      <div class="vinfo">
+        <h3 id="vTitle">Select a component</h3>
+        <p id="vMeta">—</p>
+        <div id="vPath" class="vpath"></div>
+      </div>
+      <div class="vtools">
+        <button id="tab3d" class="sbtn tab active" style="padding:5px 9px;font-size:11px">3D Model</button>
+        <button id="tab2d" class="sbtn tab" style="padding:5px 9px;font-size:11px">📐 2D Blueprint</button>
+        <span id="vBox" class="bbox-pill">Size: —</span>
+        <button id="copyAbsBtn" class="sbtn" style="padding:5px 9px;font-size:11px">Copy Full Path</button>
+        <a id="dlBtn" class="sbtn" download style="padding:5px 9px;font-size:11px">⬇ .stl</a>
+        <a id="dlSvgBtn" class="sbtn" download style="padding:5px 9px;font-size:11px">⬇ .svg</a>
+        <a id="dlDxfBtn" class="sbtn" download style="padding:5px 9px;font-size:11px">⬇ .dxf</a>
+        <button id="wireBtn" class="sbtn" style="padding:5px 9px;font-size:11px">Wireframe</button>
+        <button id="rstBtn" class="sbtn" style="padding:5px 9px;font-size:11px">Reset View</button>
+      </div>
+    </div>
+    <div class="vstage">
+      <div id="threeWrap"></div>
+      <div id="svgWrap"><img id="svgImg" alt="2D Engineering Drawing (Click to Zoom)"/></div>
+      <div id="noStlNote">
+        <strong style="color:#f8fafc">Workshop Machined / Shop-Cut Metal Component</strong>
+        <span>No 3D-print STL needed — open the <b>📐 2D Blueprint</b> tab or download <code>.svg</code> / <code>.dxf</code> for lathe &amp; cutting dimensions.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+
+THREE.Object3D.DEFAULT_UP.set(0, 0, 1);
+
+const wrap = document.getElementById('threeWrap');
+const svgWrap = document.getElementById('svgWrap');
+const svgImg = document.getElementById('svgImg');
+const noStlNote = document.getElementById('noStlNote');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b101b);
+const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 4000);
+camera.up.set(0, 0, 1);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+wrap.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.78));
+const d1 = new THREE.DirectionalLight(0xffffff, 1.05);
+d1.position.set(180, -220, 260);
+const d2 = new THREE.DirectionalLight(0x93c5fd, 0.5);
+d2.position.set(-200, 140, 140);
+scene.add(d1, d2);
+
+const grid = new THREE.GridHelper(256, 16, 0x334155, 0x1e293b);
+grid.rotation.x = Math.PI / 2;
+scene.add(grid);
+
+const holder = new THREE.Group();
+scene.add(holder);
+const loader = new STLLoader();
+const cache = new Map();
+let activePart = null;
+let wireOn = false;
+let viewMode = '3d';
+let parts = [];
+let curGroup = 'all';
+
+function resize() {
+  const w = Math.max(100, wrap.clientWidth);
+  const h = Math.max(100, wrap.clientHeight);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}
+window.addEventListener('resize', resize);
+if (window.ResizeObserver) new ResizeObserver(resize).observe(wrap);
+resize();
+
+function procClass(proc) {
+  if (!proc) return 'proc-fdm';
+  if (proc.includes('LATHE')) return 'proc-lathe';
+  if (proc.includes('CNC')) return 'proc-cnc';
+  if (proc.includes('CUT')) return 'proc-cut';
+  return 'proc-fdm';
+}
+
+function setMode(mode) {
+  if (mode === '2d' && (!activePart || !activePart.svg_url)) mode = '3d';
+  viewMode = mode;
+  document.getElementById('tab3d').classList.toggle('active', mode === '3d');
+  document.getElementById('tab2d').classList.toggle('active', mode === '2d');
+  const hasStl = !!(activePart && activePart.has_stl);
+  wrap.style.display = (mode === '3d' && hasStl) ? 'block' : 'none';
+  noStlNote.style.display = (mode === '3d' && !hasStl) ? 'flex' : 'none';
+  svgWrap.style.display = mode === '2d' ? 'flex' : 'none';
+  document.getElementById('wireBtn').style.display = (mode === '3d' && hasStl) ? 'inline-flex' : 'none';
+  document.getElementById('rstBtn').style.display = (mode === '3d' && hasStl) ? 'inline-flex' : 'none';
+  if (mode === '3d' && hasStl) {
+    resize();
+  } else if (mode === '2d' && activePart && activePart.svg_url) {
+    svgImg.src = activePart.svg_url;
+  }
+}
+
+function fitPart(geom, part) {
+  holder.clear();
+  geom.computeBoundingBox();
+  const bb = geom.boundingBox;
+  const sz = new THREE.Vector3();
+  const ctr = new THREE.Vector3();
+  bb.getSize(sz);
+  bb.getCenter(ctr);
+
+  const g2 = geom.clone();
+  g2.computeVertexNormals();
+  // Sit part centered on build plate at Z = 0
+  g2.translate(-ctr.x, -ctr.y, -bb.min.z);
+  const mat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(part.color || '#38bdf8'),
+    roughness: 0.36,
+    metalness: 0.16,
+    side: THREE.DoubleSide,
+    wireframe: wireOn,
+  });
+  const mesh = new THREE.Mesh(g2, mat);
+  holder.add(mesh);
+
+  document.getElementById('vBox').textContent = `${sz.x.toFixed(1)} × ${sz.y.toFixed(1)} × ${sz.z.toFixed(1)} mm`;
+  const dist = Math.max(36, sz.length() * 1.18);
+  camera.position.set(dist * 0.72, -dist * 0.72, sz.z * 0.5 + dist * 0.58);
+  controls.target.set(0, 0, sz.z * 0.45);
+  controls.update();
+}
+
+function selectPart(part, forceMode) {
+  activePart = part;
+  document.querySelectorAll('.pcard').forEach((el) => el.classList.toggle('active', el.dataset.id === part.id));
+  document.getElementById('vTitle').textContent = `${part.mark} · ${part.name} (Qty ${part.qty})`;
+  const sizeTxt = part.has_stl ? `${part.size_kb} KB STL` : 'Shop Drawing / BOM Spec';
+  document.getElementById('vMeta').textContent = `[${part.process}] ${part.material} — ${part.notes} (${sizeTxt})`;
+  document.getElementById('vPath').textContent = part.svg_path ? `${part.abs_path}  ·  2D: ${part.svg_path}` : part.abs_path;
+
+  const tab2d = document.getElementById('tab2d');
+  tab2d.classList.toggle('disabled', !part.svg_url);
+
+  const dl = document.getElementById('dlBtn');
+  if (part.has_stl && part.stl_url) {
+    dl.style.display = 'inline-flex';
+    dl.href = part.stl_url;
+    dl.download = part.rel_path.split('/').pop();
+  } else {
+    dl.style.display = 'none';
+  }
+
+  const dlSvg = document.getElementById('dlSvgBtn');
+  dlSvg.style.display = part.svg_url ? 'inline-flex' : 'none';
+  if (part.svg_url) { dlSvg.href = part.svg_url; dlSvg.download = `${part.id}.svg`; }
+
+  const dlDxf = document.getElementById('dlDxfBtn');
+  dlDxf.style.display = part.dxf_url ? 'inline-flex' : 'none';
+  if (part.dxf_url) { dlDxf.href = part.dxf_url; dlDxf.download = `${part.id}.dxf`; }
+
+  if (part.bbox_mm && part.bbox_mm.length === 3) {
+    document.getElementById('vBox').textContent = `${part.bbox_mm[0].toFixed(1)} × ${part.bbox_mm[1].toFixed(1)} × ${part.bbox_mm[2].toFixed(1)} mm`;
+  } else {
+    document.getElementById('vBox').textContent = 'Size: —';
+  }
+
+  const targetMode = forceMode || ((!part.has_stl && part.svg_url) ? '2d' : viewMode);
+  setMode(targetMode);
+
+  if (part.has_stl && part.stl_url) {
+    if (cache.has(part.stl_url)) {
+      fitPart(cache.get(part.stl_url), part);
+    } else {
+      loader.load(part.stl_url, (geom) => {
+        cache.set(part.stl_url, geom);
+        if (activePart && activePart.stl_url === part.stl_url) fitPart(geom, part);
+      });
+    }
+  } else {
+    holder.clear();
+  }
+}
+
+function copyText(txt, btn) {
+  navigator.clipboard?.writeText(txt).then(() => {
+    const old = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = old; }, 1100);
+  });
+}
+
+function renderList() {
+  const listEl = document.getElementById('partsList');
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const vis = parts.filter((p) => {
+    const gOk = curGroup === 'all' || p.group === curGroup;
+    const qOk = !q || (`${p.id} ${p.mark} ${p.process} ${p.name} ${p.rel_path} ${p.notes} ${p.material}`).toLowerCase().includes(q);
+    return gOk && qOk;
+  });
+  document.getElementById('cntPill').textContent = `${vis.length} / ${parts.length} Parts`;
+  listEl.innerHTML = '';
+  vis.forEach((p) => {
+    const card = document.createElement('div');
+    card.className = 'pcard' + (activePart && activePart.id === p.id ? ' active' : '');
+    card.dataset.id = p.id;
+    const dimTxt = (p.bbox_mm && p.bbox_mm.length === 3) ? `${p.bbox_mm[0].toFixed(0)}×${p.bbox_mm[1].toFixed(0)}×${p.bbox_mm[2].toFixed(0)}mm` : `${p.size_kb} KB`;
+    card.innerHTML = `
+      <div class="prow">
+        <div class="pid-wrap">
+          <span class="swatch" style="background:${p.color}"></span>
+          <span class="pid">${p.mark}</span>
+          <span class="proc ${procClass(p.process)}">${p.process}</span>
+          <span class="qty">Qty ${p.qty}</span>
+        </div>
+        <span class="dim-badge">${dimTxt}</span>
+      </div>
+      <div class="pname">${p.name}</div>
+      <div class="pmeta">${p.material} · ${p.notes}</div>
+      <div class="path-box">
+        <code title="${p.abs_path}">${p.rel_path}</code>
+        <div class="act-btns">
+          <button class="sbtn cp-btn">Copy</button>
+          ${p.svg_url ? `<button class="sbtn bp-btn" title="Open 2D Blueprint">📐 2D</button>` : ''}
+          ${p.stl_url ? `<a class="sbtn" href="${p.stl_url}" download="${p.rel_path.split('/').pop()}" title="Download STL">⬇</a>` : ''}
+        </div>
+      </div>
+    `;
+    card.querySelector('.cp-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyText(p.abs_path, e.target);
+    });
+    const bp = card.querySelector('.bp-btn');
+    if (bp) bp.addEventListener('click', (e) => { e.stopPropagation(); selectPart(p, '2d'); });
+    const a = card.querySelector('a');
+    if (a) a.addEventListener('click', (e) => e.stopPropagation());
+    card.addEventListener('click', () => selectPart(p));
+    listEl.appendChild(card);
+  });
+}
+
+document.querySelectorAll('.chip').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    curGroup = btn.dataset.g;
+    document.querySelectorAll('.chip').forEach((b) => b.classList.toggle('active', b.dataset.g === curGroup));
+    renderList();
+  });
+});
+document.getElementById('q').addEventListener('input', renderList);
+document.getElementById('tab3d').addEventListener('click', () => setMode('3d'));
+document.getElementById('tab2d').addEventListener('click', () => setMode('2d'));
+svgImg.addEventListener('click', () => svgImg.classList.toggle('zoomed'));
+document.getElementById('copyAbsBtn').addEventListener('click', (e) => {
+  if (activePart) copyText(activePart.abs_path, e.target);
+});
+document.getElementById('wireBtn').addEventListener('click', (e) => {
+  wireOn = !wireOn;
+  e.target.textContent = wireOn ? 'Solid' : 'Wireframe';
+  if (activePart && activePart.stl_url && cache.has(activePart.stl_url)) fitPart(cache.get(activePart.stl_url), activePart);
+});
+document.getElementById('rstBtn').addEventListener('click', () => {
+  if (activePart && activePart.stl_url && cache.has(activePart.stl_url)) fitPart(cache.get(activePart.stl_url), activePart);
+});
+
+(async function start() {
+  const res = await fetch('/api/print-parts');
+  parts = await res.json();
+  renderList();
+  if (parts.length) selectPart(parts[0]);
+})();
+
+function anim() { requestAnimationFrame(anim); controls.update(); renderer.render(scene, camera); }
+anim();
+</script>
+</body>
+</html>
+"""
+
+
 DASHBOARD_HTML = r"""<!doctype html>
 <html lang="en">
 <head>
@@ -1205,6 +1876,7 @@ DASHBOARD_HTML = r"""<!doctype html>
         <button id="poolBtn" class="abtn" title="Keep 1 live WebGL stage (lowest GPU/RAM) or cache up to 3 recent stages">Live: 1</button>
         <a id="popoutLink" class="abtn" target="_blank" rel="noopener" title="Open active stage in full tab">↗ Open</a>
       </div>
+      <button id="printPartsBtn" class="abtn" style="width:100%;justify-content:center;background:#142b29;border-color:#10b981;color:#6ee7b7;font-weight:600" title="Browse &amp; inspect every 3D STL + dimensioned 2D blueprint (.svg / .dxf) and build method">🖨️ Print &amp; Build Parts (2D/3D)</button>
 
       <div class="status-line" title="Stages load dynamically on demand; hovering a card prefetches its STLs into browser cache">
         <span id="cacheDot" class="dot ready"></span>
@@ -1316,6 +1988,9 @@ function selectStage(id) {
   if (!st) return;
   activeId = id;
   window.location.hash = id;
+  document.getElementById('printPartsBtn').classList.remove('on');
+  const ppFr = document.getElementById('printPartsFrame');
+  if (ppFr) ppFr.classList.remove('active');
 
   document.querySelectorAll('.card').forEach((c) => c.classList.toggle('active', c.dataset.id === id));
   const activeCard = document.querySelector(`.card[data-id="${id}"]`);
@@ -1411,9 +2086,36 @@ async function init() {
   });
 
   const hashId = window.location.hash.replace('#', '');
-  const initialId = STAGES.some((s) => s.id === hashId) ? hashId : '14_objects_base';
-  selectStage(initialId);
+  if (hashId === 'print-parts') {
+    openPrintParts();
+  } else {
+    const initialId = STAGES.some((s) => s.id === hashId) ? hashId : '14_objects_base';
+    selectStage(initialId);
+  }
 }
+
+function openPrintParts() {
+  window.location.hash = 'print-parts';
+  document.querySelectorAll('.card').forEach((c) => c.classList.remove('active'));
+  document.getElementById('printPartsBtn').classList.add('on');
+  document.getElementById('popoutLink').href = '/print-parts/';
+  frames.forEach((fr) => fr.classList.remove('active'));
+  let ppFr = document.getElementById('printPartsFrame');
+  if (!ppFr) {
+    loadingText.textContent = 'Loading 3D Print Parts Inventory…';
+    loadingOverlay.classList.remove('gone');
+    ppFr = document.createElement('iframe');
+    ppFr.id = 'printPartsFrame';
+    ppFr.className = 'stage-frame';
+    ppFr.src = '/print-parts/';
+    ppFr.addEventListener('load', () => loadingOverlay.classList.add('gone'));
+    canvasStack.appendChild(ppFr);
+  } else {
+    loadingOverlay.classList.add('gone');
+  }
+  ppFr.classList.add('active');
+}
+document.getElementById('printPartsBtn').addEventListener('click', openPrintParts);
 
 document.querySelectorAll('.fbtn').forEach((btn) => {
   btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
@@ -1452,8 +2154,10 @@ init();
 """
 
 
-def make_handler(manifest: list):
+def make_handler(manifest: list, print_parts: list, print_by_rel: dict, svg_by_name: dict, dxf_by_name: dict):
     manifest_bytes = json.dumps(manifest).encode("utf-8")
+    print_bytes = json.dumps(print_parts).encode("utf-8")
+    print_html_bytes = PRINT_PARTS_HTML.encode("utf-8")
 
     class DashboardHandler(http.server.BaseHTTPRequestHandler):
         def log_message(self, fmt, *args):
@@ -1475,6 +2179,42 @@ def make_handler(manifest: list):
 
             if path == "/api/stages":
                 return self._send_bytes(manifest_bytes, "application/json; charset=utf-8", "no-cache")
+
+            if path == "/print-parts" or path == "/print-parts/":
+                return self._send_bytes(print_html_bytes, "text/html; charset=utf-8", "no-cache")
+
+            if path == "/api/print-parts":
+                return self._send_bytes(print_bytes, "application/json; charset=utf-8", "no-cache")
+
+            if path.startswith("/print-stl/"):
+                rel = urllib.parse.unquote(path[len("/print-stl/"):])
+                fpath = print_by_rel.get(rel)
+                if not fpath or not os.path.isfile(fpath):
+                    self.send_error(404, "Print STL not found")
+                    return
+                with open(fpath, "rb") as f:
+                    data = f.read()
+                return self._send_bytes(data, "application/octet-stream", "public, max-age=3600")
+
+            if path.startswith("/docs-drawing/"):
+                fname = urllib.parse.unquote(path[len("/docs-drawing/"):])
+                fpath = svg_by_name.get(fname)
+                if not fpath or not os.path.isfile(fpath):
+                    self.send_error(404, "Drawing SVG not found")
+                    return
+                with open(fpath, "rb") as f:
+                    data = f.read()
+                return self._send_bytes(data, "image/svg+xml; charset=utf-8", "no-cache")
+
+            if path.startswith("/docs-dxf/"):
+                fname = urllib.parse.unquote(path[len("/docs-dxf/"):])
+                fpath = dxf_by_name.get(fname)
+                if not fpath or not os.path.isfile(fpath):
+                    self.send_error(404, "Drawing DXF not found")
+                    return
+                with open(fpath, "rb") as f:
+                    data = f.read()
+                return self._send_bytes(data, "application/dxf", "no-cache")
 
             if path.startswith("/stage/"):
                 rest = path[len("/stage/"):]
@@ -1552,13 +2292,16 @@ def launch_mujoco(stage: dict) -> dict:
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="RackLift5 All-in-One Evolution Timeline Dashboard")
     parser.add_argument("--port", type=int, default=8860, help="Starting TCP port to bind (default 8860)")
     parser.add_argument("--no-open", action="store_true", help="Do not open browser automatically")
     args = parser.parse_args()
 
     manifest = collect_stage_manifest()
-    handler_cls = make_handler(manifest)
+    print_parts, print_by_rel, svg_by_name, dxf_by_name = collect_print_parts()
+    handler_cls = make_handler(manifest, print_parts, print_by_rel, svg_by_name, dxf_by_name)
     socketserver.ThreadingTCPServer.allow_reuse_address = True
     srv = None
     bound_port = args.port

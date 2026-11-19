@@ -1,0 +1,698 @@
+[
+  {
+    "id": "R46",
+    "mark": "R46-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      186.5,
+      272.15,
+      46.1
+    ],
+    "volume_cm3": 240.83,
+    "holes": [
+      "\u00d83.30 mm (\u00d718)",
+      "\u00d83.40 mm (\u00d74)",
+      "\u00d82.90 mm (\u00d72)",
+      "\u00d85.30 mm (\u00d72)",
+      "\u00d86.20 mm (\u00d72)",
+      "\u00d89.60 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/R46.svg",
+    "dxf_rel": "docs/drawings/dxf/R46.dxf",
+    "scale": "0.30:1"
+  },
+  {
+    "id": "R47",
+    "mark": "R47-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      40.45,
+      166.6,
+      7.2
+    ],
+    "volume_cm3": 7.93,
+    "holes": [],
+    "svg_rel": "docs/drawings/R47.svg",
+    "dxf_rel": "docs/drawings/dxf/R47.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R48",
+    "mark": "R48-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      40.45,
+      166.6,
+      7.2
+    ],
+    "volume_cm3": 7.93,
+    "holes": [],
+    "svg_rel": "docs/drawings/R48.svg",
+    "dxf_rel": "docs/drawings/dxf/R48.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R49",
+    "mark": "R49",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      32.0,
+      7.0,
+      10.5
+    ],
+    "volume_cm3": 0.48,
+    "holes": [
+      "\u00d818.40 mm (\u00d75)",
+      "\u00d83.30 mm (\u00d72)",
+      "\u00d816.10 mm"
+    ],
+    "svg_rel": "docs/drawings/R49.svg",
+    "dxf_rel": "docs/drawings/dxf/R49.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "R50",
+    "mark": "R50-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      109.2,
+      162.5,
+      11.6
+    ],
+    "volume_cm3": 12.77,
+    "holes": [
+      "\u00d810.40 mm (\u00d74)",
+      "\u00d82.95 mm (\u00d72)",
+      "\u00d83.30 mm (\u00d72)",
+      "\u00d810.60 mm"
+    ],
+    "svg_rel": "docs/drawings/R50.svg",
+    "dxf_rel": "docs/drawings/dxf/R50.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R51",
+    "mark": "R51-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      15.95,
+      272.0,
+      4.0
+    ],
+    "volume_cm3": 11.03,
+    "holes": [],
+    "svg_rel": "docs/drawings/R51.svg",
+    "dxf_rel": "docs/drawings/dxf/R51.dxf",
+    "scale": "0.30:1"
+  },
+  {
+    "id": "R52",
+    "mark": "R52-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      15.95,
+      272.0,
+      4.0
+    ],
+    "volume_cm3": 11.03,
+    "holes": [],
+    "svg_rel": "docs/drawings/R52.svg",
+    "dxf_rel": "docs/drawings/dxf/R52.dxf",
+    "scale": "0.30:1"
+  },
+  {
+    "id": "R53",
+    "mark": "R53-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      66.0,
+      69.95,
+      12.15
+    ],
+    "volume_cm3": 28.09,
+    "holes": [
+      "\u00d83.30 mm (\u00d74)",
+      "\u00d86.20 mm (\u00d74)",
+      "\u00d85.30 mm (\u00d72)",
+      "\u00d810.20 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/R53.svg",
+    "dxf_rel": "docs/drawings/dxf/R53.dxf",
+    "scale": "1:1"
+  },
+  {
+    "id": "R54",
+    "mark": "R54",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      17.9,
+      17.9,
+      4.0
+    ],
+    "volume_cm3": 0.58,
+    "holes": [
+      "\u00d87.10 mm",
+      "\u00d88.20 mm"
+    ],
+    "svg_rel": "docs/drawings/R54.svg",
+    "dxf_rel": "docs/drawings/dxf/R54.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "R55",
+    "mark": "R55",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      17.9,
+      17.9,
+      4.0
+    ],
+    "volume_cm3": 0.58,
+    "holes": [
+      "\u00d87.10 mm",
+      "\u00d88.20 mm"
+    ],
+    "svg_rel": "docs/drawings/R55.svg",
+    "dxf_rel": "docs/drawings/dxf/R55.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "R44-FK",
+    "mark": "R44 (Forklift)",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      180.0,
+      175.0,
+      10.0
+    ],
+    "volume_cm3": 180.99,
+    "holes": [
+      "\u00d82.90 mm (\u00d729)",
+      "\u00d816.00 mm (\u00d710)",
+      "\u00d84.40 mm (\u00d78)",
+      "\u00d83.30 mm (\u00d72)",
+      "\u00d816.40 mm (\u00d72)",
+      "\u00d89.20 mm"
+    ],
+    "svg_rel": "docs/drawings/R44-FK.svg",
+    "dxf_rel": "docs/drawings/dxf/R44-FK.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R44-PK",
+    "mark": "R44 (Legacy Picker)",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      180.0,
+      175.0,
+      22.0
+    ],
+    "volume_cm3": 196.07,
+    "holes": [
+      "\u00d816.00 mm (\u00d710)",
+      "\u00d84.40 mm (\u00d78)"
+    ],
+    "svg_rel": "docs/drawings/R44-PK.svg",
+    "dxf_rel": "docs/drawings/dxf/R44-PK.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "R40",
+    "mark": "R40",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      89.0,
+      38.0,
+      98.0
+    ],
+    "volume_cm3": 137.14,
+    "holes": [
+      "\u00d84.50 mm (\u00d712)",
+      "\u00d811.00 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/R40.svg",
+    "dxf_rel": "docs/drawings/dxf/R40.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "R41",
+    "mark": "R41",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      201.35,
+      114.0,
+      94.0
+    ],
+    "volume_cm3": 175.7,
+    "holes": [
+      "\u00d84.50 mm (\u00d76)",
+      "\u00d85.30 mm (\u00d73)"
+    ],
+    "svg_rel": "docs/drawings/R41.svg",
+    "dxf_rel": "docs/drawings/dxf/R41.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "R42",
+    "mark": "R42",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      105.85,
+      54.0,
+      94.0
+    ],
+    "volume_cm3": 181.54,
+    "holes": [
+      "\u00d84.50 mm (\u00d76)",
+      "\u00d83.10 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/R42.svg",
+    "dxf_rel": "docs/drawings/dxf/R42.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "R43",
+    "mark": "R43",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      87.85,
+      46.0,
+      5.15
+    ],
+    "volume_cm3": 17.73,
+    "holes": [
+      "\u00d83.40 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/R43.svg",
+    "dxf_rel": "docs/drawings/dxf/R43.dxf",
+    "scale": "1.50:1"
+  },
+  {
+    "id": "R45",
+    "mark": "R45",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      90.0,
+      102.0,
+      9.55
+    ],
+    "volume_cm3": 13.23,
+    "holes": [
+      "\u00d84.40 mm (\u00d76)",
+      "\u00d87.60 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/R45.svg",
+    "dxf_rel": "docs/drawings/dxf/R45.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "P07",
+    "mark": "P07-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      35.8,
+      20.8,
+      80.0
+    ],
+    "volume_cm3": 58.24,
+    "holes": [
+      "\u00d84.50 mm (\u00d74)"
+    ],
+    "svg_rel": "docs/drawings/P07.svg",
+    "dxf_rel": "docs/drawings/dxf/P07.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "P07B",
+    "mark": "P07B",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      35.8,
+      20.8,
+      98.0
+    ],
+    "volume_cm3": 70.11,
+    "holes": [
+      "\u00d84.50 mm (\u00d78)"
+    ],
+    "svg_rel": "docs/drawings/P07B.svg",
+    "dxf_rel": "docs/drawings/dxf/P07B.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "P01",
+    "mark": "P01-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      104.93,
+      64.68,
+      86.38
+    ],
+    "volume_cm3": 61.04,
+    "holes": [
+      "\u00d830.80 mm (\u00d710)",
+      "\u00d82.60 mm (\u00d77)",
+      "\u00d83.40 mm (\u00d77)",
+      "\u00d87.20 mm (\u00d76)",
+      "\u00d83.60 mm (\u00d74)",
+      "\u00d85.20 mm (\u00d74)"
+    ],
+    "svg_rel": "docs/drawings/P01.svg",
+    "dxf_rel": "docs/drawings/dxf/P01.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "P02",
+    "mark": "P02-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      49.25,
+      26.45,
+      86.38
+    ],
+    "volume_cm3": 13.72,
+    "holes": [
+      "\u00d83.40 mm (\u00d77)",
+      "\u00d830.80 mm (\u00d75)",
+      "\u00d86.20 mm (\u00d72)",
+      "\u00d87.50 mm",
+      "\u00d826.00 mm"
+    ],
+    "svg_rel": "docs/drawings/P02.svg",
+    "dxf_rel": "docs/drawings/dxf/P02.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "P03",
+    "mark": "P03-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      48.5,
+      20.8,
+      33.43
+    ],
+    "volume_cm3": 7.74,
+    "holes": [
+      "\u00d83.40 mm (\u00d73)",
+      "\u00d86.20 mm (\u00d73)",
+      "\u00d814.00 mm (\u00d73)",
+      "\u00d87.20 mm",
+      "\u00d810.10 mm"
+    ],
+    "svg_rel": "docs/drawings/P03.svg",
+    "dxf_rel": "docs/drawings/dxf/P03.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "P04",
+    "mark": "P04-B01",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      88.75,
+      38.0,
+      55.0
+    ],
+    "volume_cm3": 76.8,
+    "holes": [
+      "\u00d85.00 mm (\u00d714)",
+      "\u00d82.80 mm (\u00d76)",
+      "\u00d822.00 mm (\u00d75)",
+      "\u00d84.50 mm (\u00d74)",
+      "\u00d824.00 mm (\u00d73)",
+      "\u00d83.30 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/P04.svg",
+    "dxf_rel": "docs/drawings/dxf/P04.dxf",
+    "scale": "1:1"
+  },
+  {
+    "id": "P05",
+    "mark": "P05",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      27.15,
+      27.15,
+      8.0
+    ],
+    "volume_cm3": 3.39,
+    "holes": [
+      "\u00d83.40 mm (\u00d74)",
+      "\u00d84.00 mm"
+    ],
+    "svg_rel": "docs/drawings/P05.svg",
+    "dxf_rel": "docs/drawings/dxf/P05.dxf",
+    "scale": "3:1"
+  },
+  {
+    "id": "P06",
+    "mark": "P06",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      23.59,
+      9.8,
+      23.98
+    ],
+    "volume_cm3": 2.11,
+    "holes": [
+      "\u00d814.00 mm",
+      "\u00d82.50 mm"
+    ],
+    "svg_rel": "docs/drawings/P06.svg",
+    "dxf_rel": "docs/drawings/dxf/P06.dxf",
+    "scale": "3:1"
+  },
+  {
+    "id": "P08",
+    "mark": "P08",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      27.5,
+      30.0,
+      36.5
+    ],
+    "volume_cm3": 8.87,
+    "holes": [
+      "\u00d85.00 mm (\u00d77)",
+      "\u00d83.30 mm (\u00d72)",
+      "\u00d810.25 mm (\u00d72)",
+      "\u00d86.25 mm"
+    ],
+    "svg_rel": "docs/drawings/P08.svg",
+    "dxf_rel": "docs/drawings/dxf/P08.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "P10-UP",
+    "mark": "P10-UP",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      141.2,
+      110.8,
+      145.5
+    ],
+    "volume_cm3": 156.95,
+    "holes": [
+      "\u00d83.40 mm (\u00d72)",
+      "\u00d811.00 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/P10-UP.svg",
+    "dxf_rel": "docs/drawings/dxf/P10-UP.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "P10-LO",
+    "mark": "P10-LO",
+    "process": "3D PRINT (FDM)",
+    "bbox_mm": [
+      141.2,
+      110.8,
+      145.5
+    ],
+    "volume_cm3": 156.47,
+    "holes": [
+      "\u00d83.40 mm (\u00d72)",
+      "\u00d811.00 mm (\u00d72)"
+    ],
+    "svg_rel": "docs/drawings/P10-LO.svg",
+    "dxf_rel": "docs/drawings/dxf/P10-LO.dxf",
+    "scale": "1:2"
+  },
+  {
+    "id": "XP-ROT",
+    "mark": "Crossing Rotor",
+    "process": "CNC / 3D PRINT",
+    "bbox_mm": [
+      42.0,
+      42.0,
+      6.0
+    ],
+    "volume_cm3": 6.83,
+    "holes": [
+      "\u00d85.50 mm (\u00d72)",
+      "\u00d810.00 mm (\u00d72)",
+      "\u00d88.20 mm",
+      "\u00d842.00 mm"
+    ],
+    "svg_rel": "docs/drawings/XP-ROT.svg",
+    "dxf_rel": "docs/drawings/dxf/XP-ROT.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "XP-RCK",
+    "mark": "Crossing Rack",
+    "process": "CNC / 3D PRINT",
+    "bbox_mm": [
+      168.65,
+      10.4,
+      5.0
+    ],
+    "volume_cm3": 4.37,
+    "holes": [],
+    "svg_rel": "docs/drawings/XP-RCK.svg",
+    "dxf_rel": "docs/drawings/dxf/XP-RCK.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "FX-BKT",
+    "mark": "Crossing Bracket",
+    "process": "CNC / 3D PRINT",
+    "bbox_mm": [
+      96.0,
+      96.0,
+      10.0
+    ],
+    "volume_cm3": 79.32,
+    "holes": [
+      "\u00d83.30 mm (\u00d74)",
+      "\u00d810.40 mm (\u00d72)",
+      "\u00d827.10 mm"
+    ],
+    "svg_rel": "docs/drawings/FX-BKT.svg",
+    "dxf_rel": "docs/drawings/dxf/FX-BKT.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "M01",
+    "mark": "M01 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      69.0,
+      8.0,
+      8.0
+    ],
+    "volume_cm3": 3.26,
+    "holes": [
+      "\u00d83.30 mm (\u00d72)",
+      "\u00d88.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M01.svg",
+    "dxf_rel": "docs/drawings/dxf/M01.dxf",
+    "scale": "2:1"
+  },
+  {
+    "id": "M02",
+    "mark": "M02 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      12.0,
+      12.0,
+      12.0
+    ],
+    "volume_cm3": 0.72,
+    "holes": [
+      "\u00d88.20 mm",
+      "\u00d812.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M02.svg",
+    "dxf_rel": "docs/drawings/dxf/M02.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M03",
+    "mark": "M03 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      4.5,
+      12.0,
+      12.0
+    ],
+    "volume_cm3": 0.27,
+    "holes": [
+      "\u00d88.20 mm",
+      "\u00d812.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M03.svg",
+    "dxf_rel": "docs/drawings/dxf/M03.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M04",
+    "mark": "M04 (Lathe)",
+    "process": "LATHE TURNING",
+    "bbox_mm": [
+      1.5,
+      12.0,
+      12.0
+    ],
+    "volume_cm3": 0.09,
+    "holes": [
+      "\u00d88.20 mm",
+      "\u00d812.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M04.svg",
+    "dxf_rel": "docs/drawings/dxf/M04.dxf",
+    "scale": "4:1"
+  },
+  {
+    "id": "M-T8",
+    "mark": "CNC4759-A Cut",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      202.0,
+      8.0,
+      8.0
+    ],
+    "volume_cm3": 8.46,
+    "holes": [
+      "\u00d86.30 mm (\u00d7101)",
+      "\u00d88.00 mm (\u00d7100)"
+    ],
+    "svg_rel": "docs/drawings/M-T8.svg",
+    "dxf_rel": "docs/drawings/dxf/M-T8.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "M-ROD",
+    "mark": "MT0092 Cut",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      165.0,
+      8.0,
+      8.0
+    ],
+    "volume_cm3": 8.29,
+    "holes": [
+      "\u00d88.00 mm"
+    ],
+    "svg_rel": "docs/drawings/M-ROD.svg",
+    "dxf_rel": "docs/drawings/dxf/M-ROD.dxf",
+    "scale": "0.75:1"
+  },
+  {
+    "id": "M-COL",
+    "mark": "Column 276 mm",
+    "process": "SHOP CUT / DRILL",
+    "bbox_mm": [
+      276.17,
+      25.0,
+      40.0
+    ],
+    "volume_cm3": 66.55,
+    "holes": [
+      "\u00d84.50 mm (\u00d724)"
+    ],
+    "svg_rel": "docs/drawings/M-COL.svg",
+    "dxf_rel": "docs/drawings/dxf/M-COL.dxf",
+    "scale": "1:2"
+  }
+]
