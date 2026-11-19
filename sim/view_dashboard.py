@@ -28,6 +28,7 @@ import math
 import os
 import re
 import socketserver
+import sys
 import threading
 import urllib.parse
 import webbrowser
@@ -281,6 +282,14 @@ def _mjcf_tree(xml_path: str):
 def build_mujoco_three_html(xml_path: str, title: str, subtitle: str, traj_file: str = "") -> str:
     """MuJoCo XML + STL meshes -> interactive Three.js viewer with the real body tree and joints (forward kinematics in the
     browser), playback of a qpos recording made with the MuJoCo sim itself (sim/record_qpos.py) and a slider per joint."""
+    if not os.path.isfile(xml_path):
+        rel = os.path.relpath(xml_path, ROOT)
+        return (
+            f"<!doctype html><html><body style='background:#0b1120;color:#e2e8f0;font-family:system-ui;padding:24px'>"
+            f"<h2>{title}</h2><p style='color:#94a3b8;margin-top:8px'>Missing MuJoCo model: <code>{rel}</code></p>"
+            f"<p style='margin-top:12px'>Generate it with: <code>pixi run -e sim python -s sim/model.py</code></p>"
+            f"</body></html>"
+        )
     bodies, geoms, _ = _mjcf_tree(xml_path)
     groups = sorted(set(g["g"] for g in geoms))
     html = _MJ_VIEWER_TEMPLATE
@@ -1528,11 +1537,16 @@ def launch_mujoco(stage: dict) -> dict:
         r = subprocess.run(["git", "-C", ROOT, "worktree", "add", "--detach", wt, L["commit"]], capture_output=True, text=True)
         if r.returncode != 0:
             return {"ok": False, "msg": "Could not check out " + L["commit"] + ": " + r.stderr.strip()[:300]}
-    mjpy = os.path.join(ROOT, ".pixi", "envs", "sim", "bin", "mjpython")
-    if not os.path.isfile(mjpy):
-        return {"ok": False, "msg": "mjpython not found - run `pixi install -e sim` first."}
+    if sys.platform == "win32":
+        sim_py = os.path.join(ROOT, ".pixi", "envs", "sim", "python.exe")
+    elif sys.platform == "darwin":
+        sim_py = os.path.join(ROOT, ".pixi", "envs", "sim", "bin", "mjpython")
+    else:
+        sim_py = os.path.join(ROOT, ".pixi", "envs", "sim", "bin", "python")
+    if not os.path.isfile(sim_py):
+        return {"ok": False, "msg": f"{os.path.basename(sim_py)} not found - run `pixi install -e sim` first."}
     log = open(os.path.join(BUILD_DIR, f"launch_{sid}.log"), "w")
-    _LAUNCHED[sid] = subprocess.Popen([mjpy, L["script"], "--port", str(L["port"])], cwd=wt, stdout=log, stderr=subprocess.STDOUT,
+    _LAUNCHED[sid] = subprocess.Popen([sim_py, "-s", L["script"], "--port", str(L["port"])], cwd=wt, stdout=log, stderr=subprocess.STDOUT,
                                       start_new_session=True)
     return {"ok": True, "msg": f"MuJoCo started on the original code ({L['commit']}); its window opens in a few seconds.", "url": url}
 
