@@ -72,20 +72,27 @@ HTML = r"""<!doctype html>
 
   <div class="sec">
     <div class="sec-title">1. Robot &amp; Forklift Cycle</div>
+    <div id="phase-lbl" style="font-size:11px;color:#38bdf8;font-weight:600;margin-bottom:6px;min-height:15px">Auto Loop · Initializing…</div>
     <div class="btn-group" style="width:100%">
-      <button id="m-auto" class="active ok" style="flex:1" onclick="setMode('auto')">Auto Bay 0→1</button>
+      <button id="m-auto" class="active ok" style="flex:1.3" onclick="setMode('auto')">Auto Full Loop</button>
       <button id="m-vert" style="flex:1" onclick="setMode('vert')">0° Home</button>
       <button id="m-horiz" style="flex:1" onclick="setMode('horiz')">90° Travel</button>
       <button id="m-reach" style="flex:1" onclick="setMode('reach')">Fork +240</button>
+    </div>
+    <div class="btn-group" style="width:100%; margin-top:5px">
+      <button style="flex:1" onclick="goShelf(0)">Shelf 1 (0)</button>
+      <button style="flex:1" onclick="goShelf(173)">Shelf 2 (+173)</button>
+      <button style="flex:1" onclick="goShelf(346)">Shelf 3 (+346)</button>
+      <button style="flex:1" onclick="goShelf(519)">Shelf 4 (+519)</button>
     </div>
     <div class="row" style="margin-top:8px">
       <span>Bay Travel X (0 .. 358.14 mm)</span><span id="x-val">0.0 mm</span>
     </div>
     <input id="x-sl" type="range" min="0" max="358.14" step="1" value="0" oninput="setPose('x', Number(this.value))"/>
     <div class="row">
-      <span>Climb / Leg Z-Lift dZ (0 .. 525 mm)</span><span id="z-val">0.0 mm</span>
+      <span>Climb / Leg Z-Lift dZ (0 .. 535 mm)</span><span id="z-val">0.0 mm</span>
     </div>
-    <input id="z-sl" type="range" min="0" max="525" step="1" value="0" oninput="setPose('z', Number(this.value))"/>
+    <input id="z-sl" type="range" min="0" max="535" step="1" value="0" oninput="setPose('z', Number(this.value))"/>
     <div class="row">
       <span>Legs Swivel (0° .. 90°)</span><span id="sw-val">L 0° / U 0°</span>
     </div>
@@ -323,14 +330,14 @@ regBody('battery_pack', batGroup, mats.battery_pack);
 
 let mode = 'auto', poseX = 0, poseZ = 0, swL = 0, swU = 0, forkMm = 0;
 let tx = 0, tz = 0, tsw = 0, tFork = 0;
-let animSpeed = 1.0, explodeK = 0.0, carryingLoad = false, loadBayX = 0.0;
+let animSpeed = 1.0, explodeK = 0.0, carryingLoad = false, loadBayX = 0.0, loadShelfZ = 0.0;
 const BAYS = [0.0, BAY_P];
 const crossAng = { b0_lo: 0, b0_up: 0, b1_lo: 90, b1_up: 90 };
-const SPD = { x: 165, z: 140, sw: 85, fork: 180 };
+const SPD = { x: 185, z: 175, sw: 95, fork: 210 };
 const nearestBay = (x) => BAYS.reduce((a, b) => Math.abs(b - x) < Math.abs(a - x) ? b : a);
 const approach = (v, goal, maxStep) => {
   const d = goal - v;
-  const step = Math.sign(d) * Math.min(Math.abs(d), maxStep, Math.max(Math.abs(d) * 0.28, maxStep * 0.16));
+  const step = Math.sign(d) * Math.min(Math.abs(d), maxStep, Math.max(Math.abs(d) * 0.30, maxStep * 0.18));
   return Math.abs(d) < 1e-3 ? goal : v + step;
 };
 
@@ -339,7 +346,15 @@ function stepPlanner(dt) {
   const sx = SPD.x * dt, sz = SPD.z * dt, ss = SPD.sw * dt, sf = SPD.fork * dt;
   const atBayT = BAYS.some(b => Math.abs(tx - b) < 0.5);
   const xMove = Math.abs(poseX - tx) > eps;
+
+  // Always retract forks before swiveling, climbing long vertical distances away from shelf, or horizontal rail travel
   if (xMove && forkMm > eps) { forkMm = approach(forkMm, 0, sf); return; }
+  if (Math.abs(poseX - tx) < eps && Math.abs(poseZ - tz) > 20 && forkMm > eps) {
+    forkMm = approach(forkMm, 0, sf);
+    return;
+  }
+
+  // Vertical climb / leg Z-lift / fork motion (only at bay, legs aligned vertical 0 deg)
   if (!xMove && (Math.abs(poseZ - tz) > eps || Math.abs(forkMm - tFork) > eps)) {
     if (swL > eps) swL = approach(swL, 0, ss);
     else if (swU > eps) swU = approach(swU, 0, ss);
@@ -349,6 +364,8 @@ function stepPlanner(dt) {
     }
     return;
   }
+
+  // Horizontal bay-to-bay rail travel (legs must first lower to crossing dZ=0, then swivel 90 deg)
   if (xMove) {
     if (poseZ > eps) poseZ = approach(poseZ, 0, sz);
     else if (swL < 90 - eps) swL = approach(swL, 90, ss);
@@ -356,6 +373,7 @@ function stepPlanner(dt) {
     else poseX = approach(poseX, tx, sx);
     return;
   }
+
   const wantSw = poseZ > eps ? 0 : (atBayT ? tsw : 90);
   if (Math.abs(swL - wantSw) > eps) swL = approach(swL, wantSw, ss);
   else if (Math.abs(swU - wantSw) > eps) swU = approach(swU, wantSw, ss);
@@ -365,20 +383,32 @@ const reached = () => (
   Math.abs(swL - tsw) < 0.1 && Math.abs(swU - tsw) < 0.1 && Math.abs(forkMm - tFork) < 0.1
 );
 
-// Auto cycle: Bay 0 extend -> climb +10 -> retract with load -> lower -> travel Bay 1 -> climb +10 -> extend -> drop -> return
+//   [x, z, sw, fork, carry, activeShelfZ, restBayX, restShelfZ, label, dwellSec]
+// Picks from Bay 0 Bottom (Shelf 1, dZ=0) -> horizontal rail travel Bay 0->Bay 1 -> climbs UP vertical racks to Shelf 3 (dZ=346) -> places ->
+// picks from Bay 1 Shelf 3 -> climbs DOWN vertical racks -> horizontal travel Bay 1->Bay 0 -> places back on Bay 0 Bottom!
+const SHELF3_Z = 346.0;
 const AUTO = [
-  [0,     0,   0,   0, false],
-  [0,     0,   0, 240, false],
-  [0,    10,   0, 240, true],
-  [0,    10,   0,   0, true],
-  [0,     0,   0,   0, true],
-  [BAY_P, 0,   0,   0, true],
-  [BAY_P, 10,  0, 240, true],
-  [BAY_P, 0,   0, 240, false],
-  [BAY_P, 0,   0,   0, false],
-  [0,     0,   0,   0, false],
+  [0,     0,            0,   0,   false, 0,        0,     0,        'Bay 0 · Shelf 1 Ready',                0.45],
+  [0,     0,            0,   240, false, 0,        0,     0,        '1. Extend Forks under Load (+240 mm)', 0.30],
+  [0,     10,           0,   240, true,  0,        0,     0,        '2. Leg Climbers Lift +10 mm',          0.25],
+  [0,     10,           0,   0,   true,  0,        0,     0,        '3. Retract Load onto R46 Tray',        0.25],
+  [0,     0,            0,   0,   true,  0,        0,     0,        '4. Lower to Crossings (dZ = 0)',       0.20],
+  [BAY_P, 0,            0,   0,   true,  0,        0,     0,        '5. Swivel 90° & Travel Bay 0 → Bay 1',  0.30],
+  [BAY_P, SHELF3_Z + 10,0,   0,   true,  SHELF3_Z, 0,     0,        '6. Climb Vertical Racks → Shelf 3',    0.35],
+  [BAY_P, SHELF3_Z + 10,0,   240, true,  SHELF3_Z, 0,     0,        '7. Extend Forks over Shelf 3',         0.25],
+  [BAY_P, SHELF3_Z,     0,   240, true,  SHELF3_Z, BAY_P, SHELF3_Z, '8. Lower Load onto Bay 1 Shelf 3',     0.25],
+  [BAY_P, SHELF3_Z,     0,   0,   false, SHELF3_Z, BAY_P, SHELF3_Z, '9. Retract Empty from Shelf 3',        0.75],
+  [BAY_P, SHELF3_Z,     0,   240, false, SHELF3_Z, BAY_P, SHELF3_Z, '10. Re-Extend Forks under Shelf 3',    0.25],
+  [BAY_P, SHELF3_Z + 10,0,   240, true,  SHELF3_Z, BAY_P, SHELF3_Z, '11. Lift +10 mm off Shelf 3',          0.25],
+  [BAY_P, SHELF3_Z + 10,0,   0,   true,  SHELF3_Z, BAY_P, SHELF3_Z, '12. Retract Load onto Tray',           0.25],
+  [BAY_P, 0,            0,   0,   true,  0,        BAY_P, SHELF3_Z, '13. Climb Down Vertical Racks → dZ=0', 0.30],
+  [0,     0,            0,   0,   true,  0,        BAY_P, SHELF3_Z, '14. Swivel 90° & Return Bay 1 → 0',    0.30],
+  [0,     10,           0,   0,   true,  0,        0,     0,        '15. Lift +10 mm for Shelf 1 Clearance', 0.15],
+  [0,     10,           0,   240, true,  0,        0,     0,        '16. Extend Forks over Bay 0 Shelf 1',  0.25],
+  [0,     0,            0,   240, true,  0,        0,     0,        '17. Lower Load onto Bay 0 Shelf 1',    0.25],
+  [0,     0,            0,   0,   false, 0,        0,     0,        '18. Retract Empty — Cycle Complete',   0.60],
 ];
-let wp = 0, dwell = 0;
+let wp = 0, dwell = 0, activeShelfZ = 0.0;
 
 const setActive = (m) => ['auto', 'vert', 'horiz', 'reach'].forEach(id => {
   const el = document.getElementById('m-' + id);
@@ -388,14 +418,26 @@ const setActive = (m) => ['auto', 'vert', 'horiz', 'reach'].forEach(id => {
 window.setMode = (m) => {
   mode = m === 'auto' ? 'auto' : 'manual';
   setActive(m);
-  if (m === 'auto') { wp = 0; dwell = 0; loadBayX = 0; carryingLoad = false; }
-  if (m === 'vert') { tx = nearestBay(poseX); tz = 0; tsw = 0; tFork = 0; }
-  if (m === 'horiz') { tz = 0; tsw = 90; tFork = 0; }
-  if (m === 'reach') { tx = nearestBay(poseX); tz = 10; tsw = 0; tFork = 240; }
+  if (m === 'auto') {
+    wp = 0; dwell = 0;
+    poseX = 0; poseZ = 0; swL = 0; swU = 0; forkMm = 0;
+    carryingLoad = false; loadBayX = 0; loadShelfZ = 0;
+    crossAng.b0_lo = 0; crossAng.b0_up = 0; crossAng.b1_lo = 90; crossAng.b1_up = 90;
+  }
+  if (m === 'vert') { tx = nearestBay(poseX); tz = 0; tsw = 0; tFork = 0; document.getElementById('phase-lbl').textContent = 'Manual · 0° Vertical Home'; }
+  if (m === 'horiz') { tz = 0; tsw = 90; tFork = 0; document.getElementById('phase-lbl').textContent = 'Manual · 90° Horizontal Travel Ready'; }
+  if (m === 'reach') { tx = nearestBay(poseX); tz = poseZ > 20 ? poseZ : 10; tsw = 0; tFork = 240; document.getElementById('phase-lbl').textContent = 'Manual · +240 mm Fork Reach'; }
+};
+
+window.goShelf = (shelfZ) => {
+  mode = 'manual'; setActive('');
+  tx = nearestBay(poseX); tz = shelfZ; tsw = 0;
+  document.getElementById('phase-lbl').textContent = `Manual · Climbing to Shelf dZ = +${shelfZ} mm`;
 };
 
 window.setPose = (axis, val) => {
   mode = 'manual'; setActive('');
+  document.getElementById('phase-lbl').textContent = 'Manual Control';
   if (axis === 'x') { tx = val; tz = 0; tsw = 90; }
   if (axis === 'z') { tx = nearestBay(poseX); tz = val; tsw = 0; }
   if (axis === 'sw') { tx = nearestBay(poseX); tz = 0; tsw = val; }
@@ -467,15 +509,17 @@ function animate() {
   last = performance.now();
 
   if (mode === 'auto' && animSpeed > 0) {
-    const [gx, gz, gsw, gfork, carry] = AUTO[wp];
+    const [gx, gz, gsw, gfork, carry, shelfClampZ, dropX, dropZ, lbl, holdSec] = AUTO[wp];
     tx = gx; tz = gz; tsw = gsw; tFork = gfork;
-    carryingLoad = carry;
+    carryingLoad = carry; activeShelfZ = shelfClampZ;
+    document.getElementById('phase-lbl').textContent = lbl;
     stepPlanner(dt);
     if (reached()) {
       dwell += dt;
-      if (dwell > 0.65) {
+      if (dwell > holdSec) {
         dwell = 0;
-        if (!carry && forkMm > 200) loadBayX = poseX;
+        loadBayX = dropX;
+        loadShelfZ = dropZ;
         wp = (wp + 1) % AUTO.length;
       }
     }
@@ -507,13 +551,14 @@ function animate() {
   fFastMesh.position.set(0, 0.5 * forkMm, 26 * k);
   fTinesMesh.position.set(0, forkMm, 54 * k);
 
-  if (carryingLoad || mode !== 'auto') {
-    const lx = carryingLoad ? poseX : loadBayX;
-    const ly = carryingLoad ? forkMm : 240;
-    const lz = carryingLoad ? (poseZ > 2.2 ? poseZ - 2.2 : 0) : -5.6;
-    refLoadMesh.position.set(lx + 60 * k, ly, lz + 185 * k);
+  if (carryingLoad) {
+    const clampZ = (mode === 'auto') ? activeShelfZ : loadShelfZ;
+    const shelfLz = Math.max(clampZ - 3.6, poseZ - 7.7);
+    const tTray = Math.max(0, Math.min(1, (220.0 - forkMm) / 220.0));
+    const lz = shelfLz * (1.0 - tTray) + poseZ * tTray;
+    refLoadMesh.position.set(poseX + 60 * k, forkMm, lz + 185 * k);
   } else {
-    refLoadMesh.position.set(loadBayX + 60 * k, 240, -5.6 + 185 * k);
+    refLoadMesh.position.set(loadBayX + 60 * k, 240, (loadShelfZ - 3.6) + 185 * k);
   }
 
   if (mode === 'auto') {
