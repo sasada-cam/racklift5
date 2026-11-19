@@ -8,10 +8,10 @@
       181.5,
       32.0
     ],
-    "volume_cm3": 106.54,
+    "volume_cm3": 107.03,
     "holes": [
       "\u00d81.90 mm (\u00d722)",
-      "\u00d83.30 mm (\u00d716)",
+      "\u00d83.30 mm (\u00d714)",
       "\u00d83.40 mm (\u00d74)",
       "\u00d82.90 mm (\u00d72)",
       "\u00d86.10 mm (\u00d72)",
@@ -76,25 +76,6 @@
     "svg_rel": "docs/drawings/R48.svg",
     "dxf_rel": "docs/drawings/dxf/R48.dxf",
     "scale": "1:2"
-  },
-  {
-    "id": "R49",
-    "mark": "R49",
-    "process": "3D PRINT (FDM)",
-    "bbox_mm": [
-      32.0,
-      7.0,
-      10.5
-    ],
-    "volume_cm3": 0.48,
-    "holes": [
-      "\u00d818.40 mm (\u00d75)",
-      "\u00d83.30 mm (\u00d72)",
-      "\u00d816.10 mm"
-    ],
-    "svg_rel": "docs/drawings/R49.svg",
-    "dxf_rel": "docs/drawings/dxf/R49.dxf",
-    "scale": "4:1"
   },
   {
     "id": "R50",
@@ -246,13 +227,14 @@
     "process": "3D PRINT (FDM)",
     "bbox_mm": [
       81.2,
-      168.0,
-      3.45
+      171.25,
+      14.95
     ],
-    "volume_cm3": 22.46,
+    "volume_cm3": 26.14,
     "holes": [
       "\u00d82.20 mm (\u00d74)",
-      "\u00d83.80 mm (\u00d74)"
+      "\u00d83.80 mm (\u00d74)",
+      "\u00d816.10 mm"
     ],
     "svg_rel": "docs/drawings/R58.svg",
     "dxf_rel": "docs/drawings/dxf/R58.dxf",
@@ -267,14 +249,14 @@
       175.0,
       10.0
     ],
-    "volume_cm3": 175.38,
+    "volume_cm3": 175.8,
     "holes": [
       "\u00d82.90 mm (\u00d729)",
       "\u00d81.90 mm (\u00d714)",
-      "\u00d816.00 mm (\u00d713)",
-      "\u00d84.40 mm (\u00d76)",
-      "\u00d82.25 mm (\u00d74)",
-      "\u00d83.30 mm (\u00d72)"
+      "\u00d816.50 mm (\u00d710)",
+      "\u00d84.40 mm (\u00d78)",
+      "\u00d816.00 mm (\u00d76)",
+      "\u00d82.25 mm (\u00d74)"
     ],
     "svg_rel": "docs/drawings/R44-FK.svg",
     "dxf_rel": "docs/drawings/dxf/R44-FK.dxf",

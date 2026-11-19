@@ -1117,11 +1117,6 @@ PRINT_PARTS_CATALOG = [
      "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
      "notes": "Mirrored right full-length guide track & solid MOD=1.0 fixed rack.",
      "rel_path": "models/components/objects_compartment/R48_rail_right_B01.stl"},
-    {"id": "R49", "mark": "R49", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#80CBC4",
-     "name": "Front 688ZZ Bearing Arch Saddle",
-     "material": "PETG · 0.2mm · 4 walls · 40% gyroid",
-     "notes": "Bolts to tray front at Z <= 189.6 mm; retains 688ZZ front T8 bearing.",
-     "rel_path": "models/components/objects_compartment/R49_front_688zz_arch_B01.stl"},
     {"id": "R50", "mark": "R50-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#43A047",
      "name": "Stage-1 55° MGN Linear-Rail H-Carriage (+120 mm)",
      "material": "PETG · 0.15mm · 5 walls · 100% infill · -0.15mm E-foot",
@@ -1165,9 +1160,9 @@ PRINT_PARTS_CATALOG = [
      "notes": "5x M2x14/side bolt through R47/R48 into R46+R44 locking R50 MGN wings below 192 mm crate (0.8 mm side walls).",
      "rel_path": "models/components/objects_compartment/R57_hold_rail_left_B01.stl"},
     {"id": "R58", "mark": "R58-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0284C7",
-     "name": "Screwed Center-Bay Overhead Protective Shroud Lid",
+     "name": "1-Piece Center-Bay Overhead Shroud + Integrated 688ZZ Arch & Front L-Shield",
      "material": "PETG · 0.2mm · 4 walls · 100% infill",
-     "notes": "C-channel boundary ribs guard cog/rack tracks (Z<=190.10, +1.50mm under 191.60 tines); 4x M2x14 shared end holes.",
+     "notes": "Combines center shroud, front 688ZZ bearing saddle, and a downward L-shaped front dust/finger shield wall (Z=175.15..190.10) clamped by 4x M2x14 corner screws.",
      "rel_path": "models/components/objects_compartment/R58_fork_bay_cover_B01.stl"},
 
     # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs

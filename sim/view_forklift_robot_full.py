@@ -126,7 +126,7 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#0e7490"></span>R56 Screwed Top Motor &amp; Tail Cover</span>
       <div class="btn-group"><button id="v-cover-solid" class="active" onclick="setVis('cover','solid')">Solid</button><button id="v-cover-xray" onclick="setVis('cover','xray')">Ghost</button><button id="v-cover-off" onclick="setVis('cover','off')">Hide</button></div>
     </div>
-    <div class="row"><span><span class="dot" style="background:#0284c7"></span>R58 Center-Bay Overhead Shroud</span>
+    <div class="row"><span><span class="dot" style="background:#0284c7"></span>R58 Shroud + Front L-Shield (688ZZ)</span>
       <div class="btn-group"><button id="v-baycov-solid" class="active" onclick="setVis('baycov','solid')">Solid</button><button id="v-baycov-xray" onclick="setVis('baycov','xray')">Ghost</button><button id="v-baycov-off" onclick="setVis('baycov','off')">Hide</button></div>
     </div>
     <div class="row"><span><span class="dot" style="background:#6366f1"></span>R57 Screwed MGN/T-Slot Hold-Down Rails</span>
@@ -233,7 +233,7 @@ const mats = {
   fork_bay_cover: mat(0x0284c7), fork_bay_cover_fasteners: mat(0x334155, { metalness: 0.78 }), fork_limit_switches: mat(0x16a34a),
   fork_hold_rails: mat(0x6366f1), fork_hold_fasteners: mat(0x334155, { metalness: 0.80 }),
   fork_base_rails: mat(0x00897b, { metalness: 0.25 }),
-  fork_front_arch: mat(0x80cbc4), fork_mid_stage: mat(0x43a047, { metalness: 0.25 }),
+  fork_mid_stage: mat(0x43a047, { metalness: 0.25 }),
   fork_pinion_left: mat(0xeab308, { metalness: 0.25 }), fork_pinion_right: mat(0xca8a04, { metalness: 0.25 }),
   fork_t8_nut: mat(0xd97706, { metalness: 0.82, roughness: 0.22 }),
   fork_mid_fasteners: mat(0x334155, { metalness: 0.78 }), fork_tines: mat(0xf97316, { metalness: 0.30 }),
@@ -338,7 +338,6 @@ const fSwMesh = regBody('fork_limit_switches', forkGroup, mats.fork_limit_switch
 const fHoldMesh = regBody('fork_hold_rails', forkGroup, mats.fork_hold_rails);
 const fHoldHwMesh = regBody('fork_hold_fasteners', forkGroup, mats.fork_hold_fasteners);
 regBody('fork_base_rails', forkGroup, mats.fork_base_rails);
-regBody('fork_front_arch', forkGroup, mats.fork_front_arch);
 regBody('fork_drive', forkGroup, mats.fork_drive);
 const fMidMesh = regBody('fork_mid_stage', forkGroup, mats.fork_mid_stage);
 const fPinLMesh = new THREE.Group();

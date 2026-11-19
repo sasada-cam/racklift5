@@ -97,7 +97,6 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#EAB308"></span>R54-R55 Horizontal 1:2 Pinions + F683ZZ</span><button class="active" onclick="togglePinions(this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#43A047"></span>R50 Stage-1 Bridged H-Carriage</span><button class="active" onclick="toggleLayer('fork_mid_stage', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#d97706"></span>CNC4759-A Copper T8 Nut</span><button class="active" onclick="toggleLayer('fork_t8_nut', this)">Shown</button></div>
-    <div class="row"><span><span class="dot" style="background:#80CBC4"></span>R49 Front 688ZZ Bearing Arch</span><button class="active" onclick="toggleLayer('fork_front_arch', this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#00897B"></span>R47-R48 Base Rails &amp; CNC4759-A</span><button class="active" onclick="toggleForkFixed(this)">Shown</button></div>
     <div class="row"><span><span class="dot" style="background:#6366F1"></span>R57 Hold-Down Rails</span>
       <div class="btn-group"><button class="active" onclick="setMode('fork_hold_rails','solid',this);syncHoldHw();">Solid</button><button onclick="setMode('fork_hold_rails','ghost',this);syncHoldHw();">Ghost</button><button onclick="setMode('fork_hold_rails','hidden',this);syncHoldHw();">Hide</button></div>
@@ -106,7 +105,7 @@ HTML = r"""<!doctype html>
     <div class="row"><span><span class="dot" style="background:#0E7490"></span>R56 Motor &amp; Tail Cover</span>
       <div class="btn-group"><button class="active" onclick="setMode('fork_top_cover','solid',this);syncCoverHw();">Solid</button><button onclick="setMode('fork_top_cover','ghost',this);syncCoverHw();">Ghost</button><button onclick="setMode('fork_top_cover','hidden',this);syncCoverHw();">Hide</button></div>
     </div>
-    <div class="row"><span><span class="dot" style="background:#0284C7"></span>R58 Center Overhead Shroud</span>
+    <div class="row"><span><span class="dot" style="background:#0284C7"></span>R58 Shroud + Front L-Shield (688ZZ)</span>
       <div class="btn-group"><button class="active" onclick="setMode('fork_bay_cover','solid',this);syncBayCoverHw();">Solid</button><button onclick="setMode('fork_bay_cover','ghost',this);syncBayCoverHw();">Ghost</button><button onclick="setMode('fork_bay_cover','hidden',this);syncBayCoverHw();">Hide</button></div>
     </div>
     <div class="row"><span><span class="dot" style="background:#26A69A"></span>R46A Front Deck &amp; Stop Wall (≤220mm)</span><button class="active" onclick="toggleLayer('compartment_deck', this)">Shown</button></div>
@@ -202,7 +201,6 @@ const mats = {
   fork_under_tie:       mkMat(0x2e7d32, { rough: 0.36 }),
   base_fasteners:   mkMat(0x334155, { metal: 0.75, rough: 0.28 }),
   fork_base_rails:  mkMat(0x00897b, { metal: 0.25, rough: 0.34 }),
-  fork_front_arch:  mkMat(0x80cbc4, { rough: 0.34 }),
   fork_mid_stage:   mkMat(0x43a047, { metal: 0.25, rough: 0.34 }),
   fork_pinion_left:  mkMat(0xeab308, { metal: 0.25, rough: 0.34 }),
   fork_pinion_right: mkMat(0xca8a04, { metal: 0.25, rough: 0.34 }),
@@ -229,7 +227,7 @@ function loadMesh(name, parent, recenter = null) {
 
 [
   'base_boom','load_cell','live_wishbone','tray_deck','compartment_deck','fork_rear_cradle','fork_top_cover','fork_cover_fasteners','fork_bay_cover','fork_bay_cover_fasteners','fork_under_tie','base_fasteners',
-  'fork_base_rails','fork_front_arch','fork_mid_stage','fork_limit_switches','fork_hold_rails','fork_hold_fasteners',
+  'fork_base_rails','fork_mid_stage','fork_limit_switches','fork_hold_rails','fork_hold_fasteners',
   'fork_t8_nut','fork_mid_fasteners','fork_tines','fork_drive'
 ].forEach((k) => loadMesh(k, robotLiftGroup));
 window.syncHoldHw = () => {
@@ -304,7 +302,6 @@ function applyTransforms() {
   if (meshes.fork_hold_rails)    meshes.fork_hold_rails.position.set(0, 0, 156 * explodeK);
   if (meshes.fork_hold_fasteners) meshes.fork_hold_fasteners.position.set(0, 0, 180 * explodeK);
   if (meshes.fork_limit_switches) meshes.fork_limit_switches.position.set(0, 0, 72 * explodeK);
-  if (meshes.fork_front_arch)    meshes.fork_front_arch.position.set(0, 0, 114 * explodeK);
   if (meshes.fork_drive)         meshes.fork_drive.position.set(0, 0, 118 * explodeK);
   if (meshes.fork_mid_stage)     meshes.fork_mid_stage.position.set(0, 0.5 * extMm, 142 * explodeK);
   if (meshes.fork_pinion_left) {
