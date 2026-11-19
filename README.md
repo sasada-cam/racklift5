@@ -3,14 +3,17 @@
 > ## ⭐ Recommended: view every version in the dashboard
 >
 > ```bash
-> .pixi/envs/default/bin/python sim/view_dashboard.py          # -> http://127.0.0.1:8860/
+> pixi run python sim/view_dashboard.py                  # -> http://127.0.0.1:8860/ (Windows / macOS / Linux)
+> # or on macOS / Linux directly:
+> .pixi/envs/default/bin/python sim/view_dashboard.py
 > ```
 >
 > **Always use the dashboard to look at the design.** It puts every version of RackLift5 on one timeline, in order, with
 > what each one reuses: v1, v2, the original v3, the motor / servo / OpenBuilds kits, the swivel-leg prototypes, the
-> Option 1 swivel pod + crossing turntable, the dual legs on the rails, the body + picker and the full robot.
+> Option 1 swivel pod + crossing turntable, the dual legs on the rails, the body + picker / forklift compartment, and the full robot.
 >
-> * Pick a stage on the left to open its 3D view (or images + **Open in MuJoCo** for the original v3).
+> * Pick a stage on the left to open its 3D view (or images + **Open in MuJoCo** for the original v3 — cross-platform via `python.exe` on Windows, `mjpython` on macOS, `python` on Linux).
+> * Click **`🖨️ Print & Build Parts (2D/3D)`** (or visit `/print-parts/`) to browse all **41 components** (`34` printable PETG STLs + `7` lathe/CNC/shop-cut metal parts), copy exact STL file paths, filter by group, see fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`), and toggle between the **3D Model** viewer and **📐 2D Blueprint** ISO A3 `.svg`/`.dxf` engineering drawings (`38` drawings).
 > * The live MuJoCo sim of the current v3 (task buttons in the browser): `pixi run -e sim sim`
 >   (macOS: it must run under `mjpython`, which this task does).
 > * The single studios (`sim/view_*.py`) still work on their own, but the dashboard is the one place that shows them all.
@@ -31,13 +34,14 @@ transfer cart between rows - see [v3](#v3-compact-squid-layout-work-in-progress)
 | Path | What it is |
 |---|---|
 | `generator/` | **Parametric source of the design** (Python + numpy). `params.py` holds every dimension; values marked `# MEASURE` must be checked with a caliper. Original mesh pipeline: `export_v2.py` (STL), `clearance_v2.py` (67-pose collision check), `r2.py` (renders). |
-| `cad/` | **Exact CAD export.** `cad/brep/csg.py` is a drop-in build123d / OpenCascade backend for `generator/csg.py`, so the unchanged generator code produces true B-rep solids (real cylinders, slots, involute gear splines). |
+| `cad/` | **Exact CAD export.** `cad/brep/csg.py` is a drop-in build123d / OpenCascade backend for `generator/csg.py`, producing true B-rep solids; `cad/export_drawings.py` exports ISO A3 4-view `.svg` + `.dxf` 2D blueprints via OpenCASCADE HLR. |
 | `models/print/` | Print-ready STEP + STL, already in print orientation (mm). |
 | `models/design/` | Each part as STEP in its design frame – use these for FEA. |
 | `models/assembly/` | Whole machine in 3 poses (`reach`, `travel`, `turning`) as STEP + FreeCAD `.FCStd`: 97 named, coloured bodies in 5 groups. |
 | `models/parts_list.csv` | Quantities, sizes and print notes per part. |
 | `models/parts_report.csv` | Volume, solid PETG mass, size and validity of each exact solid. |
-| `docs/` | Renders and the original v2 release notes. |
+| `docs/drawings/` | **38** dimensioned ISO A3 2D engineering blueprints (`.svg` + `dxf/*.dxf` + `manifest.json`) with fabrication badges (`3D PRINT (FDM)`, `CNC / 3D PRINT`, `LATHE TURNING`, `SHOP CUT / DRILL`). |
+| `docs/` | Renders, BOMs (`SHOPPING_LIST.md`, `OBJECTS_COMPARTMENT_FORKLIFT_BOM.md`), 2D blueprints, and release notes. |
 | `archive/v1/` | RackLift 5 v1 (two-rail lift), kept for reference only. |
 | `archive/v2_original_stl/` | The original mesh STLs of v2 – reference for the volume check. |
 
@@ -71,13 +75,15 @@ pixi install -e freecad      # + headless FreeCAD 1.0 (~1.5 GB)
 
 ### 3. Everyday commands
 ```
-pixi task list               # everything available
-pixi run export              # all parts + 3 assembly poses -> models/   (~1 min)
-pixi run export-parts        # only the printable parts
-pixi run test                # validity + volume check vs archive/v2_original_stl
-pixi run -e freecad verify   # open all STEP files in FreeCAD, write assembly .FCStd
-pixi run gen-stl             # original mesh pipeline -> generator/out/ (git-ignored)
-pixi run gen-clearance       # original 67-pose collision check
+pixi task list                              # everything available
+pixi run python sim/view_dashboard.py       # all stages + 3D STL paths + 2D blueprints (http://127.0.0.1:8860/)
+pixi run python cad/export_drawings.py      # regenerate 38 ISO A3 2D SVG + DXF blueprints -> docs/drawings/
+pixi run export                             # all parts + 3 assembly poses -> models/   (~1 min)
+pixi run export-parts                       # only the printable parts
+pixi run test                               # validity + volume check vs archive/v2_original_stl
+pixi run -e freecad verify                  # open all STEP files in FreeCAD, write assembly .FCStd
+pixi run gen-stl                            # original mesh pipeline -> generator/out/ (git-ignored)
+pixi run gen-clearance                      # original 67-pose collision check
 ```
 Workflow: edit `generator/params.py` → `pixi run export` → `pixi run test` → commit.
 
@@ -352,7 +358,7 @@ on the shelf at y 2..132 and picked with the tip finger 1 mm behind it; `build_o
 
 ## Printed part IDs (Forklift Objects Compartment: `cad/build_objects_compartment.py`, batch `B01`)
 
-All 10 printed STLs in `models/components/objects_compartment/` carry 0.6 mm engraved ID + batch (`BATCH = "B01"`, `R49`/`R54`/`R55` are `id_only`) and distinct non-adjacent colours matching Stage 14 (`sim/view_objects_compartment.py`) and Stage 15 (`sim/view_forklift_robot_full.py`):
+All 10 printed STLs in `models/components/objects_compartment/` carry 0.6 mm engraved ID + batch (`BATCH = "B01"`, `R49`/`R54`/`R55` are `id_only`) and distinct non-adjacent colours matching Stage 14 (`sim/view_objects_compartment.py`) and Stage 15 (`sim/view_forklift_robot_full.py`). Dimensioned ISO A3 2D blueprints (`.svg` + `.dxf`) for `R44-FK`, `R46..R55`, `R40..R45`, `P01..P10`, crossings, and lathe/shop-cut metal stock (`M01..M04`, `M-T8`, `M-ROD`, `M-COL`) live in `docs/drawings/` and inside the dashboard's **`🖨️ Print & Build Parts (2D/3D)`** view:
 
 | ID | Mark | Part | Colour |
 |---|---|---|---|

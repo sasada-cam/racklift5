@@ -20,7 +20,7 @@ Where to buy:
 - bearings, motors and servos: tronic.lk (or bearing shops)
 - `M` parts: any lathe or metal-cutting shop
 
-Take this page and a sample part to the shop.
+Take this page, the dimensioned shop blueprints in [`docs/drawings/`](./drawings/) (`M01.svg`–`M04.svg`, `M-COL.svg` — also viewable under **Metal / Lathe / Cut** in the dashboard `/print-parts/`), and a sample part to the shop.
 
 ---
 

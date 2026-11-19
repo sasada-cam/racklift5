@@ -5,6 +5,7 @@ Exact parts, quantities, verified dimensions, and local Sri Lanka sourcing (`tro
 - **CAD Builder:** [`cad/build_objects_compartment.py`](../cad/build_objects_compartment.py)
 - **3D Studio Viewer:** [`sim/view_objects_compartment.py`](../sim/view_objects_compartment.py)
 - **Exported STLs / STEP:** [`models/components/objects_compartment/`](../models/components/objects_compartment/)
+- **2D Blueprints (SVG + DXF) & Interactive Print/Build Browser:** [`docs/drawings/`](./drawings/) (`R44-FK`, `R46`–`R55`, `M-T8`, `M-ROD`) or run `pixi run python sim/view_dashboard.py` -> **`🖨️ Print & Build Parts (2D/3D)`** (`/print-parts/`)
 - **Robot Chassis / Legs / Load Cell BOM:** [`docs/SHOPPING_LIST.md`](./SHOPPING_LIST.md)
 
 ---
