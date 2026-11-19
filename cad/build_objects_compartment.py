@@ -306,10 +306,11 @@ def build_forklift_deck(tray_clean: bd.Part):
 
     # Central fork bay + embedded T8/nut channel into R46 & R44 + front 688ZZ cradle
     comp = comp - box(BAY_X0, BAY_X1, WALL_Y1, OB.TRAY_Y1 + 0.5, BAY_FLOOR_Z, WALL_TOP_Z + 2.0)
-    # Lowered flat skid landing channels on R46 (X=108.5..121.0 & 239.0..251.5, Z=178.60 mm -> +1.00 mm clear below
-    # 12.0 mm crate skids @ 179.60 mm when carried on 191.60 mm forks, while keeping sloped outer decks & M3 screws!)
-    comp = comp - box(OB.BXR - 71.5, BAY_X0 + 0.1, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
-    comp = comp - box(BAY_X1 - 0.1, OB.BXR + 71.5, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
+    # Lowered & widened flat skid landing channels on R46 (X=101.0..121.0 & 239.0..259.0, 20.0 mm wide each, Z=178.60 mm ->
+    # gives 9.0 mm total lateral leg-room margin around the 11.0 mm crate skids @ X=110..121 & 239..250, while keeping the
+    # outer 8.5 mm sloped guide wings & flush counterbored M3 top deck screws!)
+    comp = comp - box(OB.BXR - 79.0, BAY_X0 + 0.1, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
+    comp = comp - box(BAY_X1 - 0.1, OB.BXR + 79.0, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
     comp = comp - box(SCREW_X - 12.2, SCREW_X + 12.2, WALL_Y1, -78.0, NUT_TRENCH_Z, BAY_FLOOR_Z + 0.5)
     comp = comp - box(SCREW_X - 16.5, SCREW_X + 16.5, -78.0, OB.TRAY_Y1 + 0.5, 179.05, BAY_FLOOR_Z + 0.5)
     comp = comp - box(SCREW_X - 10.2, SCREW_X + 10.2, -78.0, OB.TRAY_Y1 + 0.5, NUT_TRENCH_Z, 179.20)
@@ -392,8 +393,41 @@ def build_forklift_deck(tray_clean: bd.Part):
             bd.extrude(amount=sx1 - sx0)
         comp = comp + cb.part
 
-    for nx0, nx1 in ((OB.TRAY_X0 + CURB_W, OB.TRAY_X0 + 16.0), (OB.TRAY_X1 - 16.0, OB.TRAY_X1 - CURB_W)):
+    for nx0, nx1 in ((OB.TRAY_X0 + CURB_W, OB.TRAY_X0 + 11.0), (OB.TRAY_X1 - 11.0, OB.TRAY_X1 - CURB_W)):
         comp = comp + box(nx0, nx1, OB.TRAY_Y1 - 6.0, OB.TRAY_Y1, SLOPE_Z_FRONT - 0.5, 183.80)
+
+    # 3b) Drop-on outer R46 skirts falling over R44 edges flush to bottom (Z=168.0) at 4 vertices + side mid-edges
+    #     (Placed BEFORE the 178.60 mm skid landing channel cut so the corner wrap top bridges are trimmed flush to Z=178.60!)
+    SK_T, SK_Z0 = 3.2, OB.TRAY_RIB_Z0
+    Z_JOIN = 180.40  # ties over R44 top (Z=178.0) directly into R46 deck (SLOPE_Z >= 181.60)
+    # Vertices (24 mm corner wraps)
+    for cx_out, cx_in, cx_sign in ((OB.TRAY_X0 - SK_T - 0.05, OB.TRAY_X0 + 24.0, -1), (OB.TRAY_X1 - 24.0, OB.TRAY_X1 + SK_T + 0.05, 1)):
+        px0, px1 = (cx_out, OB.TRAY_X0 - 0.05) if cx_sign < 0 else (OB.TRAY_X1 + 0.05, cx_in)
+        tx0, tx1 = (cx_out, OB.TRAY_X0 + 2.5) if cx_sign < 0 else (OB.TRAY_X1 - 2.5, cx_in)
+        for vy0, vy1, wy0, wy1, y_edge, ysgn in (
+            (OB.TRAY_Y0 - SK_T - 0.05, OB.TRAY_Y0 + 24.0, OB.TRAY_Y0 - SK_T - 0.05, OB.TRAY_Y0 - 0.05, OB.TRAY_Y0 + 2.5, -1),
+            (OB.TRAY_Y1 - 24.0, OB.TRAY_Y1 + SK_T + 0.05, OB.TRAY_Y1 + 0.05, OB.TRAY_Y1 + SK_T + 0.05, OB.TRAY_Y1 - 2.5, 1),
+        ):
+            # X-edge side drop + top bridge into R46
+            comp = comp + box(px0, px1, vy0, vy1, SK_Z0, Z_JOIN)
+            comp = comp + box(tx0, tx1, max(vy0, OB.TRAY_Y0), min(vy1, OB.TRAY_Y1), OB.TRAY_TOP_Z + 0.05, Z_JOIN)
+            # Y-edge rear/front drop + top bridge into R46 (kept strictly inside X=90..101 & 259..270 on top so skid lanes stay 100% flat!)
+            ux0, ux1 = (OB.TRAY_X0, OB.TRAY_X0 + 24.0) if cx_sign < 0 else (OB.TRAY_X1 - 24.0, OB.TRAY_X1)
+            comp = comp + box(ux0, ux1, wy0, wy1, SK_Z0, Z_JOIN)
+            comp = comp + box(ux0, ux1, wy0 if ysgn < 0 else y_edge, y_edge if ysgn < 0 else wy1, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
+    # Mid-edge Right (X=270, centered at Y=-157.5)
+    comp = comp + box(OB.TRAY_X1 + 0.05, OB.TRAY_X1 + SK_T + 0.05, -175.5, -139.5, SK_Z0, Z_JOIN)
+    comp = comp + box(OB.TRAY_X1 - 2.5, OB.TRAY_X1 + SK_T + 0.05, -175.5, -139.5, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
+    # Mid-edge Left (X=90, Y=-161.5..-133.5 -> clears R41 boom brace at Y=-175..-164.5 by 3 mm)
+    comp = comp + box(OB.TRAY_X0 - SK_T - 0.05, OB.TRAY_X0 - 0.05, -161.5, -133.5, SK_Z0, Z_JOIN)
+    comp = comp + box(OB.TRAY_X0 - SK_T - 0.05, OB.TRAY_X0 + 2.5, -161.5, -133.5, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
+    # Mid-edge Front (Y=-70, X=148..212 -> top bridge tying R46A deck at Z=178.05..180.40)
+    for sx0, sx1 in ((148.0, 163.5), (196.5, 212.0)):
+        comp = comp + box(sx0, sx1, OB.TRAY_Y1 - 2.5, OB.TRAY_Y1, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
+    # Re-apply lowered 20.0 mm flat skid landing channels (X=101.0..121.0 & 239.0..259.0, Z=178.60 mm) AFTER corner wraps
+    # so the front/rear corner top bridges never create a raised Z=180.40 lip inside the skid channel!
+    comp = comp - box(OB.BXR - 79.0, BAY_X0 + 0.1, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
+    comp = comp - box(BAY_X1 - 0.1, OB.BXR + 79.0, WALL_Y1, OB.TRAY_Y1 + 0.5, 178.60, WALL_TOP_Z + 2.0)
 
     # Unified Rear KP08 housing + wrapped 17HS4401 cradle (R46B-B01: split at Y = WALL_Y0 = -245.0 mm so BOTH R46A & R46B
     # print flat inside a 220 x 220 mm bed, triple-clamped across Y = -245.0 by R53 bottom tie, 2x shear tenons + 2x M3
@@ -486,37 +520,6 @@ def build_forklift_deck(tray_clean: bd.Part):
     comp = comp - OB._cyl_axis(6.8, WALL_Y0 - 0.5, WALL_Y0 + 1.0, "y", SCREW_X, SCREW_Z)
     rear_cradle = rear_cradle - OB._cyl_axis(6.8, KP08_Y0 - 2.0, SEAM_Y + 0.5, "y", SCREW_X, SCREW_Z)
 
-    # 4) Drop-on outer R46 skirts falling over R44 edges flush to bottom (Z=168.0) at 4 vertices + 4 mid-edges
-    #    No inward under-hooks on R46 so R46 drops down / lifts straight off R44 cleanly once screws & R53-B01 are removed
-    SK_T, SK_Z0 = 3.2, OB.TRAY_RIB_Z0
-    Z_JOIN = 180.40  # ties over R44 top (Z=178.0) directly into R46 deck (SLOPE_Z >= 181.60)
-    # Vertices (24 mm corner wraps)
-    for cx_out, cx_in, cx_sign in ((OB.TRAY_X0 - SK_T - 0.05, OB.TRAY_X0 + 24.0, -1), (OB.TRAY_X1 - 24.0, OB.TRAY_X1 + SK_T + 0.05, 1)):
-        px0, px1 = (cx_out, OB.TRAY_X0 - 0.05) if cx_sign < 0 else (OB.TRAY_X1 + 0.05, cx_in)
-        tx0, tx1 = (cx_out, OB.TRAY_X0 + 2.5) if cx_sign < 0 else (OB.TRAY_X1 - 2.5, cx_in)
-        for vy0, vy1, wy0, wy1, y_edge, ysgn in (
-            (OB.TRAY_Y0 - SK_T - 0.05, OB.TRAY_Y0 + 24.0, OB.TRAY_Y0 - SK_T - 0.05, OB.TRAY_Y0 - 0.05, OB.TRAY_Y0 + 2.5, -1),
-            (OB.TRAY_Y1 - 24.0, OB.TRAY_Y1 + SK_T + 0.05, OB.TRAY_Y1 + 0.05, OB.TRAY_Y1 + SK_T + 0.05, OB.TRAY_Y1 - 2.5, 1),
-        ):
-            # X-edge side drop + top bridge into R46
-            comp = comp + box(px0, px1, vy0, vy1, SK_Z0, Z_JOIN)
-            comp = comp + box(tx0, tx1, max(vy0, OB.TRAY_Y0), min(vy1, OB.TRAY_Y1), OB.TRAY_TOP_Z + 0.05, Z_JOIN)
-            # Y-edge rear/front drop + top bridge into R46
-            ux0, ux1 = (OB.TRAY_X0, OB.TRAY_X0 + 24.0) if cx_sign < 0 else (OB.TRAY_X1 - 24.0, OB.TRAY_X1)
-            comp = comp + box(ux0, ux1, wy0, wy1, SK_Z0, Z_JOIN)
-            comp = comp + box(ux0, ux1, wy0 if ysgn < 0 else y_edge, y_edge if ysgn < 0 else wy1, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
-    # Mid-edge Right (X=270, centered at Y=-157.5)
-    comp = comp + box(OB.TRAY_X1 + 0.05, OB.TRAY_X1 + SK_T + 0.05, -175.5, -139.5, SK_Z0, Z_JOIN)
-    comp = comp + box(OB.TRAY_X1 - 2.5, OB.TRAY_X1 + SK_T + 0.05, -175.5, -139.5, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
-    # Mid-edge Left (X=90, Y=-161.5..-133.5 -> clears R41 boom brace at Y=-175..-164.5 by 3 mm)
-    comp = comp + box(OB.TRAY_X0 - SK_T - 0.05, OB.TRAY_X0 - 0.05, -161.5, -133.5, SK_Z0, Z_JOIN)
-    comp = comp + box(OB.TRAY_X0 - SK_T - 0.05, OB.TRAY_X0 + 2.5, -161.5, -133.5, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
-    # Mid-edge Front (Y=-70, X=148..212 -> under-trench drop + side vertical shoulders flanking center 688ZZ bay)
-    comp = comp + box(148.0, 212.0, OB.TRAY_Y1 + 0.05, OB.TRAY_Y1 + SK_T + 0.05, SK_Z0, 175.05)
-    for sx0, sx1 in ((148.0, 162.5), (197.5, 212.0)):
-        comp = comp + box(sx0, sx1, OB.TRAY_Y1 + 0.05, OB.TRAY_Y1 + SK_T + 0.05, 175.0, Z_JOIN)
-        comp = comp + box(sx0, sx1, OB.TRAY_Y1 - 2.5, OB.TRAY_Y1 + SK_T + 0.05, OB.TRAY_TOP_Z + 0.05, Z_JOIN)
-
     # Drill M2 pilot bores AFTER drop skirts so front skirt (-72.5..-66.75) cannot close -72.4 end bores
     for sgn_m in (-1, 1):
         mx_out = OB.BXR + sgn_m * (FORK_DX + 8.3)  # 123.7 / 236.3
@@ -551,11 +554,12 @@ def build_forklift_deck(tray_clean: bd.Part):
 
     hw_solids = []
 
+    # 4x Top deck M3 screws positioned in the outer sloped wing strip (X = 95.5 & 264.5 mm, outside the 101..121 & 239..259 skid lanes!)
     m3_pts = (
-        (OB.TRAY_X0 + 5.0, OB.TRAY_Y1 - 10.0, 179.45, 1.60),
-        (OB.TRAY_X1 - 5.0, OB.TRAY_Y1 - 10.0, 179.45, 1.60),
-        (OB.TRAY_X0 + 5.0, WALL_Y1 + 8.0, 181.20, 3.00),
-        (OB.TRAY_X1 - 5.0, WALL_Y1 + 8.0, 181.20, 3.00),
+        (OB.TRAY_X0 + 5.5, OB.TRAY_Y1 - 10.0, 179.45, 1.60),
+        (OB.TRAY_X1 - 5.5, OB.TRAY_Y1 - 10.0, 179.45, 1.60),
+        (OB.TRAY_X0 + 5.5, WALL_Y1 + 8.0, 181.20, 3.00),
+        (OB.TRAY_X1 - 5.5, WALL_Y1 + 8.0, 181.20, 3.00),
     )
     for mx, my, z_seat, hd_h in m3_pts:
         comp = comp - OB._cyl_axis(1.70, z0 - 0.5, z_seat + 0.5, "z", mx, my)
@@ -577,8 +581,6 @@ def build_forklift_deck(tray_clean: bd.Part):
         ("y", 104.0, OB.TRAY_Y0 - SK_T - 0.05, 173.0, -1),
         ("y", 256.0, OB.TRAY_Y0 - SK_T - 0.05, 173.0, -1),
         ("y", 104.0, OB.TRAY_Y1 + SK_T + 0.05, 173.0, 1),
-        ("y", 155.0, OB.TRAY_Y1 + SK_T + 0.05, 173.0, 1),
-        ("y", 205.0, OB.TRAY_Y1 + SK_T + 0.05, 173.0, 1),
         ("y", 256.0, OB.TRAY_Y1 + SK_T + 0.05, 173.0, 1),
     )
     for ax, sx, sy, sz, odir in side_m3:
@@ -679,27 +681,28 @@ def build_forklift_deck(tray_clean: bd.Part):
         comp = comp - OB._cyl_axis(1.45, 191.00, WALL_TOP_Z + 0.5, "z", lx, ly)
         cover_hw.append(_socket_bolt(2.70, 2.40, 1.40, 10.0, "z", lx, ly, 202.45, head_dir=1))
 
-    # 7) Removable Screwed 1-Piece Center-Bay Overhead Shroud + Front 688ZZ Bearing Arch + L-Shaped Front Shield (R58-B01):
-    #    - Combines the center shroud and front 688ZZ bearing arch saddle into ONE solid part with a downward L-shaped
-    #      front dust/finger shield wall (Y=-71.35..-66.75 mm, Z=175.15..190.10 mm) that seals the front 688ZZ bearing
-    #      and internal bay down to R46A's Z=175.05 mm front drop-skirt ledge.
-    #    - Longitudinal 3.20 mm boundary ribs along X=139.4..144.4 & 215.6..220.6 (Z=186.90..190.10) stiffen the shroud
-    #      and guard both cogwheel / tine-rack tracks (+0.60 mm clear of R51/R52, +0.80 mm clear of R50 chord).
-    #    - Integral end mounting feet at (160.5 / 199.5, -234.6 & -72.4) share the EXACT 4 end screw holes with R47/R48
-    #      (4x M2 x 14 mm clamping R58 -> R47/R48 -> R46A -> R44 with zero separate R49 part or front M3 bolts needed!).
+    # 7) Removable Screwed 1-Piece Center-Bay Overhead Shroud + Front 688ZZ Bearing Arch + Full-Width L-Shaped Front Apron (R58-B01):
+    #    - Combines the center shroud, front 688ZZ bearing arch saddle, AND the full-width front L-shaped apron wall
+    #      (X=139.4..220.6 at top Z=186.90..190.10 and X=148.0..212.0 down to Z=168.00 mm across Y=-69.95..-66.75 mm)
+    #      into ONE solid part that completely seals the front 688ZZ bearing and internal bay against dust and fingers.
+    #    - Fastened by the 4x M2 x 14 mm top corner screws (shared with R47/R48 ends at X=160.5/199.5, Y=-234.6/-72.4)
+    #      PLUS the 2x M3 x 10 mm horizontal front apron screws at (X=155.0 & 205.0, Y=-66.75, Z=173.0) into R44-FK!
     bay_cover = (
-        box(139.4, 220.6, -238.0, -70.0, 188.65, 190.10)
-        + box(139.4, 144.4, -238.0, -70.0, 186.90, 190.10)
-        + box(215.6, 220.6, -238.0, -70.0, 186.90, 190.10)
-        + box(163.6, 196.4, -77.5, -70.0, 179.10, 188.70)    # integrated 688ZZ bearing arch saddle onto R46A Z=179.00 pad
-        + box(163.6, 196.4, -70.5, -69.8, 179.10, 190.10)    # top corner bridge into front L-lip
-        + box(162.6, 197.4, -69.90, -66.75, 175.15, 190.10)  # downward L-shaped front dust/finger shield wall (X=162.6..197.4)
-        + box(170.0, 190.0, -71.35, -69.80, 178.10, 188.70)  # solid 4.60 mm front blind wall closing 688ZZ bearing bore (+0.1 mm above R44 Z=178)
-        - OB._cyl_axis(8.05, -77.8, -71.35, "y", SCREW_X, SCREW_Z)  # blind 688ZZ bearing pocket (closed in front of Y=-71.35!)
+        box(139.4, 220.6, -238.0, -66.75, 188.65, 190.10)
+        + box(139.4, 144.4, -238.0, -66.75, 186.90, 190.10)
+        + box(215.6, 220.6, -238.0, -66.75, 186.90, 190.10)
+        + box(139.4, 220.6, -69.95, -66.75, 186.90, 190.10)   # full-width 81.2 mm front upper L-lip across entire shroud width
+        + box(148.0, 212.0, -69.95, -66.75, SK_Z0, 190.10)    # full-depth 64.0 mm front apron wall down to Z=168.00 (incl. 2x M3 screws)
     )
     for sx0, sx1 in ((157.8, 163.2), (196.8, 202.2)):
-        bay_cover = bay_cover + box(sx0, sx1, -237.2, -231.8, 186.65, 188.70)  # rear feet onto R47/R48 (+0.05 mm clear)
-        bay_cover = bay_cover + box(sx0, sx1, -75.2, -70.0, 186.65, 188.70)    # front feet onto R47/R48 (+0.05 mm clear)
+        bay_cover = bay_cover + box(sx0, sx1, -237.2, -231.8, 186.65, 188.75)  # rear feet onto R47/R48 (+0.05 mm clear)
+        bay_cover = bay_cover + box(sx0, sx1, -75.2, -69.5, 186.65, 188.75)    # front feet tied directly into front L-apron!
+    bay_cover = (
+        bay_cover
+        + box(163.6, 196.4, -77.5, -69.5, 179.10, 188.75)    # integrated 688ZZ bearing arch saddle onto R46A Z=179.00 pad
+        + box(170.0, 190.0, -71.35, -69.5, 178.10, 188.75)   # solid 4.60 mm front blind wall closing 688ZZ bearing bore (+0.1 mm above R44 Z=178)
+        - OB._cyl_axis(8.05, -77.8, -71.35, "y", SCREW_X, SCREW_Z)  # blind 688ZZ bearing pocket (closed in front of Y=-71.35!)
+    )
     bay_cover_hw = []
     for sgn_c in (-1, 1):
         bx = SCREW_X + sgn_c * 19.5  # 160.5 / 199.5 (shared end anchor bores with R47/R48 -> R46 -> R44!)
@@ -707,6 +710,11 @@ def build_forklift_deck(tray_clean: bd.Part):
             bay_cover = bay_cover - OB._cyl_axis(1.10, 186.50, 190.30, "z", bx, by)
             bay_cover = bay_cover - OB._cyl_axis(1.90, 188.90, 190.30, "z", bx, by)
             bay_cover_hw.append(_socket_bolt(1.75, 1.15, 0.95, 14.0, "z", bx, by, 188.95, head_dir=1))
+    # 2x Horizontal M3 x 10 mm front apron screws (X=155.0 & 205.0, Z=173.0) through R58-B01's front L-apron into R44-FK
+    for fx_ap in (155.0, 205.0):
+        bay_cover = bay_cover - OB._cyl_axis(1.65, OB.TRAY_Y1 - 0.2, OB.TRAY_Y1 + SK_T + 0.6, "y", fx_ap, 173.0)
+        tray_clean = tray_clean - OB._cyl_axis(1.45, OB.TRAY_Y1 - 8.0, OB.TRAY_Y1 + 0.2, "y", fx_ap, 173.0)
+        bay_cover_hw.append(_socket_bolt(2.70, 2.40, 1.40, 10.0, "y", fx_ap, OB.TRAY_Y1 + SK_T + 0.05, 173.0, head_dir=1))
 
     # Engrave R46A-B01 on front face of stop wall, R46B-B01 on rear face of motor cap, R53-B01 on under-tie, R56-B01 & R58-B01 on lids
     comp_part = _engrave_verified(
@@ -834,6 +842,8 @@ def build_forklift_mechanism():
     # 2) Wide 24.0 mm upper lateral gusset wings (Y=-220..-196, Z=181.30..183.30) tying pinion bosses & runners into pylons
     # 3) Full-height vertical shear posts (Z=174.35..188.35) + 8.2 mm deep rear-offset posts behind R54/R55 pinions (-220..-211.8)
     # 4) Overhead top box chord (Z=186.90..188.35, Y=-218.5..-207.7) clears BOTH racks (186.60) & R58 shroud (188.65)!
+    # 5) Rear captive M3 hex-nut pockets (5.65 mm AF x 2.65 mm deep, Y=-218.0..-215.35) at X=SCREW_X±8.0 so both copper T8 nut
+    #    M3 nuts are rotationally locked inside R50-B01 with zero wrench clearance needed (or open for a 5.5 mm socket)!
     r50_parts.append(box(144.2, 165.0, -215.5, -210.6, 174.35, 177.70))
     r50_parts.append(box(164.6, SCREW_X - 10.8, -215.5, -207.7, 174.35, 177.70))
     r50_parts.append(box(SCREW_X + 10.8, 215.8, -215.5, -207.7, 174.35, 177.70))
@@ -844,11 +854,19 @@ def build_forklift_mechanism():
     r50_parts.append(box(145.2, 152.8, -220.0, -211.8, 181.30, 188.35))
     r50_parts.append(box(207.2, 214.8, -220.0, -211.8, 181.30, 188.35))
     r50_parts.append(box(145.2, 214.8, -218.5, -207.7, 186.90, 188.35))
-    nut_plate = box(SCREW_X - 11.2, SCREW_X + 11.2, -215.5, -207.7, 174.35, 188.35) - OB._cyl_axis(
-        5.30, -216.0, -207.2, "y", SCREW_X, SCREW_Z
+    nut_plate = (
+        box(SCREW_X - 11.2, SCREW_X + 11.2, -215.5, -207.7, 174.35, 188.35)
+        + box(SCREW_X - 12.2, SCREW_X + 12.2, -218.0, -215.0, 176.20, 184.80)  # rear captive nut boss collar (+0.5 mm Y overlap)
+        - OB._cyl_axis(5.20, -218.5, -207.2, "y", SCREW_X, SCREW_Z)
     )
     for hx in (SCREW_X - 8.0, SCREW_X + 8.0):
-        nut_plate = nut_plate - OB._cyl_axis(1.65, -216.0, -207.2, "y", hx, SCREW_Z)
+        nut_plate = nut_plate - OB._cyl_axis(1.65, -218.5, -207.2, "y", hx, SCREW_Z)
+        with bd.BuildPart() as hxp:
+            with bd.Locations(bd.Location((hx, -218.2, SCREW_Z), (-90, 0, 0))):
+                with bd.BuildSketch():
+                    bd.RegularPolygon(radius=5.70 / math.sqrt(3.0), side_count=6, rotation=30.0)
+                bd.extrude(amount=2.85)  # Y = -218.2..-215.35 captive hex pocket around M3 nut (flat vertical sides clear barrel!)
+        nut_plate = nut_plate - hxp.part
     r50_parts.append(nut_plate)
 
     r50_raw = r50_parts[0]
@@ -860,7 +878,7 @@ def build_forklift_mechanism():
         r50_raw, "stage1_carriage", (SCREW_X - 7.5, -213.0, 188.35), (1, 0, 0), (0, 0, 1), 2.4
     )
 
-    # Bought Copper T8 Nut + 2x M3 Flange Bolts & Hex Nuts
+    # Bought Copper T8 Nut + 2x M3 Flange Bolts & Captive Hex Nuts (seated inside R50 rear hex pockets at Y=-217.9..-215.5)
     flange = OB._cyl_axis(11.0, -207.5, -204.0, "y", SCREW_X, SCREW_Z) & box(
         SCREW_X - 11.5, SCREW_X + 11.5, -207.6, -203.9, 175.60, 185.40
     )
@@ -868,8 +886,8 @@ def build_forklift_mechanism():
     copper_nut = (flange + barrel) - OB._cyl_axis(4.20, -218.5, -202.0, "y", SCREW_X, SCREW_Z)
     for hx in (SCREW_X - 8.0, SCREW_X + 8.0):
         copper_nut = copper_nut - OB._cyl_axis(1.65, -208.0, -203.5, "y", hx, SCREW_Z)
-        moving_hw.append(_socket_bolt(2.55, 2.5, 1.45, 11.5, "y", hx, -203.9, SCREW_Z, head_dir=1))
-        moving_hw.append(_hex_nut(5.5, 2.4, "y", hx, -218.1, SCREW_Z, 1.50))
+        moving_hw.append(_socket_bolt(2.55, 2.5, 1.45, 14.0, "y", hx, -203.9, SCREW_Z, head_dir=1))
+        moving_hw.append(_hex_nut(5.5, 2.4, "y", hx, -217.9, SCREW_Z, 1.50))
 
     # R51 & R52: MGN Wrap-Around Linear Carriage Fork Tines (locks onto R50 45-deg T-rail + tail hook across 0..+240!)
     tines = {}

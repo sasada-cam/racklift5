@@ -88,7 +88,7 @@ Print settings: `0.2 mm` layers (`0.15 mm` on `R50`, `R51`, `R52`, `R54`, `R55`,
 | **R55** | `R55` | `R55_pinion_right_B01.stl` | `#CA8A04` | **1** | **Flat `0°`** (`17.9 × 17.9 × 3.1 mm`) | Right horizontal `16T MOD=1.0` spur pinion (`F683ZZ` hub, `X = 211.5, Y = -202.0`), meshes `R48` ↔ `R52` at `1:2` |
 | **R56** | `R56-B01` | `R56_fork_top_cover_B01.stl` | `#0E7490` | **1** | **Flat `0°`** (`104.8 × 100.9 × 8.95 mm`) | Screwed top motor & rack-tail enclosure lid bridging `Y = -245.0` seam (`6× M3×10` into `R46B` + `2× M3×10` into `R46A` stop wall) |
 | **R57** | `R57-B01` | `R57_hold_rail_left_B01.stl` | `#6366F1` | **2** | **Flat `0°`** (`8.0 × 166.6 × 5.75 mm`) | Screwed `55°` MGN/T-slot linear hold-down rails (`5× M2×14`/side through `R47`/`R48` into `R46A`+`R44`) |
-| **R58** | `R58-B01` | `R58_fork_bay_cover_B01.stl` | `#0284C7` | **1** | **Flat `0°`** (`81.2 × 171.25 × 14.95 mm`) | 1-Piece screwed center-bay overhead shroud + integrated `688ZZ` front bearing arch saddle + downward L-shaped front dust/finger shield wall (`4× M2×14` shared end holes) |
+| **R58** | `R58-B01` | `R58_fork_bay_cover_B01.stl` | `#0284C7` | **1** | **Flat `0°`** (`81.2 × 171.25 × 22.10 mm`) | 1-Piece screwed center-bay overhead shroud + integrated `688ZZ` front bearing arch saddle + full-depth downward L-shaped front apron (`Z = 168.00..190.10 mm`, clamped by `4× M2×14` top corner screws + `2× M3×10` horizontal front screws) |
 
 ---
 

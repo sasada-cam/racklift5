@@ -1160,9 +1160,9 @@ PRINT_PARTS_CATALOG = [
      "notes": "5x M2x14/side bolt through R47/R48 into R46+R44 locking R50 MGN wings below 192 mm crate (0.8 mm side walls).",
      "rel_path": "models/components/objects_compartment/R57_hold_rail_left_B01.stl"},
     {"id": "R58", "mark": "R58-B01", "group": "forklift", "process": "3D PRINT (FDM)", "qty": "1", "color": "#0284C7",
-     "name": "1-Piece Center-Bay Overhead Shroud + Integrated 688ZZ Arch & Front L-Shield",
+     "name": "1-Piece Center-Bay Overhead Shroud + Integrated 688ZZ Arch & Full Front L-Apron",
      "material": "PETG · 0.2mm · 4 walls · 100% infill",
-     "notes": "Combines center shroud, front 688ZZ bearing saddle, and a downward L-shaped front dust/finger shield wall (Z=175.15..190.10) clamped by 4x M2x14 corner screws.",
+     "notes": "Combines center shroud, front 688ZZ bearing saddle, and full front L-shaped apron wall down to Z=168.00 mm (clamped by 4x M2x14 top corner screws + 2x M3x10 horizontal front screws into R44-FK).",
      "rel_path": "models/components/objects_compartment/R58_fork_bay_cover_B01.stl"},
 
     # 2. Option 1 Robot Body, Boom, Load Base & Column Plugs
