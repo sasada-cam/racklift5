@@ -465,9 +465,8 @@ def _clamp_front_half() -> bd.Part:
         bd.Location((34.5, 10.2, wf_z0)))
     web_l = web_l + bd.Box(mc_x - 34.5, 21.8 - 10.2, ARM_Z[1] - lid_clr_z0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
         bd.Location((34.5, 10.2, lid_clr_z0)))
-    # Extend upper -X web back to the clamp flange (Y 23.95) below P02's tab (Z 44.3..45.6) and above it (Z 54.4..71.5)
-    web_l = web_l + bd.Box(mc_x - 34.5, mc_y - 0.1 - 10.2, 45.6 - lid_clr_z0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
-        bd.Location((34.5, 10.2, lid_clr_z0)))
+    # Extend upper -X web back to the clamp flange (Y 23.95) above P02's tab (Z 54.4..71.5);
+    # the lower Z 43.5..46.25 region is transferred cleanly onto P02's own gearbox lid & upper-left tab.
     web_l = web_l + bd.Box(mc_x - 34.5, mc_y - 0.1 - 10.2, ARM_Z[1] - 54.4, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
         bd.Location((34.5, 10.2, 54.4)))
     web_l = web_l + bd.Box(mc_x - 38.0, mc_y - 0.1 - 10.2, CLAMP_TOP_Z - ARM_Z[1], align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
@@ -515,11 +514,13 @@ def build_motor_cap_option1() -> bd.Part:
     cap = cap + _ycyl(CAP_BOSS_R, cy0, CAP_TAB_Y1, x, z)
     cap = cap + bd.Box(x + CAP_BOSS_R - (mc_x + bore), mc_y + 2.0 - cy0, z + CAP_BOSS_R - rib_z0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
         bd.Location((mc_x + bore, cy0, rib_z0)))
-    # upper left tab: plate on the arm post's back face (Y 22), joined to the sleeve's -X side
+    # upper left tab: plate on the arm post's back face (Y 22.2..25.4), plus rib down to Z 43.5 onto P02's gearbox lid (X >= 35.5)
     x, z, yj = CAP_SCREWS[3]
     px0 = ARM_POST[0] + 0.5
     cap = cap + bd.Box(mc_x - bore - px0, 3.2, 2 * CAP_BOSS_R, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
         bd.Location((px0, yj + 0.2, z - CAP_BOSS_R)))
+    cap = cap + bd.Box(mc_x - bore - CAP_X0, 3.2, z - rib_z0, align=(bd.Align.MIN, bd.Align.MIN, bd.Align.MIN)).moved(
+        bd.Location((CAP_X0, yj + 0.2, rib_z0)))
     for x, z, yj in CAP_SCREWS:
         y0 = cy0 if yj == CAP_Y0 else yj + 0.2
         cap = cap - _ycyl(1.7, y0 - 1.0, y0 + 3.0 + 1.0 + (CAP_TAB_Y1 - cy0 - 3.0 if yj == CAP_Y0 else 0.2), x, z)
