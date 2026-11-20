@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø8.20 mm, Ø12.00 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: Steel Tube 12 OD x 8.2 ID — Faced square 2.00 mm rear collar under DIN 6796 disc spring.</text><text x="15" y="276.0" class="sm">Source File: docs/SHOPPING_LIST.md#L104</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø8.20 mm, Ø12.00 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: Steel Tube 12 OD x 8.2 ID — Faced square 2.00 mm rear collar under DIN 6796 disc spring.</text><text x="15" y="276.0" class="sm">Source File: models/components/metal_shop/M15_crossing_preload_collar.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#fffbeb" stroke="#d97706" stroke-width="0.45"/>

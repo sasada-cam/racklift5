@@ -150,7 +150,7 @@ def get_rail_rack_specs() -> list[dict]:
          "process": "SHOP CUT / DRILL", "qty": 2, "color": "#94A3B8",
          "material": "2020 Anodized Aluminium V-Slot",
          "notes": "Cut square 69.69 mm; fits vertically between H2 & H1 crossings (holes w/ RK-VMB).",
-         "rel_path": "cad/build_option1_full.py#L51", "shape": _centered_rail(vmb_len),
+         "rel_path": "models/components/metal_shop/M-VMB_2020_vert_bridge.stl", "shape": _centered_rail(vmb_len),
          "key_dims": ["Section: 20.0 x 20.0 mm V-slot", f"Cut length: {vmb_len:.2f} mm", "Qty 2 (Bay 0 & Bay 1 middle)"]},
 
         {"id": "M-VUP", "mark": "Cut 2020 (VUP)", "short_title": "2020 Vert Upper Climb",
@@ -158,7 +158,7 @@ def get_rail_rack_specs() -> list[dict]:
          "process": "SHOP CUT / DRILL", "qty": 2, "color": "#94A3B8",
          "material": "2020 Anodized Aluminium V-Slot",
          "notes": "Cut square 664.35 mm; holds RK-VUP-1 + 2x RK-VUP-2 + RK-VUP-3.",
-         "rel_path": "cad/build_option1_full.py#L51", "shape": _centered_rail(vup_len),
+         "rel_path": "models/components/metal_shop/M-VUP_2020_vert_climb.stl", "shape": _centered_rail(vup_len),
          "key_dims": ["Section: 20.0 x 20.0 mm V-slot", f"Cut length: {vup_len:.2f} mm", "Qty 2 (Bay 0 & Bay 1 climb)"]},
 
         {"id": "M-HL", "mark": "Cut 2020 (HL)", "short_title": "2020 Horiz Left Tail",
@@ -166,7 +166,7 @@ def get_rail_rack_specs() -> list[dict]:
          "process": "SHOP CUT / DRILL", "qty": 2, "color": "#94A3B8",
          "material": "2020 Anodized Aluminium V-Slot",
          "notes": "Cut square 94.68 mm; holds RK-HL rack strip.",
-         "rel_path": "cad/build_option1_full.py#L66", "shape": _centered_rail(hl_len),
+         "rel_path": "models/components/metal_shop/M-HL_2020_horiz_left.stl", "shape": _centered_rail(hl_len),
          "key_dims": ["Section: 20.0 x 20.0 mm V-slot", f"Cut length: {hl_len:.2f} mm", "Qty 2 (Lower & Upper left)"]},
 
         {"id": "M-HB", "mark": "Cut 2020 (HB)", "short_title": "2020 Horiz Bay Span",
@@ -174,7 +174,7 @@ def get_rail_rack_specs() -> list[dict]:
          "process": "SHOP CUT / DRILL", "qty": 2, "color": "#94A3B8",
          "material": "2020 Anodized Aluminium V-Slot",
          "notes": "Cut square 187.50 mm for 358.14 mm bay pitch; holds RK-HB rack strip.",
-         "rel_path": "cad/build_option1_full.py#L67", "shape": _centered_rail(hb_len),
+         "rel_path": "models/components/metal_shop/M-HB_2020_horiz_bay.stl", "shape": _centered_rail(hb_len),
          "key_dims": ["Section: 20.0 x 20.0 mm V-slot", f"Cut length: {hb_len:.2f} mm", "Qty 2 (Lower & Upper span)"]},
 
         {"id": "M-HR", "mark": "Cut 2020 (HR)", "short_title": "2020 Horiz Right Overhang",
@@ -182,7 +182,7 @@ def get_rail_rack_specs() -> list[dict]:
          "process": "SHOP CUT / DRILL", "qty": 2, "color": "#94A3B8",
          "material": "2020 Anodized Aluminium V-Slot",
          "notes": "Cut square 264.68 mm; holds RK-HR-1 + RK-HR-2.",
-         "rel_path": "cad/build_option1_full.py#L68", "shape": _centered_rail(hr_len),
+         "rel_path": "models/components/metal_shop/M-HR_2020_horiz_right.stl", "shape": _centered_rail(hr_len),
          "key_dims": ["Section: 20.0 x 20.0 mm V-slot", f"Cut length: {hr_len:.2f} mm", "Qty 2 (Lower & Upper right)"]},
     ]
     return rack_specs + rail_cut_specs

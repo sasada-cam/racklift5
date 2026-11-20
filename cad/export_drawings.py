@@ -444,7 +444,7 @@ def build_all_specs() -> list[dict]:
         # --- Robot Body & Load Base (R40..R45, P07) ---
         {"id": "R44-FK", "mark": "R44 (Forklift)", "short_title": "Forklift Tray Base", "name": "Printed Tray Base (Sewer Duct, T8 Trench & R46 Bores)",
          "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "Slice THIS STL for Forklift build.",
-         "rel_path": "sim/build/meshes_objects_compartment/tray_deck.stl", "shape": fork["tray_deck"],
+         "rel_path": "models/components/objects_compartment/R44_forklift_tray_deck_B01.stl", "shape": fork["tray_deck"],
          "key_dims": ["Plate: 180.0 x 175.0 x 10.0 mm", "Sewer duct + T8 trench Z=174.0 (bed 171.2..174)", "12x side + 10x rail M3 bores"]},
         {"id": "R40", "mark": "R40", "short_title": "Column Collar", "name": "Body 40x25 Column Mounting Collar",
          "process": "3D PRINT (FDM)", "qty": 1, "material": "PETG (0.2mm, 4 walls, 40%)", "notes": "11 mm wrench access holes for pod column bolts.",
@@ -538,19 +538,19 @@ def build_all_specs() -> list[dict]:
         # --- Workshop Lathe / Shop-Cut Metal Parts ---
         {"id": "M01", "mark": "M01 (Lathe)", "short_title": "Swivel Main Axle", "name": "Common Swivel Axle (Bright Mild / Silver Steel)",
          "process": "LATHE TURNING", "qty": 2, "material": "Bright Mild / Silver Steel (NO hardened rod)", "notes": "Face square 69.0 mm; drill Ø3.3 x 12 & tap M4 x 10 both ends.",
-         "rel_path": "docs/SHOPPING_LIST.md#L47", "shape": metal["M01"],
+         "rel_path": "models/components/metal_shop/M01_swivel_axle.stl", "shape": metal["M01"],
          "key_dims": ["OD: Ø8.00 h9 mm (fits 608ZZ)", "Length: 69.00 mm (faces square)", "Both ends: Ø3.3 x 12, tap M4 x 10"]},
         {"id": "M02", "mark": "M02 (Lathe)", "short_title": "Axle Spacer Bottom", "name": "Bottom Bearing Steel Axle Spacer Tube",
          "process": "LATHE TURNING", "qty": 2, "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Part off & face ends flat/square to 12.0 mm.",
-         "rel_path": "docs/SHOPPING_LIST.md#L48", "shape": metal["M02"],
+         "rel_path": "models/components/metal_shop/M02_axle_spacer_bottom.stl", "shape": metal["M02"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 12.00 mm (square faces)"]},
         {"id": "M03", "mark": "M03 (Lathe)", "short_title": "Axle Spacer Top", "name": "Top Bearing Trim-to-Snug Steel Spacer",
          "process": "LATHE TURNING", "qty": 2, "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Cut 4.5 mm; lap/trim on assembly for snug 608ZZ preload.",
-         "rel_path": "docs/SHOPPING_LIST.md#L49", "shape": metal["M03"],
+         "rel_path": "models/components/metal_shop/M03_axle_spacer_top.stl", "shape": metal["M03"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 4.50 mm (trim to fit)"]},
         {"id": "M04", "mark": "M04 (Lathe)", "short_title": "Axle Boss Spacer", "name": "Axle Boss Steel Washer Spacer",
          "process": "LATHE TURNING", "qty": 2, "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Thin 1.5 mm faced steel ring spacer.",
-         "rel_path": "docs/SHOPPING_LIST.md#L50", "shape": metal["M04"],
+         "rel_path": "models/components/metal_shop/M04_axle_boss_spacer.stl", "shape": metal["M04"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Thickness: 1.50 mm"]},
         {"id": "M11", "mark": "M11 (Lathe)", "short_title": "Crossing Pivot Housing", "name": "608ZZ Duplex Crossing Pivot Bearing Housing",
          "process": "LATHE TURNING", "qty": "1/crossing", "material": "6061-T6 Alu Bar Ø45 mm", "notes": "Spigot Ø27 g6 x 9.5; twin Ø22 H7 x 7 bearing seats; 4x Ø4.5 on 36 PCD.",
@@ -558,31 +558,31 @@ def build_all_specs() -> list[dict]:
          "key_dims": ["Spigot: Ø27.0 g6 x 9.5 mm", "Bearing bores: Ø22.0 H7 x 7 mm", "4x Ø4.5 holes on 36 mm PCD"]},
         {"id": "M13", "mark": "M13 (Lathe)", "short_title": "Crossing Front Spacer", "name": "Crossing Axle Front Bearing Steel Spacer",
          "process": "LATHE TURNING", "qty": "1/crossing", "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Faced square 2.50 mm steel tube spacer in M11 pivot stack.",
-         "rel_path": "docs/SHOPPING_LIST.md#L102", "shape": metal["M13"],
+         "rel_path": "models/components/metal_shop/M13_crossing_front_spacer.stl", "shape": metal["M13"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 2.50 mm (square faces)"]},
         {"id": "M14", "mark": "M14 (Lathe)", "short_title": "Crossing Preload Spacer", "name": "Crossing Inner-Race Preload Steel Spacer (7.95 mm)",
          "process": "LATHE TURNING", "qty": "1/crossing", "material": "Steel Tube 12 OD x 8.2 ID (Faces Ground)", "notes": "Ground 0.05 mm shorter than M11 housing shoulder (sets 608ZZ preload).",
-         "rel_path": "docs/SHOPPING_LIST.md#L103", "shape": metal["M14"],
+         "rel_path": "models/components/metal_shop/M14_crossing_preload_spacer.stl", "shape": metal["M14"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 7.95 mm (shoulder - 0.05 mm)"]},
         {"id": "M15", "mark": "M15 (Lathe)", "short_title": "Crossing Preload Collar", "name": "Crossing Rear Preload Steel Collar",
          "process": "LATHE TURNING", "qty": "1/crossing", "material": "Steel Tube 12 OD x 8.2 ID", "notes": "Faced square 2.00 mm rear collar under DIN 6796 disc spring.",
-         "rel_path": "docs/SHOPPING_LIST.md#L104", "shape": metal["M15"],
+         "rel_path": "models/components/metal_shop/M15_crossing_preload_collar.stl", "shape": metal["M15"],
          "key_dims": ["OD Ø12.0 mm / ID Ø8.2 mm", "Length: 2.00 mm (square faces)"]},
         {"id": "M16", "mark": "M16 (Shop Cut)", "short_title": "Stop-Pin Sleeve", "name": "Crossing M5 Stop-Pin Steel Sleeve",
          "process": "SHOP CUT / DRILL", "qty": "1/crossing", "material": "Steel Tube 10 OD x 5.2 ID", "notes": "Cut square 20.0 mm; runs on M5 x 25 stop pin inside FX-BKT slot.",
-         "rel_path": "docs/SHOPPING_LIST.md#L105", "shape": metal["M16"],
+         "rel_path": "models/components/metal_shop/M16_crossing_stop_pin_sleeve.stl", "shape": metal["M16"],
          "key_dims": ["OD Ø10.0 mm / ID Ø5.2 mm", "Length: 20.00 mm"]},
         {"id": "M-T8", "mark": "CNC4759-A Cut", "short_title": "Cut T8 Lead Screw", "name": "CNC4759-A 304SS T8 Lead Screw (Trimmed)",
          "process": "SHOP CUT / DRILL", "qty": 1, "material": "304 Stainless (from 500 mm kit)", "notes": "Cut 500 mm screw -> 202.0 mm; chamfer cut end for 688ZZ.",
-         "rel_path": "docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md#L18", "shape": metal["M-T8"],
+         "rel_path": "models/components/metal_shop/M-T8_lead_screw_202mm.stl", "shape": metal["M-T8"],
          "key_dims": ["OD Ø8.0 mm · Pitch 2 · Lead 8", "Cut length: ~202.0 mm (298 spare)", "Fits rear KP08 + coupler + front 688ZZ"]},
         {"id": "M-ROD", "mark": "MT0092 Cut", "short_title": "Hardened Smooth Shafts", "name": "MT0092 8mm Hardened Linear Rods (Optional Spine)",
          "process": "SHOP CUT / DRILL", "qty": 2, "material": "Case-Hardened Steel (Abrasive Cutoff ONLY)", "notes": "DO NOT try to tap/thread hardened MT0092 rod; abrasive wheel only.",
-         "rel_path": "docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md#L33", "shape": metal["M-ROD"],
+         "rel_path": "models/components/metal_shop/M-ROD_smooth_shaft_165mm.stl", "shape": metal["M-ROD"],
          "key_dims": ["OD: Ø8.00 mm", "Cut length: 2 x 165.0 mm (170 spare)"]},
         {"id": "M-COL", "mark": "Column 276 mm", "short_title": "Robot Spine Column", "name": "40 x 25 x 2 mm Hollow Alu Column Bar",
          "process": "SHOP CUT / DRILL", "qty": 1, "material": "6063-T5 / 6061 Aluminum 40x25x2", "notes": "Cut square 276.0 mm; drill M4/M5 patterns for H1/H2 & R40.",
-         "rel_path": "docs/SHOPPING_LIST.md", "shape": metal["M-COL"],
+         "rel_path": "models/components/metal_shop/M-COL_spine_column_276mm.stl", "shape": metal["M-COL"],
          "key_dims": ["Section: 40.0 x 25.0 mm (2 mm wall)", "Length: 276.0 mm"]},
     ]
     specs.extend(RR.get_rail_rack_specs())
@@ -597,6 +597,11 @@ def main():
     specs = build_all_specs()
     manifest = []
     for sp in specs:
+        rel_p = sp.get("rel_path", "")
+        if rel_p.startswith("models/components/metal_shop/") and rel_p.endswith(".stl"):
+            stl_out = os.path.join(ROOT, rel_p)
+            os.makedirs(os.path.dirname(stl_out), exist_ok=True)
+            bd.export_stl(sp["shape"], stl_out, tolerance=0.01, angular_tolerance=0.1)
         info = generate_drawing(sp)
         manifest.append(info)
         d = info["bbox_mm"]

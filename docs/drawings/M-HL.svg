@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø3.00 mm (×4), Ø5.50 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: 2020 Anodized Aluminium V-Slot — Cut square 94.68 mm; holds RK-HL rack strip.</text><text x="15" y="276.0" class="sm">Source File: cad/build_option1_full.py#L66</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø3.00 mm (×4), Ø5.50 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: 2020 Anodized Aluminium V-Slot — Cut square 94.68 mm; holds RK-HL rack strip.</text><text x="15" y="276.0" class="sm">Source File: models/components/metal_shop/M-HL_2020_horiz_left.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#f5f3ff" stroke="#7c3aed" stroke-width="0.45"/>

@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø6.30 mm (×101), Ø8.00 mm (×100)</text><text x="15" y="268.5" class="sm">Process &amp; Settings: 304 Stainless (from 500 mm kit) — Cut 500 mm screw -&gt; 202.0 mm; chamfer cut end for 688ZZ.</text><text x="15" y="276.0" class="sm">Source File: docs/OBJECTS_COMPARTMENT_FORKLIFT_BOM.md#L18</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø6.30 mm (×101), Ø8.00 mm (×100)</text><text x="15" y="268.5" class="sm">Process &amp; Settings: 304 Stainless (from 500 mm kit) — Cut 500 mm screw -&gt; 202.0 mm; chamfer cut end for 688ZZ.</text><text x="15" y="276.0" class="sm">Source File: models/components/metal_shop/M-T8_lead_screw_202mm.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#f5f3ff" stroke="#7c3aed" stroke-width="0.45"/>

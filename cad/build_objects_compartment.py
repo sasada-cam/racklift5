@@ -1178,7 +1178,8 @@ def main():
     for k, sh in print_solids.items():
         pid = PART_IDS[k]
         bd.export_stl(sh, os.path.join(OUT_DIR, f"{pid}_{k}_{BATCH}.stl"), tolerance=0.01, angular_tolerance=0.1)
-    print(f"Exported {len(parts)} viewer meshes + {len(print_solids)} printable R46..R57-{BATCH} STLs")
+    bd.export_stl(parts["tray_deck"], os.path.join(OUT_DIR, f"R44_forklift_tray_deck_{BATCH}.stl"), tolerance=0.01, angular_tolerance=0.1)
+    print(f"Exported {len(parts)} viewer meshes + {len(print_solids) + 1} printable R44-FK & R46..R58-{BATCH} STLs")
 
     asm = bd.Compound(
         children=[v for k, v in parts.items() if not k.startswith("ref_")],

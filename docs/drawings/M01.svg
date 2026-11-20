@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø3.30 mm (×2), Ø8.00 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: Bright Mild / Silver Steel (NO hardened rod) — Face square 69.0 mm; drill Ø3.3 x 12 &amp; tap M4 x 10 both ends.</text><text x="15" y="276.0" class="sm">Source File: docs/SHOPPING_LIST.md#L47</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø3.30 mm (×2), Ø8.00 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: Bright Mild / Silver Steel (NO hardened rod) — Face square 69.0 mm; drill Ø3.3 x 12 &amp; tap M4 x 10 both ends.</text><text x="15" y="276.0" class="sm">Source File: models/components/metal_shop/M01_swivel_axle.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#fffbeb" stroke="#d97706" stroke-width="0.45"/>

@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø5.20 mm, Ø10.00 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: Steel Tube 10 OD x 5.2 ID — Cut square 20.0 mm; runs on M5 x 25 stop pin inside FX-BKT slot.</text><text x="15" y="276.0" class="sm">Source File: docs/SHOPPING_LIST.md#L105</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø5.20 mm, Ø10.00 mm</text><text x="15" y="268.5" class="sm">Process &amp; Settings: Steel Tube 10 OD x 5.2 ID — Cut square 20.0 mm; runs on M5 x 25 stop pin inside FX-BKT slot.</text><text x="15" y="276.0" class="sm">Source File: models/components/metal_shop/M16_crossing_stop_pin_sleeve.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#f5f3ff" stroke="#7c3aed" stroke-width="0.45"/>

@@ -44,7 +44,7 @@
 
   <!-- Bottom Notes Strip -->
   <text x="15" y="256" class="lbl">FABRICATION &amp; ASSEMBLY NOTES</text>
-  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø2.90 mm (×29), Ø1.90 mm (×14), Ø16.50 mm (×10), Ø4.40 mm (×8), Ø16.00 mm (×6), Ø2.25 mm (×4)</text><text x="15" y="268.5" class="sm">Process &amp; Settings: PETG (0.2mm, 4 walls, 40%) — Slice THIS STL for Forklift build.</text><text x="15" y="276.0" class="sm">Source File: sim/build/meshes_objects_compartment/tray_deck.stl</text>
+  <text x="15" y="261.0" class="sm">Critical Features / Callouts: Ø2.90 mm (×29), Ø1.90 mm (×14), Ø16.50 mm (×10), Ø4.40 mm (×8), Ø16.00 mm (×6), Ø2.25 mm (×4)</text><text x="15" y="268.5" class="sm">Process &amp; Settings: PETG (0.2mm, 4 walls, 40%) — Slice THIS STL for Forklift build.</text><text x="15" y="276.0" class="sm">Source File: models/components/objects_compartment/R44_forklift_tray_deck_B01.stl</text>
 
   <!-- ISO Title Block -->
   <rect x="290" y="219" width="116" height="11" rx="2" fill="#ecfdf5" stroke="#059669" stroke-width="0.45"/>
